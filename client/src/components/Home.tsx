@@ -5,11 +5,14 @@ import NavButton from './NavButton';
 function Home() {
 	return (
 		<div className='home page'>
-			<h1 className='title'>XYZ Inc</h1>
-			<Container className='mt-3'>
+			<Container className='mt-5'>
+				<h1 className='title'>🏠 Hub Empire</h1>
 				<Row className='mb-3'>
 					<Col>
 						<div className='rounded-box shadow'>
+							<h2 className='no-padding huge-and-bold'>
+								XYZ Inc
+							</h2>
 							<p className='no-padding'>net-worth:</p>
 							<h2 className='no-padding huge-and-bold'>
 								$900,000
@@ -23,7 +26,7 @@ function Home() {
 						</div>
 					</Col>
 				</Row>
-				<Row className='mb-3'>
+				<Row className='mb-3 gx-3'>
 					<Col>
 						<NavButton
 							title='My Cards'
@@ -42,7 +45,7 @@ function Home() {
 						/>
 					</Col>
 				</Row>
-				<Row className='mb-3'>
+				<Row className='mb-3 gx-3'>
 					<Col>
 						<NavButton
 							title='Leaderboard'
