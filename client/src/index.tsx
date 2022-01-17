@@ -8,6 +8,7 @@ import './styles/shadow.css';
 import './styles/master.css';
 import MyCards from './components/MyCards';
 import Trade from './components/Trade';
+import Leaderboard from './components/Leaderboard';
 
 const rootElement = document.getElementById('root');
 render(
@@ -16,6 +17,7 @@ render(
 			<Route path='/' element={<Home />} />
 			<Route path='/my-cards' element={<MyCards />} />
 			<Route path='/trade' element={<Trade />} />
+			<Route path='/leaderboard' element={<Leaderboard />} />
 		</Routes>
 	</BrowserRouter>,
 	rootElement
