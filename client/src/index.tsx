@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/shadow.css';
 import './styles/master.css';
 import MyCards from './components/MyCards';
+import Trade from './components/Trade';
 
 const rootElement = document.getElementById('root');
 render(
@@ -14,6 +15,7 @@ render(
 		<Routes>
 			<Route path='/' element={<Home />} />
 			<Route path='/my-cards' element={<MyCards />} />
+			<Route path='/trade' element={<Trade />} />
 		</Routes>
 	</BrowserRouter>,
 	rootElement

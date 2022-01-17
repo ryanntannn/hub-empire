@@ -37,6 +37,8 @@
 	text-align: center;
 	overflow: hidden;
 	padding-top: 70px;
+	width: 170px;
+	margin: 0;
 }
 
 .card .top-color-area {

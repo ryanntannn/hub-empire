@@ -17,28 +17,21 @@ export default function MyCards() {
 			<Container className='mt-5'>
 				<BackButton />
 				<h1 className='title'>🏢 My Cards</h1>
-				<Container fluid className='mt-5 '>
-					<Row className='mt-3 gx-3'>
-						<Col>
+				<Container fluid className='mt-3 '>
+					<Row className='mt-3 gy-3'>
+						<Col xs='auto'>
 							<TestCard />
 						</Col>
-						<Col>
+						<Col xs='auto'>
 							<TestCard />
 						</Col>
-					</Row>
-					<Row className='mt-3 gx-3'>
-						<Col>
+						<Col xs='auto'>
 							<TestCard />
 						</Col>
-						<Col>
+						<Col xs='auto'>
 							<TestCard />
 						</Col>
-					</Row>
-					<Row className='mt-3 gx-3'>
-						<Col>
-							<TestCard />
-						</Col>
-						<Col>
+						<Col xs='auto'>
 							<TestCard />
 						</Col>
 					</Row>
