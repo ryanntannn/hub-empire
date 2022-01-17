@@ -3,10 +3,9 @@
 	margin: 0;
 }
 
-.page .title {
-	margin: 30px 35px;
+.title {
 	font-weight: 800;
-	font-size: 48px;
+	font-size: 45px;
 }
 
 .rounded-box {
@@ -32,4 +31,18 @@
 .rounded-box.big {
 	margin: 0 25px;
 	min-height: 100px;
+}
+
+.card {
+	text-align: center;
+	overflow: hidden;
+	padding-top: 70px;
+}
+
+.card .top-color-area {
+	position: absolute;
+	height: 50px;
+	width: 100%;
+	left: 0;
+	top: 0;
 }

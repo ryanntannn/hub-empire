@@ -6,12 +6,14 @@ import { render } from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/shadow.css';
 import './styles/master.css';
+import MyCards from './components/MyCards';
 
 const rootElement = document.getElementById('root');
 render(
 	<BrowserRouter>
 		<Routes>
 			<Route path='/' element={<Home />} />
+			<Route path='/my-cards' element={<MyCards />} />
 		</Routes>
 	</BrowserRouter>,
 	rootElement
