@@ -2,7 +2,7 @@ interface CardProps {
 	emoji: string;
 	displayName: string;
 	value: number;
-	returns: number;
+	earnings: number;
 	color: string;
 }
 
@@ -21,9 +21,9 @@ export default function Card(props: CardProps) {
 			<p className='normal-and-bold no-padding'>{props.displayName}</p>
 			<p className='normal-and-bold no-padding'>${props.value}</p>
 			<p
-				style={{ color: props.returns >= 0 ? 'green' : 'red' }}
+				style={{ color: props.earnings >= 0 ? 'green' : 'red' }}
 				className='normal-and-bold no-padding'>
-				{props.returns >= 0 ? '+' : '-'}${props.returns}
+				{props.earnings >= 0 ? '+' : '-'}${props.earnings}
 			</p>
 		</div>
 	);

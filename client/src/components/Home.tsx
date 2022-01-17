@@ -6,10 +6,13 @@ function Home() {
 	return (
 		<div className='home page'>
 			<Container className='mt-5'>
-				<h1 className='title'>🏠 XYZ Inc</h1>
+				<h1 className='title'>🏠 Hub Empire</h1>
 				<Row className='mb-3'>
 					<Col>
 						<div className='rounded-box shadow'>
+							<h2 className='no-padding huge-and-bold'>
+								XYZ Inc
+							</h2>
 							<p className='no-padding'>net-worth:</p>
 							<h2 className='no-padding huge-and-bold'>
 								$900,000

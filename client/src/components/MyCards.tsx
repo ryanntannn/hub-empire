@@ -8,7 +8,7 @@ export default function MyCards() {
 			emoji={'🏢'}
 			displayName={'test card'}
 			value={0}
-			returns={0}
+			earnings={0}
 			color={'#DD5555'}
 		/>
 	);
@@ -17,7 +17,7 @@ export default function MyCards() {
 			<Container className='mt-5'>
 				<BackButton />
 				<h1 className='title'>🏢 My Cards</h1>
-				<Container fluid className='mt-3 '>
+				<Container fluid className='mt- '>
 					<Row className='mt-3 gy-3'>
 						<Col xs='auto'>
 							<TestCard />

@@ -9,6 +9,7 @@ import './styles/master.css';
 import MyCards from './components/MyCards';
 import Trade from './components/Trade';
 import Leaderboard from './components/Leaderboard';
+import Profile, { ProfileProps } from './components/Profile';
 
 const rootElement = document.getElementById('root');
 render(
@@ -18,6 +19,7 @@ render(
 			<Route path='/my-cards' element={<MyCards />} />
 			<Route path='/trade' element={<Trade />} />
 			<Route path='/leaderboard' element={<Leaderboard />} />
+			<Route path='/profile' element={<Profile />} />
 		</Routes>
 	</BrowserRouter>,
 	rootElement
