@@ -46,3 +46,9 @@
 	left: 0;
 	top: 0;
 }
+
+.back-button {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+}

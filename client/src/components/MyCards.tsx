@@ -1,4 +1,5 @@
 import { Col, Container, Row } from 'reactstrap';
+import BackButton from './BackButton';
 import Card from './Card';
 
 export default function MyCards() {
@@ -12,8 +13,9 @@ export default function MyCards() {
 		/>
 	);
 	return (
-		<div className='home page'>
+		<div className='page'>
 			<Container className='mt-5'>
+				<BackButton />
 				<h1 className='title'>🏢 My Cards</h1>
 				<Container fluid className='mt-5 '>
 					<Row className='mt-3 gx-3'>
