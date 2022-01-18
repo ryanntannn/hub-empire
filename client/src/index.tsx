@@ -14,6 +14,7 @@ import Login from './components/Login';
 import { AuthenticationProvider } from './contexts/AuthenticationContext';
 import useAuth from './contexts/AuthenticationContext';
 import React from 'react';
+import NewTrade from './components/trading/NewTrade';
 
 const rootElement = document.getElementById('root');
 
@@ -36,7 +37,7 @@ render(
 					}
 				/>
 				<Route
-					path='/my-cards'
+					path='my-cards'
 					element={
 						<RequireAuth>
 							<MyCards />
@@ -44,15 +45,16 @@ render(
 					}
 				/>
 				<Route
-					path='/trade'
+					path='trade'
 					element={
 						<RequireAuth>
 							<Trade />
 						</RequireAuth>
-					}
-				/>
+					}>
+					<Route path='new' element={<NewTrade />} />
+				</Route>
 				<Route
-					path='/leaderboard'
+					path='leaderboard'
 					element={
 						<RequireAuth>
 							<Leaderboard />
@@ -60,14 +62,14 @@ render(
 					}
 				/>
 				<Route
-					path='/profile'
+					path='profile'
 					element={
 						<RequireAuth>
 							<Profile />
 						</RequireAuth>
 					}
 				/>
-				<Route path='/login' element={<Login />} />
+				<Route path='login' element={<Login />} />
 			</Routes>
 		</BrowserRouter>
 	</AuthenticationProvider>,

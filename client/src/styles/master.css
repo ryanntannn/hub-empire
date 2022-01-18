@@ -37,8 +37,9 @@
 	text-align: center;
 	overflow: hidden;
 	padding-top: 70px;
-	width: 170px;
+	width: 160px;
 	margin: 0;
+	display: inline-block;
 }
 
 .card .top-color-area {
@@ -53,4 +54,32 @@
 	position: absolute;
 	right: 10px;
 	top: 10px;
+}
+
+.scroll-y {
+	overflow-x: scroll;
+	overflow-y: hidden;
+	white-space: nowrap;
+}
+
+.scroll-y .card {
+	margin: 0 5px;
+}
+::-webkit-scrollbar {
+	width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: rgba(182, 182, 182, 0.5);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
 }
