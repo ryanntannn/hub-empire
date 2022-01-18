@@ -1,8 +1,21 @@
 import { Link } from 'react-router-dom';
 import { Button, Col, Container, Row } from 'reactstrap';
 import NavButton from './NavButton';
+import AuthenticationContext from '../contexts/AuthenticationContext';
+import React from 'react';
+import useAuth from '../contexts/AuthenticationContext';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
+	let navigate = useNavigate();
+	const auth = useAuth();
+
+	// React.useEffect(() => {
+	// 	if (auth?.user.accessToken == '') {
+	// 		navigate('/login');
+	// 	}
+	// });
+
 	return (
 		<div className='home page'>
 			<Container className='mt-5'>
@@ -11,7 +24,7 @@ function Home() {
 					<Col>
 						<div className='rounded-box shadow'>
 							<h2 className='no-padding huge-and-bold'>
-								XYZ Inc
+								{auth.user.userData.name}
 							</h2>
 							<p className='no-padding'>net-worth:</p>
 							<h2 className='no-padding huge-and-bold'>
