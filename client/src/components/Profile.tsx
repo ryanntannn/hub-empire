@@ -1,5 +1,6 @@
-import { Container } from 'reactstrap';
+import { Button, Container } from 'reactstrap';
 import BackButton from './BackButton';
+import useAuth from '../contexts/AuthenticationContext';
 
 export interface ProfileProps {
 	name: string;
@@ -23,13 +24,18 @@ const testProfile: ProfileProps = {
 
 export default function Profile() {
 	const data = testProfile;
+	const auth = useAuth();
 	return (
 		<div className='page'>
 			<Container className='mt-5'>
 				<BackButton />
-				<h1 className='title'>👤 {data.name}'s Profile</h1>
+				<h1 className='title'>
+					👤 {auth.user.userData.name}'s Profile
+				</h1>
 				<div className='rounded-box shadow mt-3'>
-					<h1 className='no-padding huge-and-bold'>{data.name}</h1>
+					<h1 className='no-padding huge-and-bold'>
+						{auth.user.userData.name}
+					</h1>
 					<p className='no-padding'>net-worth:</p>
 					<h2 className='no-padding huge-and-bold'>
 						${data.netWorth}
@@ -58,6 +64,13 @@ export default function Profile() {
 					className='huge-and-bold no-padding'>
 					{data.losses >= 0 ? '+' : '-'}${Math.abs(data.losses)}
 				</h2>
+				<Button
+					className='mt-3'
+					color='danger'
+					outline
+					onClick={auth.logout}>
+					Logout
+				</Button>
 			</Container>
 		</div>
 	);
