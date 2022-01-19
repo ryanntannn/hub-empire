@@ -42,7 +42,22 @@
 	display: inline-block;
 }
 
-.card .top-color-area {
+.card.mini {
+	text-align: center;
+	overflow: hidden;
+	padding: 15px 0 5px;
+	width: 50px;
+	margin: 0;
+	display: inline-block;
+	border-radius: 20px;
+	margin-right: 5px;
+}
+
+.mini .top-color-area {
+	height: 15px;
+}
+
+.top-color-area {
 	position: absolute;
 	height: 50px;
 	width: 100%;
@@ -68,6 +83,14 @@
 
 .container {
 	max-width: 600px;
+}
+
+.vertical-center {
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
 }
 
 ::-webkit-scrollbar {

@@ -15,6 +15,7 @@ import { AuthenticationProvider } from './contexts/AuthenticationContext';
 import useAuth from './contexts/AuthenticationContext';
 import React from 'react';
 import NewTrade from './components/trading/NewTrade';
+import TradeInbox from './components/trading/TradeInbox';
 
 const rootElement = document.getElementById('root');
 
@@ -51,6 +52,8 @@ render(
 							<Trade />
 						</RequireAuth>
 					}>
+					<Route path='inbox' element={<TradeInbox />} />
+					<Route path='history' element={<TradeInbox />} />
 					<Route path='new' element={<NewTrade />} />
 				</Route>
 				<Route

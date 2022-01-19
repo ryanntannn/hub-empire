@@ -43,7 +43,9 @@ export default function NewTrade() {
 				Send Trade Offer
 			</Button>
 			<br></br>
-			<Button color='danger' onClick={() => navigate('/trade')}>
+			<Button
+				color='danger'
+				onClick={() => navigate('/trade', { replace: true })}>
 				Cancel
 			</Button>
 		</div>
