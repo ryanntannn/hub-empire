@@ -65,6 +65,11 @@
 .scroll-y .card {
 	margin: 0 5px;
 }
+
+.container {
+	max-width: 600px;
+}
+
 ::-webkit-scrollbar {
 	width: 10px;
 }
