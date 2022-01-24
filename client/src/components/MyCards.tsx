@@ -1,15 +1,41 @@
 import { Col, Container, Row } from 'reactstrap';
+import { CardRarity, CardType, Industry, Step } from '../types/types';
 import BackButton from './BackButton';
 import Card from './Card';
 
 export function TestCard() {
 	return (
 		<Card
-			emoji={'🏢'}
-			displayName={'test card'}
-			value={0}
-			earnings={0}
-			color={'#DD5555'}
+			card={{
+				id: 0,
+				emoji: '🏢',
+				displayName: 'test',
+				description: 'test',
+				cardType: CardType.HUB,
+				rarity: CardRarity.COMMON,
+				value: 10,
+				baseIncome: 1,
+				industry: Industry.FOOD,
+				step: Step.DISTRIBUTER,
+			}}
+		/>
+	);
+}
+
+export function TestActionCard() {
+	return (
+		<Card
+			card={{
+				id: 0,
+				emoji: '🏢',
+				displayName: 'action',
+				description: 'test',
+				cardType: CardType.ACTION,
+				rarity: CardRarity.COMMON,
+				isTargetCard: false,
+				isTargetPlayer: false,
+				isTargetSelfCard: false,
+			}}
 		/>
 	);
 }
@@ -26,10 +52,10 @@ export default function MyCards() {
 							<TestCard />
 						</Col>
 						<Col xs='auto'>
-							<TestCard />
+							<TestActionCard />
 						</Col>
 						<Col xs='auto'>
-							<TestCard />
+							<TestActionCard />
 						</Col>
 						<Col xs='auto'>
 							<TestCard />
