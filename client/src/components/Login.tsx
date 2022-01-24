@@ -1,6 +1,6 @@
 import { config } from 'process';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
 	Alert,
 	Button,
@@ -17,6 +17,7 @@ import cookies from '../utils/Cookies';
 export default function Login() {
 	const navigate = useNavigate();
 	const auth = useAuth();
+	const location = useLocation();
 
 	const [hasTriedAutoLogin, setTryAutoLogin] = React.useState<boolean>(false);
 	const [usernameInput, setUsernameInput] = React.useState<string>();
@@ -37,7 +38,7 @@ export default function Login() {
 		AxiosBase.get('/auth', config)
 			.then((res) => {
 				auth.login(res.data, true);
-				navigate('../', { replace: true });
+				navigate(location.pathname, { replace: true });
 				console.log(res);
 			})
 			.catch((error) => {
@@ -55,7 +56,7 @@ export default function Login() {
 				.then((res) => {
 					auth.login(res.data, true);
 					setErrorMessage('');
-					navigate('../', { replace: true });
+					navigate(location.pathname, { replace: true });
 					console.log(res);
 				})
 				.catch((error) => {

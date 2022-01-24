@@ -22,7 +22,7 @@ const rootElement = document.getElementById('root');
 const RequireAuth: React.FC = ({ children }: any) => {
 	const { authed } = useAuth();
 
-	return authed == true ? children : <Navigate to='/login' replace />;
+	return authed == true ? children : <Login />;
 };
 
 render(
