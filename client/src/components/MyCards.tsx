@@ -2,8 +2,8 @@ import { Col, Container, Row } from 'reactstrap';
 import BackButton from './BackButton';
 import Card from './Card';
 
-export default function MyCards() {
-	const TestCard = () => (
+export function TestCard() {
+	return (
 		<Card
 			emoji={'🏢'}
 			displayName={'test card'}
@@ -12,6 +12,9 @@ export default function MyCards() {
 			color={'#DD5555'}
 		/>
 	);
+}
+
+export default function MyCards() {
 	return (
 		<div className='page'>
 			<Container className='mt-5'>

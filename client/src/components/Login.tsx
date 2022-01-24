@@ -37,7 +37,7 @@ export default function Login() {
 		AxiosBase.get('/auth', config)
 			.then((res) => {
 				auth.login(res.data, true);
-				navigate('../');
+				navigate('../', { replace: true });
 				console.log(res);
 			})
 			.catch((error) => {
@@ -55,7 +55,7 @@ export default function Login() {
 				.then((res) => {
 					auth.login(res.data, true);
 					setErrorMessage('');
-					navigate('../');
+					navigate('../', { replace: true });
 					console.log(res);
 				})
 				.catch((error) => {

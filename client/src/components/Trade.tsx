@@ -1,3 +1,4 @@
+import { Outlet } from 'react-router-dom';
 import { Col, Container, Row } from 'reactstrap';
 import BackButton from './BackButton';
 import NavButton from './NavButton';
@@ -8,6 +9,7 @@ export default function Trade() {
 			<Container className='mt-5'>
 				<BackButton />
 				<h1 className='title'>🤝‍ Trade</h1>
+				<Outlet />
 				<Row className='mb-3 gx-3'>
 					<Col>
 						<NavButton
