@@ -22,7 +22,7 @@ export default function NewTrade() {
 		<div className='rounded-box shadow mt-3 mb-5'>
 			<h2 className='big-and-bold'>🤝 New Trade Offer</h2>
 			<h4>
-				{auth.user.userData.name}'s Cards <BiEdit size={20} />
+				{auth.user.userData.displayName}'s Cards <BiEdit size={20} />
 			</h4>
 			<div className='mt-3 mb-5 scroll-y'></div>
 			<h4>

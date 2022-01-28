@@ -1,13 +1,19 @@
 import React from 'react';
+import { UserDataBasic } from '../types/types';
 import cookies from '../utils/Cookies';
 
-const defaultUserState = {
-	userData: {},
+const defaultUserState: LocalUserData = {
+	userData: {
+		id: -1,
+		displayName: '',
+		netWorth: 0,
+		netEarnings: 0,
+	},
 	accessToken: '',
 };
 
 interface LocalUserData {
-	userData: any;
+	userData: UserDataBasic;
 	accessToken: string;
 }
 

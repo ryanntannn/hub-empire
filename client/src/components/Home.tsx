@@ -24,17 +24,17 @@ function Home() {
 					<Col>
 						<div className='rounded-box shadow'>
 							<h2 className='no-padding huge-and-bold'>
-								{auth.user.userData.name}
+								{auth.user.userData.displayName}
 							</h2>
 							<p className='no-padding'>net-worth:</p>
 							<h2 className='no-padding huge-and-bold'>
-								$900,000
+								${auth.user.userData.netWorth}
 							</h2>
 							<p className='no-padding'>earnings per day:</p>
 							<h2
 								className='no-padding big-and-bold'
 								style={{ color: 'green' }}>
-								$900,000
+								${auth.user.userData.netEarnings}
 							</h2>
 						</div>
 					</Col>

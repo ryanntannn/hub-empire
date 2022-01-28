@@ -90,6 +90,14 @@ export default function MyCards() {
 
 	const cardModal = create(ActiveCardModal);
 
+	const getSpacers = () => {
+		let returnMe = [];
+		for (let i = 0; i < dummyData.length % 3; i++) {
+			returnMe.push(<Col key={-i} />);
+		}
+		return returnMe;
+	};
+
 	return (
 		<div className='page'>
 			<Container className='mt-5'>
@@ -109,6 +117,7 @@ export default function MyCards() {
 								</Col>
 							);
 						})}
+						{getSpacers()}
 					</Row>
 				</Container>
 			</Container>

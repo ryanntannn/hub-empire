@@ -30,21 +30,27 @@ export default function Profile() {
 			<Container className='mt-5'>
 				<BackButton />
 				<h1 className='title'>
-					👤 {auth.user.userData.name}'s Profile
+					👤 {auth.user.userData.displayName}'s Profile
 				</h1>
 				<div className='rounded-box shadow mt-3'>
 					<h1 className='no-padding huge-and-bold'>
-						{auth.user.userData.name}
+						{auth.user.userData.displayName}
 					</h1>
 					<p className='no-padding'>net-worth:</p>
 					<h2 className='no-padding huge-and-bold'>
-						${data.netWorth}
+						${auth.user.userData.netWorth}
 					</h2>
 					<p className='no-padding'>earnings per day:</p>
 					<h2
-						style={{ color: data.earnings >= 0 ? 'green' : 'red' }}
+						style={{
+							color:
+								auth.user.userData.netEarnings >= 0
+									? 'green'
+									: 'red',
+						}}
 						className='huge-and-bold no-padding'>
-						{data.earnings >= 0 ? '+' : '-'}${data.earnings}
+						{auth.user.userData.netEarnings >= 0 ? '+' : '-'}$
+						{auth.user.userData.netEarnings}
 					</h2>
 				</div>
 				<br />
