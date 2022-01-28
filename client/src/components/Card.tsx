@@ -12,17 +12,26 @@ function IndustryToColor(industry: Industry) {
 	}
 }
 
-export default function CardComponent(props: { card: HubCard | ActionCard }) {
+export default function CardComponent(props: {
+	card: HubCard | ActionCard;
+	onClick: () => void;
+}) {
 	return props.card.cardType == CardType.ACTION ? (
-		<ActionCardComponent card={props.card as ActionCard} />
+		<ActionCardComponent
+			card={props.card as ActionCard}
+			onClick={props.onClick}
+		/>
 	) : (
-		<HubCardComponent card={props.card as HubCard} />
+		<HubCardComponent
+			card={props.card as HubCard}
+			onClick={props.onClick}
+		/>
 	);
 }
 
-function ActionCardComponent(props: { card: ActionCard }) {
+function ActionCardComponent(props: { card: ActionCard; onClick: () => void }) {
 	return (
-		<div className='rounded-box shadow card'>
+		<div className='rounded-box shadow card' onClick={props.onClick}>
 			<div
 				className='top-color-area'
 				style={{
@@ -37,14 +46,13 @@ function ActionCardComponent(props: { card: ActionCard }) {
 			<p className='normal-and-bold no-padding'>
 				{props.card.displayName}
 			</p>
-			<Button className='mt-3'>use card</Button>
 		</div>
 	);
 }
 
-function HubCardComponent(props: { card: HubCard }) {
+function HubCardComponent(props: { card: HubCard; onClick: () => void }) {
 	return (
-		<div className='rounded-box shadow card'>
+		<div className='rounded-box shadow card' onClick={props.onClick}>
 			<div
 				className='top-color-area'
 				style={{

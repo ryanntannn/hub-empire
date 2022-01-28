@@ -16,6 +16,7 @@ import useAuth from './contexts/AuthenticationContext';
 import React from 'react';
 import NewTrade from './components/trading/NewTrade';
 import TradeInbox from './components/trading/TradeInbox';
+import ModalContainer from 'react-modal-promise';
 
 const rootElement = document.getElementById('root');
 
@@ -75,6 +76,7 @@ render(
 				<Route path='login' element={<Login />} />
 			</Routes>
 		</BrowserRouter>
+		<ModalContainer />
 	</AuthenticationProvider>,
 	rootElement
 );

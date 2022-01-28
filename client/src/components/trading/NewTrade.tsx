@@ -10,7 +10,6 @@ import {
 	Row,
 } from 'reactstrap';
 import BackButton from '../BackButton';
-import { TestCard } from '../MyCards';
 import useAuth from '../../contexts/AuthenticationContext';
 import { BiEdit } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
@@ -25,20 +24,12 @@ export default function NewTrade() {
 			<h4>
 				{auth.user.userData.name}'s Cards <BiEdit size={20} />
 			</h4>
-			<div className='mt-3 mb-5 scroll-y'>
-				<TestCard />
-				<TestCard />
-				<TestCard />
-			</div>
+			<div className='mt-3 mb-5 scroll-y'></div>
 			<h4>
 				<TradeOfferDropdown />
 				's Cards <BiEdit size={20} />
 			</h4>
-			<div className='mt-3 mb-3 scroll-y'>
-				<TestCard />
-				<TestCard />
-				<TestCard />
-			</div>
+			<div className='mt-3 mb-3 scroll-y'></div>
 			<Button color='success' className='mb-2'>
 				Send Trade Offer
 			</Button>

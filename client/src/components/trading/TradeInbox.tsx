@@ -1,10 +1,6 @@
-import React from 'react';
 import { Button, CardProps } from 'reactstrap';
-import { TestCard } from '../MyCards';
-import { CgDetailsLess, CgDetailsMore } from 'react-icons/cg';
 
 import { AiFillDelete, AiOutlineSwap } from 'react-icons/ai';
-import Card from '../Card';
 
 export default function TradeInbox() {
 	return (
