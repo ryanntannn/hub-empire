@@ -120,4 +120,4 @@ app.post('/login', login);
 
 app.post('/register', register);
 
-app.listen(42069);
+app.listen(process.env.PORT || 42069);
