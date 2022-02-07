@@ -7,6 +7,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const { login, register } = require('./api/account');
+const queries = require('./queries/queries');
 const { authenticateToken, refreshToken } = require('./utils/authentication');
 
 const mongo = require('./utils/mongo');
@@ -26,37 +27,18 @@ app.get('/', function (req, res) {
 });
 
 //WORK IN PROGRESS, NOT FUNCTIONAL YET
-app.get('/home', authenticateToken, function (req, res) {
+app.get('/home', authenticateToken, async function (req, res) {
 	try {
-		console.log(req);
-		if (req.params.id.length != 24) {
+		if (req.user.id.length != 24) {
 			res.status(400).send('Invalid User ID');
 		}
-		const query = {
-			_id: ObjectId(req.params.id),
-			// username: req.body.username,
-			// password: req.body.password
-		};
-		const projection = {
-			//_id is returned by default
-			displayName: 1,
-			netWorth: 1,
-			netEarnings: 1,
-		};
-
-		(async () => {
-			userData = await mongo.client
-				.db('HubEmpireDB')
-				.collection('Users')
-				.findOne(query, { projection: projection })
-				.catch(console.dir);
-			if (userData) {
-				//Return UserDataBasic
-				res.json(200, userData);
-			} else {
-				res.json(404, 'Page not found');
-			}
-		})();
+		userData = await queries.getUserDataBasicById(req.user.id);
+		if (userData) {
+			//Return UserDataBasic
+			res.json(200, { myData: userData });
+		} else {
+			res.json(404, 'Page not found');
+		}
 	} catch (error) {
 		console.error(error);
 	}

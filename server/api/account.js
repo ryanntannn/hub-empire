@@ -14,19 +14,20 @@ const queries = require('../queries/queries');
 
 async function login(req, res) {
 	//Authenticate first
-	const user = await queries.getUserData(req.body.username);
+	const user = await queries.getUserDataByUsername(req.body.username);
 	//const user = users.find((user) => user.name == req.body.name);
 	if (user == null) return res.status(400).send('User not found');
-
-	console.log(user);
 
 	try {
 		if (!(await bcrypt.compare(req.body.password, user.password))) {
 			return res.status(400).send('Password is incorrect');
 		}
-		const accessToken = generateAccessToken({ name: user.username });
+		const accessToken = generateAccessToken({
+			username: user.username,
+			id: user._id.toString(),
+		});
 		return res.json({
-			userData: { name: user.username },
+			userData: { username: user.username },
 			accessToken: accessToken,
 		});
 	} catch {
@@ -39,7 +40,7 @@ async function login(req, res) {
 
 async function register(req, res) {
 	//Return 403 if username already exists
-	const user = await queries.getUserData(req.body.username);
+	const user = await queries.getUserDataByUsername(req.body.username);
 	if (user) return res.status(403).send('User already exists');
 	// if (users.some((user) => user.name == req.body.name))
 	// 	return res.sendStatus(403);
