@@ -50,7 +50,7 @@ export default function Login() {
 		event.preventDefault();
 		try {
 			AxiosBase.post('/login', {
-				name: usernameInput,
+				username: usernameInput,
 				password: passwordInput,
 			})
 				.then((res) => {

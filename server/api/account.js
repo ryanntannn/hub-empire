@@ -1,6 +1,7 @@
 const { generateAccessToken } = require('../utils/authentication');
 const bcrypt = require('bcrypt');
-const mongo = require('../utils/mongo')
+const mongo = require('../utils/mongo');
+const queries = require('../queries/queries');
 
 //will be moved to a db
 // const users = [
@@ -13,10 +14,12 @@ const mongo = require('../utils/mongo')
 
 async function login(req, res) {
 	//Authenticate first
-	const user = await mongo.client.db('HubEmpireDB').collection('Users').findOne({username: req.body.username}).catch(console.dir);
+	const user = await queries.getUserData(req.body.username);
 	//const user = users.find((user) => user.name == req.body.name);
 	if (user == null) return res.status(400).send('User not found');
-	
+
+	console.log(user);
+
 	try {
 		if (!(await bcrypt.compare(req.body.password, user.password))) {
 			return res.status(400).send('Password is incorrect');
@@ -29,15 +32,15 @@ async function login(req, res) {
 	} catch {
 		return res.status(500).json({
 			username: req.body.username,
-			password: req.body.password
+			password: req.body.password,
 		});
 	}
 }
 
 async function register(req, res) {
 	//Return 403 if username already exists
-	const user = await mongo.client.db('HubEmpireDB').collection('Users').findOne({username: req.body.username}).catch(console.dir);
-	if(user) return res.status(403).send("User already exists");
+	const user = await queries.getUserData(req.body.username);
+	if (user) return res.status(403).send('User already exists');
 	// if (users.some((user) => user.name == req.body.name))
 	// 	return res.sendStatus(403);
 
@@ -56,8 +59,8 @@ async function register(req, res) {
 			netEarnings: 0,
 			assetValue: 0,
 			incomePerTurn: 0,
-			expensesPerTurn: 0
-		}
+			expensesPerTurn: 0,
+		};
 		mongo.client.db('HubEmpireDB').collection('Users').insertOne(newUser);
 		// const user = {
 		// 	name: req.body.name,
@@ -71,7 +74,7 @@ async function register(req, res) {
 		return res.status(500).json({
 			username: req.body.username,
 			password: req.body.password,
-			displayName: req.body.displayName
+			displayName: req.body.displayName,
 		});
 	}
 }

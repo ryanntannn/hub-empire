@@ -20,3 +20,7 @@ Content-Type: application/json
     "name": "dev",
     "password" : "123"
 }
+
+###
+
+GET http://localhost:3000/home
