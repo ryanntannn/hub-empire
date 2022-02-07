@@ -1,6 +1,5 @@
 {
 	"name": "server",
-	
 	"version": "1.0.0",
 	"description": "",
 	"main": "server.js",
@@ -21,6 +20,6 @@
 	"author": "",
 	"license": "ISC",
 	"engines": {
-    	"node": "14.x"
+		"node": "14.x"
 	}
 }

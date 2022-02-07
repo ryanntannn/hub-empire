@@ -2,56 +2,81 @@ require('dotenv').config();
 
 const express = require('express');
 const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
 const { login, register } = require('./api/account');
 const { authenticateToken, refreshToken } = require('./utils/authentication');
 
 const mongo = require('./utils/mongo')
+const ObjectId = require('mongodb').ObjectId;
 
-app.use(express.json());
-
-// async function createNewUser(newUser) {
-// 	try {
-		
-// 		await client.connect();
-// 		const database = client.db('HubEmpireDB');
-// 		database.collection('Users').insertOne(newUser), function(err, res){
-// 			if (err) throw err;
-// 			return 1;
-// 		}
-// 		return 0;
-// 		} finally {
-// 		// Ensures that the client will close when you finish/error
-// 		//await client.close();
-// 	}
-// 	MongoClient.connect(url, function(err, db) {
-// 		if (err) throw err;
-// 		var dbo = db.db("mydb");
-// 		var myobj = { name: "Company Inc", address: "Highway 37" };
-// 		dbo.collection("customers").insertOne(myobj, function(err, res) {
-// 		  if (err) throw err;
-// 		  console.log("1 document inserted");
-// 		  db.close();
-// 		});
-// 	  });
-// }
 app.get('/', function(req, res) {
-	res.redirect('/home');
+	res.redirect('/home/login');
 });
 
-app.get('/home', function(req, res) {
+//WORK IN PROGRESS, NOT FUNCTIONAL YET
+app.get('/home/:id', function(req, res) {
 	try {
-		const database = mongo.client.db('HubEmpireDB');
-		const users = database.collection('Users');
-		const query = { displayName: 'John' };
-
+		if(req.params.id.length != 24){
+			res.status(400).send("Invalid User ID")
+		}
+		const query = {
+			_id: ObjectId(req.params.id),
+			// username: req.body.username,
+			// password: req.body.password
+		};
+		const projection = {
+			//_id is returned by default
+			displayName: 1,
+			netWorth: 1,
+			netEarnings: 1
+		};
 
 		(async () => {
-			res.json(await users.findOne(query).catch(console.dir));
-		})()
+			userData = await mongo.client.db('HubEmpireDB').collection('Users').findOne(query, {projection: projection}).catch(console.dir);
+			if(userData){
+				//Return UserDataBasic
+				res.json(200, userData);
+			} else {
+				res.json(404, "Page not found");
+			}
+		})();
 	} catch(error) {
 		console.error(error);
  	}
 });
+
+// app.post('/login', function(req, res) {
+// 	try {
+// 		const query = {
+// 			username: req.body.username,
+// 			password: req.body.password
+// 		};
+// 		const projection = {
+// 			//_id is returned by default
+// 			displayName: 1,
+// 			netWorth: 1,
+// 			netEarnings: 1
+// 		};
+
+// 		(async () => {
+// 			userData = await mongo.client.db('HubEmpireDB').collection('Users').findOne(query, {projection: projection}).catch(console.dir);
+// 			if(userData){
+// 				//Return UserDataBasic if user found
+// 				res.json(200, userData._id);
+// 			}
+// 			else{
+// 				//Return the values in form back to the user if user not found
+// 				res.json(401, query)
+// 			}
+// 		})();
+// 	} catch(error) {
+// 		console.error(error);
+//  	}
+// });
 
 app.get('/my-cards', function(req, res) {
 	res.send('my-cards');
@@ -84,24 +109,6 @@ app.get('/trade/history', function(req, res) {
 app.post('/trade/action', function(req, res) {
 	res.send('trade/history');
 });
-// app.get('/user/create/:displayName/', function(req, res){
-// 	const newUser = {
-// 		id: 1,
-// 		displayName: req.params.displayName,
-// 		cardIds: [],
-// 		cash: 0,
-// 		netWorth: 0,
-// 		netEarnings: 0,
-// 		assetValue: 0,
-// 		income: 0,
-// 		expenses: 0
-// 	};
-// 	(async () => {
-// 		await createNewUser(newUser).catch(console.dir);
-// 	res.json(await connectAndReturnUser(newUser.displayName).catch(console.dir));
-// 	})()
-	
-// })
 
 //Cors
 app.use((req, res, next) => {
