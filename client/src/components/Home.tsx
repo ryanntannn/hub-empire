@@ -7,6 +7,7 @@ import useAuth from '../contexts/AuthenticationContext';
 import { useNavigate } from 'react-router-dom';
 import { GetHomeDataRes } from '../types/api';
 import { autheticatedGet } from '../utils/AxiosBase';
+import Loading from './Loading';
 
 function Home() {
 	let navigate = useNavigate();
@@ -33,7 +34,7 @@ function Home() {
 
 	return (
 		<div className='home page'>
-			{homeData != null ? (
+			{homeData != null || false ? (
 				<Container className='mt-5'>
 					<h1 className='title'>🏠 Hub Empire</h1>
 					<Row className='mb-3'>
@@ -95,7 +96,7 @@ function Home() {
 					</Row>
 				</Container>
 			) : (
-				<Spinner />
+				<Loading />
 			)}
 		</div>
 	);
