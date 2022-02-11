@@ -53,8 +53,8 @@ export default function Login() {
 				username: usernameInput,
 				password: passwordInput,
 			})
-				.then((res) => {
-					auth.login(res.data, true);
+				.then(async (res) => {
+					await auth.login(res.data, true);
 					setErrorMessage('');
 					navigate(location.pathname, { replace: true });
 					console.log(res);

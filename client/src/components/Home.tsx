@@ -6,7 +6,6 @@ import React, { useEffect } from 'react';
 import useAuth from '../contexts/AuthenticationContext';
 import { useNavigate } from 'react-router-dom';
 import { GetHomeDataRes } from '../types/api';
-import { autheticatedGet } from '../utils/AxiosBase';
 import Loading from './Loading';
 
 function Home() {
@@ -15,15 +14,19 @@ function Home() {
 
 	const [homeData, setHomeData] = React.useState<GetHomeDataRes | null>(null);
 
-	React.useState(() => {
-		if (homeData != null) return;
-		autheticatedGet('/home')
+	const getHomeData = () => {
+		auth.authenticatedGet('/home')
 			.then((res: any) => {
 				setHomeData(res.data);
 			})
 			.catch((err) => {
 				console.log(err);
 			});
+	};
+
+	React.useState(() => {
+		if (homeData != null) return;
+		getHomeData();
 	});
 
 	// React.useEffect(() => {
