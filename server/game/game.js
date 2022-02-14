@@ -1,11 +1,11 @@
-const cardCollection = require ("./cards.js");
+//const cardCollection = require ("./cards.js");
 const queries = require('../queries/queries');
 
 class Game {
     joinId = null;
     turnNumber = null;
     playerIds = null;
-    cardIds = cardCollection.cards
+    //cardIds = cardCollection.cards
 
     constructor(game, isNew) {
         if(isNew){
