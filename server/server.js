@@ -7,7 +7,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const { login, register } = require('./api/account');
-const { useCard } = require('./api/cards');
+const { useCard, getCards } = require('./api/cards');
 const queries = require('./queries/queries');
 const { authenticateToken, refreshToken } = require('./utils/authentication');
 
@@ -135,6 +135,8 @@ app.post('/trade/action', function (req, res) {
 });
 
 app.post('/use-card', authenticateToken, useCard);
+
+app.get('/get-cards', authenticateToken, getCards);
 
 app.get('/auth', authenticateToken, (req, res) => {
 	res.json({ userData: req.user, accessToken: req.token });

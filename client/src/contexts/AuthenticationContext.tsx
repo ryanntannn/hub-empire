@@ -68,7 +68,6 @@ function useAuth() {
 	) => {
 		const req: any = configHeader();
 		if (params != null) req.params = params;
-		console.log(req);
 		return AxiosBase.get(url, req);
 	};
 
@@ -78,7 +77,6 @@ function useAuth() {
 	) => {
 		const req: any = configHeader();
 		if (params != null) req.params = params;
-		console.log(req);
 		return AxiosBase.post(url, {}, req);
 	};
 

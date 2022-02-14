@@ -17,6 +17,7 @@ import React from 'react';
 import NewTrade from './components/trading/NewTrade';
 import TradeInbox from './components/trading/TradeInbox';
 import ModalContainer from 'react-modal-promise';
+import { CardProvider } from './contexts/CardsContext';
 
 const rootElement = document.getElementById('root');
 
@@ -28,63 +29,65 @@ const RequireAuth: React.FC = ({ children }: any) => {
 
 render(
 	<AuthenticationProvider>
-		<BrowserRouter>
-			<Routes>
-				<Route
-					path='/'
-					element={
-						<RequireAuth>
-							<Home />
-						</RequireAuth>
-					}
-				/>
-				<Route
-					path='my-cards'
-					element={
-						<RequireAuth>
-							<MyCards />
-						</RequireAuth>
-					}
-				/>
-				<Route
-					path='trade'
-					element={
-						<RequireAuth>
-							<Trade />
-						</RequireAuth>
-					}>
-					<Route path='inbox' element={<TradeInbox />} />
-					<Route path='history' element={<TradeInbox />} />
-					<Route path='new' element={<NewTrade />} />
-				</Route>
-				<Route
-					path='leaderboard'
-					element={
-						<RequireAuth>
-							<Leaderboard />
-						</RequireAuth>
-					}
-				/>
-				<Route
-					path='profile'
-					element={
-						<RequireAuth>
-							<Profile />
-						</RequireAuth>
-					}
-				/>
-				<Route
-					path='profile/:userId'
-					element={
-						<RequireAuth>
-							<Profile />
-						</RequireAuth>
-					}
-				/>
-				<Route path='login' element={<Login />} />
-			</Routes>
-		</BrowserRouter>
-		<ModalContainer />
+		<CardProvider>
+			<BrowserRouter>
+				<Routes>
+					<Route
+						path='/'
+						element={
+							<RequireAuth>
+								<Home />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='my-cards'
+						element={
+							<RequireAuth>
+								<MyCards />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='trade'
+						element={
+							<RequireAuth>
+								<Trade />
+							</RequireAuth>
+						}>
+						<Route path='inbox' element={<TradeInbox />} />
+						<Route path='history' element={<TradeInbox />} />
+						<Route path='new' element={<NewTrade />} />
+					</Route>
+					<Route
+						path='leaderboard'
+						element={
+							<RequireAuth>
+								<Leaderboard />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='profile'
+						element={
+							<RequireAuth>
+								<Profile />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='profile/:userId'
+						element={
+							<RequireAuth>
+								<Profile />
+							</RequireAuth>
+						}
+					/>
+					<Route path='login' element={<Login />} />
+				</Routes>
+			</BrowserRouter>
+			<ModalContainer />
+		</CardProvider>
 	</AuthenticationProvider>,
 	rootElement
 );

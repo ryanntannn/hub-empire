@@ -23,69 +23,7 @@ import BackButton from './BackButton';
 import CardComponent from './Card';
 import useAuth from '../contexts/AuthenticationContext';
 import Loading from './Loading';
-import Cards from '../types/cards';
-
-const dummyData: (ActionCard | HubCard)[] = [
-	{
-		id: 0,
-		emoji: '🏢',
-		displayName: 'action',
-		description: 'test',
-		cardType: CardType.ACTION,
-		rarity: CardRarity.COMMON,
-		isTargetCard: false,
-		isTargetPlayer: true,
-		isTargetSelfCard: false,
-	},
-	{
-		id: 0,
-		emoji: '🏢',
-		displayName: 'hub',
-		description: 'test',
-		cardType: CardType.HUB,
-		rarity: CardRarity.COMMON,
-		value: 10,
-		baseIncome: 1,
-		step: Step.DISTRIBUTER,
-		industry: Industry.CLOTHES,
-	},
-	{
-		id: 0,
-		emoji: '🏢',
-		displayName: 'hub',
-		description: 'test',
-		cardType: CardType.HUB,
-		rarity: CardRarity.COMMON,
-		value: 10,
-		baseIncome: 1,
-		step: Step.DISTRIBUTER,
-		industry: Industry.CLOTHES,
-	},
-	{
-		id: 0,
-		emoji: '🏢',
-		displayName: 'hub',
-		description: 'test',
-		cardType: CardType.HUB,
-		rarity: CardRarity.COMMON,
-		value: 10,
-		baseIncome: 1,
-		step: Step.DISTRIBUTER,
-		industry: Industry.CLOTHES,
-	},
-	{
-		id: 0,
-		emoji: '🏢',
-		displayName: 'hub',
-		description: 'test',
-		cardType: CardType.HUB,
-		rarity: CardRarity.COMMON,
-		value: 10,
-		baseIncome: 1,
-		step: Step.DISTRIBUTER,
-		industry: Industry.CLOTHES,
-	},
-];
+import useCards from '../contexts/CardsContext';
 
 export default function MyCards() {
 	const [cards, setCards] = React.useState<(ActionCard | HubCard)[] | null>(
@@ -95,6 +33,8 @@ export default function MyCards() {
 	const auth = useAuth();
 
 	const cardModal = create(ActiveCardModal);
+
+	const cardsData = useCards();
 
 	const getCardData = async () => {
 		auth.authenticatedGet('/my-cards')
@@ -115,9 +55,7 @@ export default function MyCards() {
 				const cardIds: number[] = res.data.cards;
 				setCards(
 					cardIds.map((id) => {
-						const thisCard = Cards[id];
-						if (thisCard == undefined) return Cards[0];
-						return Cards[id];
+						return cardsData.getCard(id);
 					})
 				);
 			})
@@ -126,7 +64,7 @@ export default function MyCards() {
 
 	const getSpacers = () => {
 		let returnMe = [];
-		for (let i = 0; i < dummyData.length % 3; i++) {
+		for (let i = 0; i < cards!.length % 3; i++) {
 			returnMe.push(<Col key={-i} />);
 		}
 		return returnMe;

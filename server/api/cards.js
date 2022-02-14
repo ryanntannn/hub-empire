@@ -29,7 +29,7 @@ const Cards = {
 		cardType: 0,
 		rarity: 0,
 		value: 10,
-		baseIncome: 1,
+		baseIncome: 2,
 		step: 2,
 		industry: 2,
 	},
@@ -53,4 +53,8 @@ async function useCard(req, res) {
 	console.log(req);
 }
 
-module.exports = { useCard };
+async function getCards(req, res) {
+	res.json(Cards);
+}
+
+module.exports = { useCard, getCards };
