@@ -65,8 +65,8 @@ export interface UserData extends UserDataBasic {
 	netWorth: number;
 	netEarnings: number;
 	assetValue: number;
-	income: number;
-	expenses: number;
+	incomePerTurn: number;
+	expensesPerTurn: number;
 }
 
 export enum TradeStatus {

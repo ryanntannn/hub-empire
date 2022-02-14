@@ -37,7 +37,7 @@ function Home() {
 
 	return (
 		<div className='home page'>
-			{homeData != null || false ? (
+			{homeData != null ? (
 				<Container className='mt-5'>
 					<h1 className='title'>🏠 Hub Empire</h1>
 					<Row className='mb-3'>

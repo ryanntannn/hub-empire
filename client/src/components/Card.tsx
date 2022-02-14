@@ -46,6 +46,7 @@ function ActionCardComponent(props: { card: ActionCard; onClick: () => void }) {
 			<p className='normal-and-bold no-padding'>
 				{props.card.displayName}
 			</p>
+			<p className='no-padding'>{props.card.description}</p>
 		</div>
 	);
 }

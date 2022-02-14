@@ -73,8 +73,22 @@ app.get('/home', authenticateToken, async function (req, res) {
 //  	}
 // });
 
-app.get('/my-cards', function (req, res) {
-	res.send('my-cards');
+app.get('/my-cards', authenticateToken, async function (req, res) {
+	try {
+		if (req.user.id.length != 24) {
+			return res.status(400).send('Invalid User ID');
+		}
+		userData = await queries.getUserCardsById(req.user.id);
+		if (userData) {
+			//Return cards
+			return res.json(200, { cards: userData.cardIds });
+		} else {
+			return res.json(404, 'Page not found');
+		}
+	} catch (error) {
+		return res.json(404, 'Page not found');
+		console.error(error);
+	}
 });
 
 app.get('/leaderboard', function (req, res) {
@@ -85,8 +99,22 @@ app.get('/users-min', function (req, res) {
 	res.send('users-min');
 });
 
-app.get('/user', function (req, res) {
-	res.send('users-min');
+app.get('/user', authenticateToken, async function (req, res) {
+	try {
+		if (req.user.id.length != 24) {
+			return res.status(400).send('Invalid User ID');
+		}
+		userData = await queries.getUserDataById(req.query.id);
+		if (userData) {
+			//Return cards
+			return res.json(200, { user: userData });
+		} else {
+			return res.json(404, 'Page not found');
+		}
+	} catch (error) {
+		return res.json(404, 'Page not found');
+		console.error(error);
+	}
 });
 
 app.post('/send-trade', function (req, res) {

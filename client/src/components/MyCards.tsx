@@ -10,7 +10,7 @@ import {
 	ModalHeader,
 	Row,
 } from 'reactstrap';
-import { PostUseCardParams } from '../types/api';
+import { GetMyCardsRes, PostUseCardParams } from '../types/api';
 import {
 	ActionCard,
 	CardRarity,
@@ -22,6 +22,8 @@ import {
 import BackButton from './BackButton';
 import CardComponent from './Card';
 import useAuth from '../contexts/AuthenticationContext';
+import Loading from './Loading';
+import Cards from '../types/cards';
 
 const dummyData: (ActionCard | HubCard)[] = [
 	{
@@ -86,9 +88,44 @@ const dummyData: (ActionCard | HubCard)[] = [
 ];
 
 export default function MyCards() {
-	const cards = dummyData;
+	const [cards, setCards] = React.useState<(ActionCard | HubCard)[] | null>(
+		null
+	);
+
+	const auth = useAuth();
 
 	const cardModal = create(ActiveCardModal);
+
+	const getCardData = async () => {
+		auth.authenticatedGet('/my-cards')
+			.then((res: any) => {
+				console.log(res);
+				return res;
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	React.useState(async () => {
+		if (cards != null) return;
+		try {
+			const res: { data: GetMyCardsRes } = await auth.authenticatedGet(
+				'/my-cards'
+			);
+			if (res == null) return;
+			const cardIds: number[] = res.data.cards;
+			setCards(
+				cardIds.map((id) => {
+					const thisCard = Cards[id];
+					if (thisCard == undefined) return Cards[0];
+					return Cards[id];
+				})
+			);
+		} catch (err) {
+			console.log(err);
+		}
+	});
 
 	const getSpacers = () => {
 		let returnMe = [];
@@ -100,12 +137,12 @@ export default function MyCards() {
 
 	return (
 		<div className='page'>
-			<Container className='mt-5'>
-				<BackButton />
-				<h1 className='title'>🏢 My Cards</h1>
-				<Container fluid className='mt- '>
-					<Row className='mt-3 gy-3'>
-						{dummyData.map((x, i) => {
+			{cards != null || false ? (
+				<Container className='mt-5'>
+					<BackButton />
+					<h1 className='title'>🏢 My Cards</h1>
+					<div className='mt-3 card-container'>
+						{cards!.map((x, i) => {
 							return (
 								<Col key={i}>
 									<CardComponent
@@ -118,9 +155,11 @@ export default function MyCards() {
 							);
 						})}
 						{getSpacers()}
-					</Row>
+					</div>
 				</Container>
-			</Container>
+			) : (
+				<Loading />
+			)}
 		</div>
 	);
 }

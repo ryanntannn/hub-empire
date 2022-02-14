@@ -73,6 +73,14 @@ render(
 						</RequireAuth>
 					}
 				/>
+				<Route
+					path='profile/:userId'
+					element={
+						<RequireAuth>
+							<Profile />
+						</RequireAuth>
+					}
+				/>
 				<Route path='login' element={<Login />} />
 			</Routes>
 		</BrowserRouter>
