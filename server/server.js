@@ -10,8 +10,9 @@ const { login, register } = require('./api/account');
 const queries = require('./queries/queries');
 const { authenticateToken, refreshToken } = require('./utils/authentication');
 
-const mongo = require('./utils/mongo');
-const ObjectId = require('mongodb').ObjectId;
+const task = require('./utils/cronScheduler');
+//Start method is called to start the cron job
+task.start();
 
 //Cors
 app.use((req, res, next) => {
@@ -43,35 +44,6 @@ app.get('/home', authenticateToken, async function (req, res) {
 		console.error(error);
 	}
 });
-
-// app.post('/login', function(req, res) {
-// 	try {
-// 		const query = {
-// 			username: req.body.username,
-// 			password: req.body.password
-// 		};
-// 		const projection = {
-// 			//_id is returned by default
-// 			displayName: 1,
-// 			netWorth: 1,
-// 			netEarnings: 1
-// 		};
-
-// 		(async () => {
-// 			userData = await mongo.client.db('HubEmpireDB').collection('Users').findOne(query, {projection: projection}).catch(console.dir);
-// 			if(userData){
-// 				//Return UserDataBasic if user found
-// 				res.json(200, userData._id);
-// 			}
-// 			else{
-// 				//Return the values in form back to the user if user not found
-// 				res.json(401, query)
-// 			}
-// 		})();
-// 	} catch(error) {
-// 		console.error(error);
-//  	}
-// });
 
 app.get('/my-cards', authenticateToken, async function (req, res) {
 	try {
@@ -117,25 +89,17 @@ app.get('/user', authenticateToken, async function (req, res) {
 	}
 });
 
-app.post('/send-trade', function (req, res) {
-	res.send('users-min');
-});
+const tradeRouter = require('./routes/trade.js');
+app.use('/trade', tradeRouter);
 
-app.get('/trade/inbox', function (req, res) {
-	res.send('trade/inbox');
-});
-
-app.get('/trade/history', function (req, res) {
-	res.send('trade/history');
-});
-
-app.post('/trade/action', function (req, res) {
-	res.send('trade/history');
-});
+const gameRouter = require('./routes/game.js');
+app.use('/game', gameRouter);
 
 app.get('/auth', authenticateToken, (req, res) => {
 	res.json({ userData: req.user, accessToken: req.token });
 });
+
+
 
 app.post('/login', login);
 
