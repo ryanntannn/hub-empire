@@ -22,12 +22,13 @@ async function login(req, res) {
 		if (!(await bcrypt.compare(req.body.password, user.password))) {
 			return res.status(400).send('Password is incorrect');
 		}
-		const accessToken = generateAccessToken({
+		const userData = {
 			username: user.username,
 			id: user._id.toString(),
-		});
+		};
+		const accessToken = generateAccessToken(userData);
 		return res.json({
-			userData: { username: user.username },
+			userData,
 			accessToken: accessToken,
 		});
 	} catch {

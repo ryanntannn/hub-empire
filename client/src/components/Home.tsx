@@ -24,7 +24,7 @@ function Home() {
 			});
 	};
 
-	React.useState(() => {
+	React.useEffect(() => {
 		if (homeData != null) return;
 		getHomeData();
 	});

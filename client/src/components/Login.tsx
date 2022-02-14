@@ -1,5 +1,5 @@
 import { config } from 'process';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
 	Alert,
@@ -38,8 +38,6 @@ export default function Login() {
 		AxiosBase.get('/auth', config)
 			.then((res) => {
 				auth.login(res.data, true);
-				navigate(location.pathname, { replace: true });
-				console.log(res);
 			})
 			.catch((error) => {
 				console.log(error.response.data);
@@ -56,7 +54,6 @@ export default function Login() {
 				.then(async (res) => {
 					await auth.login(res.data, true);
 					setErrorMessage('');
-					navigate(location.pathname, { replace: true });
 					console.log(res);
 				})
 				.catch((error) => {
@@ -64,6 +61,12 @@ export default function Login() {
 				});
 		} catch {}
 	}
+
+	React.useEffect(() => {
+		console.log(auth.user);
+		if (auth.user.userData.id != -1)
+			navigate(location.pathname, { replace: true });
+	}, [auth]);
 
 	return (
 		<div className='page'>

@@ -43,8 +43,8 @@ function useAuth() {
 	const getToken = () => (token != '' ? token : getTokenFromCookie());
 
 	const login = async (responseData: LocalUserData, saveCookie: boolean) => {
-		setUser(responseData);
 		console.log(responseData);
+		setUser(responseData);
 		setAuthed(true);
 		if (saveCookie) {
 			token = responseData.accessToken;

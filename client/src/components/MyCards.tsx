@@ -107,24 +107,21 @@ export default function MyCards() {
 			});
 	};
 
-	React.useState(async () => {
+	React.useEffect(() => {
 		if (cards != null) return;
-		try {
-			const res: { data: GetMyCardsRes } = await auth.authenticatedGet(
-				'/my-cards'
-			);
-			if (res == null) return;
-			const cardIds: number[] = res.data.cards;
-			setCards(
-				cardIds.map((id) => {
-					const thisCard = Cards[id];
-					if (thisCard == undefined) return Cards[0];
-					return Cards[id];
-				})
-			);
-		} catch (err) {
-			console.log(err);
-		}
+		auth.authenticatedGet('/my-cards')
+			.then((res: any) => {
+				if (res == null) return;
+				const cardIds: number[] = res.data.cards;
+				setCards(
+					cardIds.map((id) => {
+						const thisCard = Cards[id];
+						if (thisCard == undefined) return Cards[0];
+						return Cards[id];
+					})
+				);
+			})
+			.catch();
 	});
 
 	const getSpacers = () => {

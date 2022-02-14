@@ -41,7 +41,6 @@ export default function Profile() {
 	const getUserData = () => {
 		auth.authenticatedGet(`/user?id=${userId()}`)
 			.then((res: any) => {
-				console.log(res);
 				setUserData(res.data.user);
 			})
 			.catch((err) => {
@@ -49,10 +48,11 @@ export default function Profile() {
 			});
 	};
 
-	React.useState(() => {
-		if (userData != null) return;
+	React.useEffect(() => {
+		console.log(auth.user);
+		if (userData != null || auth.user.userData.id == -1) return;
 		getUserData();
-	});
+	}, [userData, auth]);
 
 	return (
 		<div className='page'>
