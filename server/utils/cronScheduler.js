@@ -14,14 +14,14 @@ var task = cron.schedule('0 07,11,15 * * *', () => {
 
     console.log('Starting scheduled job...');
 	// prints date & time in YYYY-MM-DD HH:MM:SS format
-	console.log("Current date: " + day + "-" + month + "-" + year + " " + hours + ":" + minutes + ":" + seconds);
+	console.log('Current date: ' + day + '-' + month + '-' + year + ' ' + hours + ':' + minutes + ':' + seconds);
 
 	var game = new GameHandler(0, isNew = false)
 	game.executeTurn()
 }, 
 {
 	scheduled: false,
-    timezone: "Singapore"
+    timezone: 'Singapore'
 });
 
 module.exports = task;

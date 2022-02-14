@@ -5,13 +5,13 @@ const GameHandler = require('../game/game');
 
 router.post('/create', (req, res) => {
 	try{
-		var gameId = req.body['id'];
+		var gameId = req.body.id;
 		var newGame = new GameHandler({id: gameId}, isNew = true);
 		queries.addNewGame(newGame)
 		//console.log(newGame)
 		
 		//req.body[]
-		res.send("Success")
+		res.send('Success')
 	} catch (err) {
 		console.log(err)
 		res.status(500);
@@ -28,7 +28,7 @@ router.post('/join', async (req, res) => {
 		if (user == null) return res.status(400).send('User not found');
 
 		queries.addPlayerToGame(gameId, playerId)
-		res.status(201).send("Success");
+		res.status(201).send('Success');
 	} catch (err) {
 		console.log(err);
 		res.status(500);
