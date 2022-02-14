@@ -49,7 +49,6 @@ export default function Profile() {
 	};
 
 	React.useEffect(() => {
-		console.log(auth.user);
 		if (userData != null || auth.user.userData.id == -1) return;
 		getUserData();
 	}, [userData, auth]);

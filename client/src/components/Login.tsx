@@ -63,7 +63,6 @@ export default function Login() {
 	}
 
 	React.useEffect(() => {
-		console.log(auth.user);
 		if (auth.user.userData.id != -1)
 			navigate(location.pathname, { replace: true });
 	}, [auth]);

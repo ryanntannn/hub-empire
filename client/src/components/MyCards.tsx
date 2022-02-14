@@ -172,16 +172,25 @@ function ActiveCardModal(props: CardModalProps) {
 	const targetCardModal = create(ChooseTargetCard);
 
 	async function useCard() {
-		const card = props.currentCard as ActionCard;
-		const data: PostUseCardParams = { cardId: card.id };
-		if (card.isTargetPlayer) data.targetId = await targetPlayerModal();
-		if (card.isTargetPlayer)
-			data.targetCardId = await targetCardModal({
-				playerId: data.targetId!,
+		try {
+			const card = props.currentCard as ActionCard;
+			const data: PostUseCardParams = { cardId: card.id };
+			if (card.isTargetPlayer) data.targetId = await targetPlayerModal();
+			if (card.isTargetPlayer)
+				data.targetCardId = await targetCardModal({
+					playerId: data.targetId!,
+				});
+			if (card.isTargetPlayer)
+				data.selfCardId = await targetCardModal({ playerId: 0 });
+			const params = { ...data };
+			console.log(params);
+			await auth.authenticatedPost(`/use-card`, {
+				...data,
 			});
-		if (card.isTargetPlayer)
-			data.selfCardId = await targetCardModal({ playerId: 0 });
-		return;
+			return;
+		} catch (err) {
+			console.log(err);
+		}
 	}
 
 	return (
