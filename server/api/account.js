@@ -43,8 +43,6 @@ async function register(req, res) {
 	//Return 403 if username already exists
 	const user = await queries.getUserDataByUsername(req.body.username);
 	if (user) return res.status(403).send('User already exists');
-	// if (users.some((user) => user.name == req.body.name))
-	// 	return res.sendStatus(403);
 
 	try {
 		const salt = await bcrypt.genSalt();
