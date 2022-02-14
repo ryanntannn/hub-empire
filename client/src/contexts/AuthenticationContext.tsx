@@ -24,6 +24,7 @@ interface UseAuth {
 	login: (responseData: LocalUserData, saveCookie: boolean) => void;
 	logout: () => void;
 	authenticatedGet: <T>(url: string) => Promise<T>;
+	authenticatedPost: <T>(url: string, params?: any) => Promise<T>;
 }
 
 const AuthenticationContext = React.createContext<UseAuth>(null!);
@@ -61,24 +62,25 @@ function useAuth() {
 		return new Promise((resolve) => setTimeout(() => resolve(''), ms));
 	}
 
-	const authenticatedGet: <T>(url: string) => Promise<T> = (url: string) =>
-		new Promise<any>(async (resolve, reject) => {
-			for (let i = 0; i < MAX_RETRIES; i++) {
-				await AxiosBase.get(url, configHeader())
-					.then((res: any) => {
-						resolve(res);
-					})
-					.catch(async (err) => {
-						await timeoutAsync(500);
-						console.log(
-							`GET ${url} failed, retrying ${
-								i + 1
-							}/${MAX_RETRIES}`
-						);
-					});
-			}
-			reject(`timed out, tried ${MAX_RETRIES} times`);
-		});
+	const authenticatedGet: <T>(url: string, params?: any) => Promise<T> = (
+		url: string,
+		params?: any
+	) => {
+		const req: any = configHeader();
+		if (params != null) req.params = params;
+		console.log(req);
+		return AxiosBase.get(url, req);
+	};
+
+	const authenticatedPost: <T>(url: string, params?: any) => Promise<T> = (
+		url: string,
+		params?: any
+	) => {
+		const req: any = configHeader();
+		if (params != null) req.params = params;
+		console.log(req);
+		return AxiosBase.post(url, {}, req);
+	};
 
 	const logout = () => {
 		setUser(defaultUserState);
@@ -87,7 +89,7 @@ function useAuth() {
 		cookies.remove('dnjt');
 	};
 
-	return { authed, user, login, logout, authenticatedGet };
+	return { authed, user, login, logout, authenticatedGet, authenticatedPost };
 }
 
 const AuthenticationProvider: React.FC = ({ children }) => {
