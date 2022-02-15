@@ -45,10 +45,10 @@ function useAuth() {
 
 	const login = async (responseData: LocalUserData, saveCookie: boolean) => {
 		console.log(responseData);
+		token = responseData.accessToken;
 		setUser(responseData);
 		setAuthed(true);
 		if (saveCookie) {
-			token = responseData.accessToken;
 			//TODO: SET HTTP ONLY(NEEDS HTTPS)
 			await cookies.set('dnjt', responseData.accessToken, { path: '/' }); //definately not jwt token
 		}
