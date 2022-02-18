@@ -9,6 +9,25 @@ async function getUserDataByUsername(username) {
 		.catch(console.dir);
 }
 
+async function getUserDataMinById(id) {
+	const query = {
+		_id: ObjectId(id),
+		// username: req.body.username,
+		// password: req.body.password
+	};
+
+	const projection = {
+		//_id is returned by default
+		displayName: 1,
+	};
+
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.findOne(query, { projection: projection })
+		.catch(console.dir);
+}
+
 async function getUserDataBasicById(id) {
 	const query = {
 		_id: ObjectId(id),
@@ -103,6 +122,7 @@ async function addPlayerToGame(gameId, playerId) {
 
 const queries = {
 	getUserDataByUsername,
+	getUserDataMinById,
 	getUserDataBasicById,
 	getUserDataById,
 	getUserCardsById,

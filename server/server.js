@@ -28,7 +28,6 @@ app.get('/', function (req, res) {
 	res.redirect('/home/login');
 });
 
-//WORK IN PROGRESS, NOT FUNCTIONAL YET
 app.get('/home', authenticateToken, async function (req, res) {
 	try {
 		if (req.user.id.length != 24) {
@@ -37,12 +36,12 @@ app.get('/home', authenticateToken, async function (req, res) {
 		userData = await queries.getUserDataBasicById(req.user.id);
 		if (userData) {
 			//Return UserDataBasic
-			res.json(200, { myData: userData });
+			res.status(200).json({ myData: userData });
 		} else {
-			res.json(404, 'Page not found');
+			res.status(404).json('Page not found');
 		}
 	} catch (error) {
-		console.error(error);
+		return res.status(404).json('Page not found');
 	}
 });
 
@@ -54,13 +53,12 @@ app.get('/my-cards', authenticateToken, async function (req, res) {
 		userData = await queries.getUserCardsById(req.user.id);
 		if (userData) {
 			//Return cards
-			return res.json(200, { cards: userData.cardIds });
+			return res.status(200).json({ cards: userData.cardIds });
 		} else {
-			return res.json(404, 'Page not found');
+			return res.status(404).json('Page not found');
 		}
 	} catch (error) {
-		return res.json(404, 'Page not found');
-		console.error(error);
+		return res.status(404).json('Page not found');
 	}
 });
 
@@ -68,8 +66,21 @@ app.get('/leaderboard', function (req, res) {
 	res.send('leaderboard');
 });
 
-app.get('/users-min', function (req, res) {
-	res.send('users-min');
+app.get('/users-min', authenticateToken, async function (req, res) {
+	try {
+		if (req.user.id.length != 24) {
+			return res.status(400).send('Invalid User ID');
+		}
+		userData = await queries.getUserDataMinById(req.query.id);
+		if (userData) {
+			//Return cards
+			return res.status(200).json({ user: userData });
+		} else {
+			return res.status(404).json('Page not found');
+		}
+	} catch (error) {
+		return res.status(404).json('Page not found');
+	}
 });
 
 app.get('/user', authenticateToken, async function (req, res) {
@@ -80,13 +91,12 @@ app.get('/user', authenticateToken, async function (req, res) {
 		userData = await queries.getUserDataById(req.query.id);
 		if (userData) {
 			//Return cards
-			return res.json(200, { user: userData });
+			return res.status(200).json({ user: userData });
 		} else {
-			return res.json(404, 'Page not found');
+			return res.status(404).json('Page not found');
 		}
 	} catch (error) {
-		return res.json(404, 'Page not found');
-		console.error(error);
+		return res.status(404).json('Page not found');
 	}
 });
 
@@ -103,8 +113,6 @@ app.get('/get-cards', authenticateToken, getCards);
 app.get('/auth', authenticateToken, (req, res) => {
 	res.json({ userData: req.user, accessToken: req.token });
 });
-
-
 
 app.post('/login', login);
 
