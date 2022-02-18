@@ -9,6 +9,7 @@ const Cards = {
 		isTargetCard: false,
 		isTargetPlayer: true,
 		isTargetSelfCard: false,
+		onUse: () => {},
 	},
 	10: {
 		id: 10,
@@ -49,12 +50,65 @@ const Cards = {
 
 const getCardById = (id) => (Cards[id] != undefined ? Cards[id] : Cards[0]);
 
+const unwrapHubCard = ({
+	id,
+	emoji,
+	displayName,
+	description,
+	cardType,
+	rarity,
+	value,
+	baseIncome,
+	step,
+	industry,
+}) => ({
+	id,
+	emoji,
+	displayName,
+	description,
+	cardType,
+	rarity,
+	value,
+	baseIncome,
+	step,
+	industry,
+});
+
+const unwrapActionCard = ({
+	id,
+	emoji,
+	displayName,
+	description,
+	cardType,
+	rarity,
+	isTargetCard,
+	isTargetPlayer,
+	isTargetSelfCard,
+}) => ({
+	id,
+	emoji,
+	displayName,
+	description,
+	cardType,
+	rarity,
+	isTargetCard,
+	isTargetPlayer,
+	isTargetSelfCard,
+});
+
+const unwrapCard = (card) =>
+	card.cardType == 1 ? unwrapActionCard(card) : unwrapHubCard(card);
+
 async function useCard(req, res) {
 	console.log(req);
 }
 
 async function getCards(req, res) {
-	res.json(Cards);
+	const unwrapped = {};
+	Object.keys(Cards).forEach((key) => {
+		unwrapped[key] = unwrapCard(Cards[key]);
+	});
+	res.json(unwrapped);
 }
 
 module.exports = { useCard, getCards };

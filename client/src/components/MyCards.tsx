@@ -82,8 +82,10 @@ export default function MyCards() {
 								<Col key={i}>
 									<CardComponent
 										card={x}
-										onClick={() => {
-											cardModal({ currentCard: x });
+										onClick={async () => {
+											try {
+												cardModal({ currentCard: x });
+											} catch (err) {}
 										}}
 									/>
 								</Col>
@@ -114,11 +116,11 @@ function ActiveCardModal(props: CardModalProps) {
 			const card = props.currentCard as ActionCard;
 			const data: PostUseCardParams = { cardId: card.id };
 			if (card.isTargetPlayer) data.targetId = await targetPlayerModal();
-			if (card.isTargetPlayer)
+			if (card.isTargetCard)
 				data.targetCardId = await targetCardModal({
 					playerId: data.targetId!,
 				});
-			if (card.isTargetPlayer)
+			if (card.isTargetSelfCard)
 				data.selfCardId = await targetCardModal({ playerId: 0 });
 			const params = { ...data };
 			console.log(params);
