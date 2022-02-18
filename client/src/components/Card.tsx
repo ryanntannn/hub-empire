@@ -15,23 +15,34 @@ function IndustryToColor(industry: Industry) {
 export default function CardComponent(props: {
 	card: HubCard | ActionCard;
 	onClick: () => void;
+	selected?: boolean;
 }) {
 	return props.card.cardType == CardType.ACTION ? (
 		<ActionCardComponent
 			card={props.card as ActionCard}
 			onClick={props.onClick}
+			selected={props.selected}
 		/>
 	) : (
 		<HubCardComponent
 			card={props.card as HubCard}
 			onClick={props.onClick}
+			selected={props.selected}
 		/>
 	);
 }
 
-function ActionCardComponent(props: { card: ActionCard; onClick: () => void }) {
+function ActionCardComponent(props: {
+	card: ActionCard;
+	onClick: () => void;
+	selected?: boolean;
+}) {
 	return (
-		<div className='rounded-box shadow card' onClick={props.onClick}>
+		<div
+			className={`rounded-box shadow card ${
+				props.selected ? 'selected' : null
+			}`}
+			onClick={props.onClick}>
 			<div
 				className='top-color-area'
 				style={{
@@ -51,9 +62,17 @@ function ActionCardComponent(props: { card: ActionCard; onClick: () => void }) {
 	);
 }
 
-function HubCardComponent(props: { card: HubCard; onClick: () => void }) {
+function HubCardComponent(props: {
+	card: HubCard;
+	onClick: () => void;
+	selected?: boolean;
+}) {
 	return (
-		<div className='rounded-box shadow card' onClick={props.onClick}>
+		<div
+			className={`rounded-box shadow card ${
+				props.selected ? 'selected' : null
+			}`}
+			onClick={props.onClick}>
 			<div
 				className='top-color-area'
 				style={{

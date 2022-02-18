@@ -18,7 +18,7 @@ const Cards = {
 		description: 'Limpeh go salakau fight gang lmao who u',
 		cardType: 1,
 		rarity: 0,
-		isTargetCard: false,
+		isTargetCard: true,
 		isTargetPlayer: true,
 		isTargetSelfCard: false,
 	},

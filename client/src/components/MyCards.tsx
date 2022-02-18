@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { create, createModal, InstanceProps } from 'react-modal-promise';
 import {
 	Button,
 	Col,
 	Container,
+	Input,
 	Modal,
 	ModalBody,
 	ModalFooter,
@@ -18,6 +19,7 @@ import {
 	HubCard,
 	Industry,
 	Step,
+	UserDataMin,
 } from '../types/types';
 import BackButton from './BackButton';
 import CardComponent from './Card';
@@ -152,7 +154,7 @@ function ActiveCardModal(props: CardModalProps) {
 					</Button>
 				) : null}
 				{props.currentCard.cardType == CardType.HUB ? (
-					<Button color='primary'>
+					<Button disabled color='primary'>
 						Sell card for ${(props.currentCard as HubCard).value}
 					</Button>
 				) : null}
@@ -167,14 +169,49 @@ function ActiveCardModal(props: CardModalProps) {
 interface TargetPlayerProps extends InstanceProps<number, null> {}
 
 function ChooseTargetPlayer(props: TargetPlayerProps) {
+	const [playerList, setPlayerList] = React.useState<UserDataMin[] | null>([
+		{
+			id: 0,
+			displayName: 'TestData',
+		},
+		{
+			id: 2,
+			displayName: 'TestData2',
+		},
+	]);
+	const [selectedPlayerId, setSelectedPlayerId] = React.useState<
+		number | null
+	>(null);
+	const auth = useAuth();
+
 	return (
 		<Modal isOpen={props.isOpen} toogle={() => props.onReject()}>
 			<ModalHeader toggle={() => props.onReject()}>
 				<h2 className='big-and-bold'>Choose a target player</h2>
 			</ModalHeader>
-			<ModalBody style={{ textAlign: 'center' }}></ModalBody>
+			<ModalBody style={{ textAlign: 'center' }}>
+				{playerList != null ? (
+					playerList.map((userData, i) => (
+						<div key={i}>
+							<Input
+								onClick={() => setSelectedPlayerId(userData.id)}
+								name={`radio-playerSelect`}
+								type='radio'
+							/>{' '}
+							{userData.displayName}
+						</div>
+					))
+				) : (
+					<div style={{ height: 200 }}>
+						<Loading />
+					</div>
+				)}
+			</ModalBody>
 			<ModalFooter>
-				<Button color='primary' onClick={() => props.onResolve(0)}>
+				<Button
+					disabled={selectedPlayerId == null}
+					color='primary'
+					onClick={() => props.onResolve(selectedPlayerId!)}>
 					Confirm Selection
 				</Button>
 				<Button color='secondary' onClick={() => props.onReject()}>
@@ -190,14 +227,46 @@ interface TargetCardProps extends InstanceProps<number, null> {
 }
 
 function ChooseTargetCard(props: TargetCardProps) {
+	const [cardList, setCardList] = React.useState<number[] | null>([
+		10, 11, 25,
+	]);
+	const [selectedCardId, setSelectedCardId] = React.useState<number | null>(
+		null
+	);
+	const auth = useAuth();
+	const cardsData = useCards();
+
 	return (
-		<Modal isOpen={props.isOpen} toogle={() => props.onReject()}>
+		<Modal isOpen={props.isOpen} toggle={() => props.onReject()}>
 			<ModalHeader toggle={() => props.onReject()}>
 				<h2 className='big-and-bold'>Choose a card</h2>
 			</ModalHeader>
-			<ModalBody style={{ textAlign: 'center' }}></ModalBody>
+			<ModalBody style={{ textAlign: 'center' }}>
+				<div style={{ display: 'inline-block' }}>
+					<div className='card-container small'>
+						{cardList != null ? (
+							cardList.map((card, i) => (
+								<CardComponent
+									card={cardsData.getCard(card)}
+									onClick={() => {
+										setSelectedCardId(card);
+									}}
+									selected={selectedCardId == card}
+								/>
+							))
+						) : (
+							<div style={{ height: 200 }}>
+								<Loading />
+							</div>
+						)}
+					</div>
+				</div>
+			</ModalBody>
 			<ModalFooter>
-				<Button color='primary' onClick={() => props.onResolve(0)}>
+				<Button
+					disabled={selectedCardId == null}
+					color='primary'
+					onClick={() => props.onResolve(selectedCardId!)}>
 					Confirm Selection
 				</Button>
 				<Button color='secondary' onClick={() => props.onReject()}>

@@ -44,6 +44,10 @@
 	display: inline-block;
 }
 
+.card.selected {
+	border: 5px solid rgb(157, 241, 157);
+}
+
 .card.mini {
 	text-align: center;
 	overflow: hidden;
@@ -63,16 +67,25 @@
 	grid-gap: 10px;
 }
 
+.card-container.small {
+	max-width: 400px;
+	grid-template-columns: 1fr 1fr;
+	text-align: center;
+}
+
 .mini .top-color-area {
 	height: 15px;
 }
 
 .top-color-area {
 	position: absolute;
-	height: 50px;
+	height: 60px;
 	width: 100%;
 	left: 0;
 	top: 0;
+
+	transform: skewY(-5deg);
+	transform-origin: left;
 }
 
 .back-button {
