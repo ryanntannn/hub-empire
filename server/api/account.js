@@ -52,7 +52,7 @@ async function register(req, res) {
 			username: req.body.username,
 			password: hashedPassword,
 			displayName: req.body.displayName,
-			gameid: null,
+			gameId: null,
 			cardIds: [],
 			cash: 0,
 			netWorth: 0,

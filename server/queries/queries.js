@@ -1,3 +1,4 @@
+const { AuthMechanism } = require('mongodb');
 const mongo = require('../utils/mongo');
 const ObjectId = require('mongodb').ObjectId;
 
@@ -9,23 +10,42 @@ async function getUserDataByUsername(username) {
 		.catch(console.dir);
 }
 
-async function getUserDataMinById(id) {
-	const query = {
-		_id: ObjectId(id),
-		// username: req.body.username,
-		// password: req.body.password
-	};
-
-	const projection = {
-		//_id is returned by default
-		displayName: 1,
-	};
-
-	return await mongo.client
+async function getUserDataMinById(playerId) {
+	const game = await mongo.client
 		.db('HubEmpireDB')
-		.collection('Users')
-		.findOne(query, { projection: projection })
+		.collection('Games')
+		.findOne({ 
+			playerIds: playerId, 
+		})
 		.catch(console.dir);
+
+	if(game) {
+		//Get all users in the same game
+		var userDataMinArray = []
+
+		for(playerId of game.playerIds) {
+			console.log(playerId)
+			const query = {
+				_id: ObjectId(playerId)
+			};
+		
+			const projection = {
+				//_id is returned by default
+				displayName: 1,
+			};
+			
+			const userDataMin = await mongo.client
+				.db('HubEmpireDB')
+				.collection('Users')
+				.findOne(query, { projection: projection })
+				.catch(console.dir);
+			
+			userDataMinArray.push(userDataMin);
+		}
+		return (userDataMinArray);
+	} else {
+		return null;
+	}
 }
 
 async function getUserDataBasicById(id) {
@@ -109,7 +129,20 @@ async function getGameByGameId(gameId) {
 		.catch(console.dir);
 }
 
+async function assignGameIdToPlayer(gameId, playerId) {
+	const query = { _id: ObjectId(playerId) };
+	const valueToAppend = { $set: { gameId: gameId } };
+
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateOne(query, valueToAppend)
+		.catch(console.dir);
+}
+
 async function addPlayerToGame(gameId, playerId) {
+	//Check if player is already in a game
+
 	const query = { gameId: gameId };
 	const valueToAppend = { $push: { playerIds: playerId } };
 
@@ -129,6 +162,7 @@ const queries = {
 	addNewGame,
 	getAllExistingGames,
 	getGameByGameId,
+	assignGameIdToPlayer,
 	addPlayerToGame,
 };
 
