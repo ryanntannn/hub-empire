@@ -126,10 +126,10 @@ function ActiveCardModal(props: CardModalProps) {
 				data.selfCardId = await targetCardModal({ playerId: 0 });
 			const params = { ...data };
 			console.log(params);
-			const res = await auth.authenticatedPost(`/use-card`, {
+			const res: any = await auth.authenticatedPost(`/use-card`, {
 				...data,
 			});
-			console.log(res);
+			console.log(res.data);
 			return;
 		} catch (err) {
 			console.log(err);
@@ -184,10 +184,12 @@ function ChooseTargetPlayer(props: TargetPlayerProps) {
 		auth.authenticatedGet('/users-min')
 			.then((res: any) => {
 				setPlayerList(
-					res.data.user.map((x: any) => ({
-						id: x._id,
-						displayName: x.displayName,
-					}))
+					res.data.user
+						.filter((x: any) => x._id != auth.user.userData.id)
+						.map((x: any) => ({
+							id: x._id,
+							displayName: x.displayName,
+						}))
 				);
 				console.log(res);
 			})
