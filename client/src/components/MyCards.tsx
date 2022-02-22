@@ -126,9 +126,10 @@ function ActiveCardModal(props: CardModalProps) {
 				data.selfCardId = await targetCardModal({ playerId: 0 });
 			const params = { ...data };
 			console.log(params);
-			await auth.authenticatedPost(`/use-card`, {
+			const res = await auth.authenticatedPost(`/use-card`, {
 				...data,
 			});
+			console.log(res);
 			return;
 		} catch (err) {
 			console.log(err);
@@ -169,23 +170,34 @@ function ActiveCardModal(props: CardModalProps) {
 interface TargetPlayerProps extends InstanceProps<number, null> {}
 
 function ChooseTargetPlayer(props: TargetPlayerProps) {
-	const [playerList, setPlayerList] = React.useState<UserDataMin[] | null>([
-		{
-			id: 0,
-			displayName: 'TestData',
-		},
-		{
-			id: 2,
-			displayName: 'TestData2',
-		},
-	]);
+	const [playerList, setPlayerList] = React.useState<UserDataMin[] | null>(
+		null
+	);
 	const [selectedPlayerId, setSelectedPlayerId] = React.useState<
 		number | null
 	>(null);
+
 	const auth = useAuth();
 
+	React.useEffect(() => {
+		if (playerList != null) return;
+		auth.authenticatedGet('/users-min')
+			.then((res: any) => {
+				setPlayerList(
+					res.data.user.map((x: any) => ({
+						id: x._id,
+						displayName: x.displayName,
+					}))
+				);
+				console.log(res);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	});
+
 	return (
-		<Modal isOpen={props.isOpen} toogle={() => props.onReject()}>
+		<Modal isOpen={props.isOpen} toggle={() => props.onReject()}>
 			<ModalHeader toggle={() => props.onReject()}>
 				<h2 className='big-and-bold'>Choose a target player</h2>
 			</ModalHeader>
@@ -194,7 +206,9 @@ function ChooseTargetPlayer(props: TargetPlayerProps) {
 					playerList.map((userData, i) => (
 						<div key={i}>
 							<Input
-								onClick={() => setSelectedPlayerId(userData.id)}
+								onClick={() => {
+									setSelectedPlayerId(userData.id);
+								}}
 								name={`radio-playerSelect`}
 								type='radio'
 							/>{' '}
@@ -227,14 +241,24 @@ interface TargetCardProps extends InstanceProps<number, null> {
 }
 
 function ChooseTargetCard(props: TargetCardProps) {
-	const [cardList, setCardList] = React.useState<number[] | null>([
-		10, 11, 25,
-	]);
+	const [cardList, setCardList] = React.useState<number[] | null>(null);
 	const [selectedCardId, setSelectedCardId] = React.useState<number | null>(
 		null
 	);
 	const auth = useAuth();
 	const cardsData = useCards();
+
+	React.useEffect(() => {
+		if (cardList != null) return;
+		auth.authenticatedGet(`/user?id=${props.playerId}`)
+			.then((res: any) => {
+				setCardList(res.data.user.cardIds);
+				console.log(res);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	});
 
 	return (
 		<Modal isOpen={props.isOpen} toggle={() => props.onReject()}>

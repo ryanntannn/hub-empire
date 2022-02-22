@@ -9,7 +9,6 @@ const Cards = {
 		isTargetCard: false,
 		isTargetPlayer: true,
 		isTargetSelfCard: false,
-		onUse: () => {},
 	},
 	10: {
 		id: 10,
@@ -21,6 +20,11 @@ const Cards = {
 		isTargetCard: true,
 		isTargetPlayer: true,
 		isTargetSelfCard: false,
+		onUse: ({ targetId, targetCardId, selfCardId }) =>
+			new Promise((res, rej) => {
+				console.log(targetId, targetCardId, selfCardId);
+				return res('test');
+			}),
 	},
 	11: {
 		id: 11,
@@ -100,7 +104,10 @@ const unwrapCard = (card) =>
 	card.cardType == 1 ? unwrapActionCard(card) : unwrapHubCard(card);
 
 async function useCard(req, res) {
-	console.log(req);
+	Cards[req.query.cardId]
+		.onUse(req.query)
+		.then((r) => res.status(200).json(r))
+		.catch((err) => res.status(400).json(err));
 }
 
 async function getCards(req, res) {

@@ -71,7 +71,7 @@ app.get('/users-min', authenticateToken, async function (req, res) {
 		if (req.user.id.length != 24) {
 			return res.status(400).send('Invalid User ID');
 		}
-		userData = await queries.getUserDataMinById(req.query.id);
+		userData = await queries.getUserDataMinById(req.user.id);
 		if (userData) {
 			//Return cards
 			return res.status(200).json({ user: userData });
