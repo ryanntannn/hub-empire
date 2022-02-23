@@ -4,11 +4,11 @@ import { ActionCard, CardType, HubCard, Industry } from '../types/types';
 function IndustryToColor(industry: Industry) {
 	switch (industry) {
 		case Industry.FOOD:
-			return 'green';
+			return '#ECC30B';
 		case Industry.TECH:
-			return 'blue';
+			return '#84BCDA';
 		case Industry.CLOTHES:
-			return 'red';
+			return '#F37748';
 	}
 }
 

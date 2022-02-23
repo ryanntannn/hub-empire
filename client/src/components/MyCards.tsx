@@ -136,17 +136,76 @@ function ActiveCardModal(props: CardModalProps) {
 		}
 	}
 
+	function ActiveActionCardDetails(currentCard: ActionCard) {
+		return (
+			<div>
+				<p style={{ fontSize: 13 }}>
+					<b>Tags:</b>
+					<br />
+					{currentCard.isTargetPlayer ? 'Targets Player' : ''}
+					<br />
+					{currentCard.isTargetCard ? 'Targets Player Card' : ''}
+					<br />
+					{currentCard.isTargetSelfCard ? 'Targets Self Card' : ''}
+				</p>
+			</div>
+		);
+	}
+
+	function ActiveHubCardDetails(currentCard: HubCard) {
+		return (
+			<div>
+				<p>
+					Supply Chain Step: <b>{Step[currentCard.step]}</b>
+					<br />
+					Industry: <b>{Industry[currentCard.industry]}</b>
+					<br />
+					Value: <b>${currentCard.value}</b>
+					<br />
+					Income: <b>${currentCard.baseIncome}</b>
+				</p>
+			</div>
+		);
+	}
+
 	return (
-		<Modal isOpen={props.isOpen}>
+		<Modal isOpen={props.isOpen} style={{ maxWidth: 600 }}>
 			<ModalHeader toggle={() => props.onReject()}>
-				<h2 className='big-and-bold'>
-					{props.currentCard.displayName}
-				</h2>
+				{props.currentCard.cardType == 0 ? 'Hub Card' : 'Action Card'}
 			</ModalHeader>
-			<ModalBody style={{ textAlign: 'center' }}>
-				<CardComponent card={props.currentCard} onClick={() => {}} />
-				<br />
-				{props.currentCard.description}
+			<ModalBody>
+				<div className='card-details'>
+					<CardComponent
+						card={props.currentCard}
+						onClick={() => {}}
+					/>
+					<div>
+						<p
+							style={{
+								fontSize: 10,
+								position: 'absolute',
+								bottom: 0,
+							}}>
+							cardId:{props.currentCard.id}
+						</p>
+						<h2 className='big-and-bold'>
+							{props.currentCard.emoji}{' '}
+							{props.currentCard.displayName}
+						</h2>
+						<h6>
+							<b>{CardRarity[props.currentCard.rarity]}</b> Card
+						</h6>
+						<p>{props.currentCard.description}</p>
+						{props.currentCard.cardType == CardType.ACTION
+							? ActiveActionCardDetails(
+									props.currentCard as ActionCard
+							  )
+							: null}
+						{props.currentCard.cardType == CardType.HUB
+							? ActiveHubCardDetails(props.currentCard as HubCard)
+							: null}
+					</div>
+				</div>
 			</ModalBody>
 			<ModalFooter>
 				{props.currentCard.cardType == CardType.ACTION ? (

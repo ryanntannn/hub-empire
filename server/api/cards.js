@@ -36,7 +36,7 @@ const Cards = {
 		value: 10,
 		baseIncome: 2,
 		step: 2,
-		industry: 2,
+		industry: 1,
 	},
 	25: {
 		id: 25,
