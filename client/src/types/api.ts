@@ -28,6 +28,7 @@ export interface GetUserDataRes {
 //POST /use-card
 export interface PostUseCardParams {
 	cardId: number;
+	instanceId: number;
 	targetId?: number;
 	targetCardId?: number;
 	selfCardId?: number;

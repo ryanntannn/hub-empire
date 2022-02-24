@@ -118,7 +118,10 @@ function ActiveCardModal(props: CardModalProps) {
 	async function useCard() {
 		try {
 			const card = props.cardInstance.card as ActionCard;
-			const data: PostUseCardParams = { cardId: card.id };
+			const data: PostUseCardParams = {
+				cardId: card.id,
+				instanceId: props.cardInstance.instanceId,
+			};
 			if (card.isTargetPlayer) data.targetId = await targetPlayerModal();
 			if (card.isTargetCard)
 				data.targetCardId = await targetCardModal({
