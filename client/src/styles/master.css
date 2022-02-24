@@ -44,6 +44,13 @@
 	display: inline-block;
 }
 
+.card .step {
+	margin-top: 15px;
+	font-weight: 900;
+	font-size: 13px;
+	color: rgba(10, 10, 10, 0.5);
+}
+
 .card.selected {
 	border: 5px solid rgb(157, 241, 157);
 }
@@ -68,7 +75,7 @@
 }
 
 .card-container.small {
-	max-width: 400px;
+	max-width: 430px;
 	grid-template-columns: 1fr 1fr;
 	text-align: center;
 }
@@ -101,8 +108,8 @@
 }
 
 .scroll-y {
-	overflow-x: scroll;
-	overflow-y: hidden;
+	overflow-y: scroll;
+	overflow-x: hidden;
 	white-space: nowrap;
 }
 

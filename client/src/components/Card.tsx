@@ -1,5 +1,12 @@
 import { Button } from 'reactstrap';
-import { ActionCard, CardType, HubCard, Industry } from '../types/types';
+import {
+	ActionCard,
+	Card,
+	CardType,
+	HubCard,
+	Industry,
+	Step,
+} from '../types/types';
 
 function IndustryToColor(industry: Industry) {
 	switch (industry) {
@@ -13,7 +20,7 @@ function IndustryToColor(industry: Industry) {
 }
 
 export default function CardComponent(props: {
-	card: HubCard | ActionCard;
+	card: Card;
 	onClick: () => void;
 	selected?: boolean;
 }) {
@@ -77,7 +84,11 @@ function HubCardComponent(props: {
 				className='top-color-area'
 				style={{
 					backgroundColor: IndustryToColor(props.card.industry),
-				}}></div>
+				}}>
+				<div className='step'>
+					{Industry[props.card.industry]} {Step[props.card.step]}
+				</div>
+			</div>
 			<h1
 				style={{
 					fontSize: 50,

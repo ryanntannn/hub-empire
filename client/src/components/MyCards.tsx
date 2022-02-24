@@ -14,6 +14,7 @@ import {
 import { GetMyCardsRes, PostUseCardParams } from '../types/api';
 import {
 	ActionCard,
+	CardInstance,
 	CardRarity,
 	CardType,
 	HubCard,
@@ -28,9 +29,7 @@ import Loading from './Loading';
 import useCards from '../contexts/CardsContext';
 
 export default function MyCards() {
-	const [cards, setCards] = React.useState<(ActionCard | HubCard)[] | null>(
-		null
-	);
+	const [cards, setCards] = React.useState<CardInstance[] | null>(null);
 
 	const auth = useAuth();
 
@@ -54,10 +53,12 @@ export default function MyCards() {
 		auth.authenticatedGet('/my-cards')
 			.then((res: any) => {
 				if (res == null) return;
-				const cardIds: number[] = res.data.cards;
+				const cardIds: { instanceId: number; cardId: number }[] =
+					res.data.cards;
+				console.log(cardIds);
 				setCards(
 					cardIds.map((id) => {
-						return cardsData.getCard(id);
+						return cardsData.getCardInstance(id);
 					})
 				);
 			})
@@ -83,10 +84,10 @@ export default function MyCards() {
 							return (
 								<Col key={i}>
 									<CardComponent
-										card={x}
+										card={x.card}
 										onClick={async () => {
 											try {
-												cardModal({ currentCard: x });
+												cardModal({ cardInstance: x });
 											} catch (err) {}
 										}}
 									/>
@@ -104,7 +105,7 @@ export default function MyCards() {
 }
 
 interface CardModalProps extends InstanceProps<null, null> {
-	currentCard: ActionCard | HubCard;
+	cardInstance: CardInstance;
 }
 
 function ActiveCardModal(props: CardModalProps) {
@@ -112,10 +113,11 @@ function ActiveCardModal(props: CardModalProps) {
 
 	const targetPlayerModal = create(ChooseTargetPlayer);
 	const targetCardModal = create(ChooseTargetCard);
+	const acknowledgementModal = create(AcknowledgementModal);
 
 	async function useCard() {
 		try {
-			const card = props.currentCard as ActionCard;
+			const card = props.cardInstance.card as ActionCard;
 			const data: PostUseCardParams = { cardId: card.id };
 			if (card.isTargetPlayer) data.targetId = await targetPlayerModal();
 			if (card.isTargetCard)
@@ -129,9 +131,13 @@ function ActiveCardModal(props: CardModalProps) {
 			const res: any = await auth.authenticatedPost(`/use-card`, {
 				...data,
 			});
-			console.log(res.data);
+			await acknowledgementModal({
+				msg: res.data.toString(),
+				success: true,
+			});
 			return;
-		} catch (err) {
+		} catch (err: any) {
+			await acknowledgementModal({ msg: err.toString(), success: false });
 			console.log(err);
 		}
 	}
@@ -171,12 +177,14 @@ function ActiveCardModal(props: CardModalProps) {
 	return (
 		<Modal isOpen={props.isOpen} style={{ maxWidth: 600 }}>
 			<ModalHeader toggle={() => props.onReject()}>
-				{props.currentCard.cardType == 0 ? 'Hub Card' : 'Action Card'}
+				{props.cardInstance.card.cardType == 0
+					? 'Hub Card'
+					: 'Action Card'}
 			</ModalHeader>
 			<ModalBody>
 				<div className='card-details'>
 					<CardComponent
-						card={props.currentCard}
+						card={props.cardInstance.card}
 						onClick={() => {}}
 					/>
 					<div>
@@ -186,36 +194,41 @@ function ActiveCardModal(props: CardModalProps) {
 								position: 'absolute',
 								bottom: 0,
 							}}>
-							cardId:{props.currentCard.id}
+							cardId: {props.cardInstance.card.id}, instanceId:{' '}
+							{props.cardInstance.instanceId}
 						</p>
 						<h2 className='big-and-bold'>
-							{props.currentCard.emoji}{' '}
-							{props.currentCard.displayName}
+							{props.cardInstance.card.emoji}{' '}
+							{props.cardInstance.card.displayName}
 						</h2>
 						<h6>
-							<b>{CardRarity[props.currentCard.rarity]}</b> Card
+							<b>{CardRarity[props.cardInstance.card.rarity]}</b>{' '}
+							Card
 						</h6>
-						<p>{props.currentCard.description}</p>
-						{props.currentCard.cardType == CardType.ACTION
+						<p>{props.cardInstance.card.description}</p>
+						{props.cardInstance.card.cardType == CardType.ACTION
 							? ActiveActionCardDetails(
-									props.currentCard as ActionCard
+									props.cardInstance.card as ActionCard
 							  )
 							: null}
-						{props.currentCard.cardType == CardType.HUB
-							? ActiveHubCardDetails(props.currentCard as HubCard)
+						{props.cardInstance.card.cardType == CardType.HUB
+							? ActiveHubCardDetails(
+									props.cardInstance.card as HubCard
+							  )
 							: null}
 					</div>
 				</div>
 			</ModalBody>
 			<ModalFooter>
-				{props.currentCard.cardType == CardType.ACTION ? (
+				{props.cardInstance.card.cardType == CardType.ACTION ? (
 					<Button color='primary' onClick={useCard}>
 						Use card
 					</Button>
 				) : null}
-				{props.currentCard.cardType == CardType.HUB ? (
+				{props.cardInstance.card.cardType == CardType.HUB ? (
 					<Button disabled color='primary'>
-						Sell card for ${(props.currentCard as HubCard).value}
+						Sell card for $
+						{(props.cardInstance.card as HubCard).value}
 					</Button>
 				) : null}
 				<Button color='secondary' onClick={() => props.onReject()}>
@@ -302,7 +315,9 @@ interface TargetCardProps extends InstanceProps<number, null> {
 }
 
 function ChooseTargetCard(props: TargetCardProps) {
-	const [cardList, setCardList] = React.useState<number[] | null>(null);
+	const [cardList, setCardList] = React.useState<
+		{ instanceId: number; cardId: number }[] | null
+	>(null);
 	const [selectedCardId, setSelectedCardId] = React.useState<number | null>(
 		null
 	);
@@ -328,15 +343,17 @@ function ChooseTargetCard(props: TargetCardProps) {
 			</ModalHeader>
 			<ModalBody style={{ textAlign: 'center' }}>
 				<div style={{ display: 'inline-block' }}>
-					<div className='card-container small'>
+					<div
+						className='card-container small scroll-y'
+						style={{ maxHeight: 400, paddingRight: 30 }}>
 						{cardList != null ? (
 							cardList.map((card, i) => (
 								<CardComponent
-									card={cardsData.getCard(card)}
+									card={cardsData.getCard(card.cardId)}
 									onClick={() => {
-										setSelectedCardId(card);
+										setSelectedCardId(card.instanceId);
 									}}
-									selected={selectedCardId == card}
+									selected={selectedCardId == card.instanceId}
 								/>
 							))
 						) : (
@@ -355,6 +372,29 @@ function ChooseTargetCard(props: TargetCardProps) {
 					Confirm Selection
 				</Button>
 				<Button color='secondary' onClick={() => props.onReject()}>
+					Close
+				</Button>
+			</ModalFooter>
+		</Modal>
+	);
+}
+
+interface AcknowledgementModalProps extends InstanceProps<null, null> {
+	msg: string;
+	success: boolean;
+}
+
+function AcknowledgementModal(props: AcknowledgementModalProps) {
+	return (
+		<Modal isOpen={props.isOpen} toggle={() => props.onResolve()}>
+			<ModalHeader toggle={() => props.onReject()}>
+				<h2 className='big-and-bold'>
+					{props.success ? 'Success' : 'Failed'}
+				</h2>
+			</ModalHeader>
+			<ModalBody style={{ textAlign: 'center' }}>{props.msg}</ModalBody>
+			<ModalFooter>
+				<Button color='secondary' onClick={() => props.onResolve()}>
 					Close
 				</Button>
 			</ModalFooter>

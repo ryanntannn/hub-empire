@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react';
-import { ActionCard, Card, HubCard } from '../types/types';
+import { ActionCard, Card, CardInstance, HubCard } from '../types/types';
 import AxiosBase from '../utils/AxiosBase';
 import useAuth from './AuthenticationContext';
 
 export interface UseCards {
 	init: () => void;
 	getCard: (id: number) => ActionCard | HubCard;
+	getCardInstance: (cardData: {
+		instanceId: number;
+		cardId: number;
+	}) => CardInstance;
 }
 
 const CardContext = React.createContext<UseCards>(null!);
@@ -28,7 +32,12 @@ function useCards() {
 	const getCard = (id: number) =>
 		cardDatabase[id] != undefined ? cardDatabase[id] : cardDatabase[0];
 
-	return { init, getCard };
+	const getCardInstance = (cardData: {
+		instanceId: number;
+		cardId: number;
+	}) => ({ instanceId: cardData.instanceId, card: getCard(cardData.cardId) });
+
+	return { init, getCard, getCardInstance };
 }
 
 const CardProvider: React.FC = ({ children }) => {

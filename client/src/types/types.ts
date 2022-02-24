@@ -23,7 +23,13 @@ export enum CardType {
 	ACTION,
 }
 
+export interface CardInstance {
+	instanceId: number;
+	card: Card;
+}
+
 export interface Card {
+	instanceId?: number;
 	id: number;
 	emoji: string;
 	displayName: string;
@@ -60,7 +66,10 @@ export interface UserDataBasic extends UserDataMin {
 export interface UserData extends UserDataBasic {
 	id: number;
 	displayName: string;
-	cardIds: number[];
+	cardIds: {
+		instanceId: number;
+		cardId: number;
+	}[];
 	cash: number;
 	netWorth: number;
 	netEarnings: number;

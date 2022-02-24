@@ -7,7 +7,7 @@ const Cards = {
 		cardType: 1,
 		rarity: 0,
 		isTargetCard: false,
-		isTargetPlayer: true,
+		isTargetPlayer: false,
 		isTargetSelfCard: false,
 	},
 	10: {
@@ -25,6 +25,30 @@ const Cards = {
 				console.log(targetId, targetCardId, selfCardId);
 				return res('test');
 			}),
+	},
+	103: {
+		id: 103,
+		emoji: '🏢',
+		displayName: 'hub103',
+		description: 'test',
+		cardType: 0,
+		rarity: 0,
+		value: 10,
+		baseIncome: 2,
+		step: 0,
+		industry: 0,
+	},
+	107: {
+		id: 107,
+		emoji: '🏢',
+		displayName: 'hub107',
+		description: 'test',
+		cardType: 0,
+		rarity: 0,
+		value: 10,
+		baseIncome: 2,
+		step: 1,
+		industry: 0,
 	},
 	11: {
 		id: 11,
