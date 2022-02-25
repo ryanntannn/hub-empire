@@ -4,6 +4,10 @@ import {
 	Button,
 	Col,
 	Container,
+	Dropdown,
+	DropdownItem,
+	DropdownMenu,
+	DropdownToggle,
 	Input,
 	Modal,
 	ModalBody,
@@ -28,6 +32,11 @@ import useAuth from '../contexts/AuthenticationContext';
 import Loading from './Loading';
 import useCards from '../contexts/CardsContext';
 
+interface SortMethod {
+	name: string;
+	method: (a: CardInstance, b: CardInstance) => number;
+}
+
 export default function MyCards() {
 	const [cards, setCards] = React.useState<CardInstance[] | null>(null);
 
@@ -37,16 +46,70 @@ export default function MyCards() {
 
 	const cardsData = useCards();
 
-	const getCardData = async () => {
-		auth.authenticatedGet('/my-cards')
-			.then((res: any) => {
-				console.log(res);
-				return res;
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+	const sortMethods: {
+		name: string;
+		method: (a: CardInstance, b: CardInstance) => number;
+	}[] = [
+		{
+			name: 'Sort A to Z',
+			method: (a, b) => {
+				return a.card.displayName > b.card.displayName ? 1 : -1;
+			},
+		},
+		{
+			name: 'Sort Z to A',
+			method: (a, b) => {
+				return a.card.displayName < b.card.displayName ? 1 : -1;
+			},
+		},
+		{
+			name: 'Sort by Rarity',
+			method: (a, b) => {
+				return a.card.rarity < b.card.rarity ? 1 : -1;
+			},
+		},
+		{
+			name: 'Sort by Value',
+			method: (a, b) => {
+				if (a.card.cardType == 1) return 1;
+				if (b.card.cardType == 1) return -1;
+				return (a.card as HubCard).value < (b.card as HubCard).value
+					? 1
+					: -1;
+			},
+		},
+		{
+			name: 'Sort by Industry',
+			method: (a, b) => {
+				if (a.card.cardType == 1) return 1;
+				if (b.card.cardType == 1) return -1;
+				return (a.card as HubCard).industry >
+					(b.card as HubCard).industry
+					? 1
+					: -1;
+			},
+		},
+		{
+			name: 'Sort by Supply Chain Step',
+			method: (a, b) => {
+				if (a.card.cardType == 1) return 1;
+				if (b.card.cardType == 1) return -1;
+				return (a.card as HubCard).step > (b.card as HubCard).step
+					? 1
+					: -1;
+			},
+		},
+	];
+
+	const errorCardsToTheBack = (a: CardInstance, b: CardInstance) => {
+		if (a.card.id == 0) return 1;
+		if (b.card.id == 0) return -1;
+		return 1;
 	};
+
+	const [activeSortMethod, setActiveSortMethod] = React.useState<SortMethod>(
+		sortMethods[0]
+	);
 
 	React.useEffect(() => {
 		if (cards != null) return;
@@ -73,27 +136,56 @@ export default function MyCards() {
 		return returnMe;
 	};
 
+	function SortDropdown() {
+		const [isOpen, setIsOpen] = React.useState(false);
+		return (
+			<Dropdown
+				style={{ display: 'inline' }}
+				toggle={() => {
+					setIsOpen((x) => !x);
+				}}
+				isOpen={isOpen}
+				color='secondary'>
+				<DropdownToggle caret>{activeSortMethod.name}</DropdownToggle>
+				<DropdownMenu container='body'>
+					{sortMethods.map((sortMethod) => (
+						<DropdownItem
+							onClick={() => setActiveSortMethod(sortMethod)}>
+							{sortMethod.name}
+						</DropdownItem>
+					))}
+				</DropdownMenu>
+			</Dropdown>
+		);
+	}
+
 	return (
 		<div className='page'>
 			{cards != null || false ? (
 				<Container className='mt-5'>
 					<BackButton />
 					<h1 className='title'>🏢 My Cards</h1>
+					<SortDropdown />
 					<div className='mt-3 card-container'>
-						{cards!.map((x, i) => {
-							return (
-								<Col key={i}>
-									<CardComponent
-										card={x.card}
-										onClick={async () => {
-											try {
-												cardModal({ cardInstance: x });
-											} catch (err) {}
-										}}
-									/>
-								</Col>
-							);
-						})}
+						{cards
+							.sort(activeSortMethod.method)
+							.sort(errorCardsToTheBack)
+							.map((x, i) => {
+								return (
+									<Col key={i}>
+										<CardComponent
+											card={x.card}
+											onClick={async () => {
+												try {
+													cardModal({
+														cardInstance: x,
+													});
+												} catch (err) {}
+											}}
+										/>
+									</Col>
+								);
+							})}
 						{getSpacers()}
 					</div>
 				</Container>
