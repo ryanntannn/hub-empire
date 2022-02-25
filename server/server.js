@@ -110,6 +110,25 @@ app.post('/use-card', authenticateToken, useCard);
 
 app.get('/get-cards', authenticateToken, getCards);
 
+app.get('/action-log', authenticateToken, async function (req, res) {
+	try {
+		const start = req.query.showAmount * (req.query.page - 1);
+		const amount = req.query.showAmount;
+		console.log(start, amount);
+		if (start < 0 || amount <= 0)
+			return res.status(400).json('Invalid Req');
+		const actionLog = await queries.getActionLog(
+			req.query.gameId,
+			start,
+			amount
+		);
+		res.status(200).json(actionLog);
+	} catch (error) {
+		console.log(error);
+		return res.status(400).json(error);
+	}
+});
+
 app.get('/auth', authenticateToken, (req, res) => {
 	res.json({ userData: req.user, accessToken: req.token });
 });
