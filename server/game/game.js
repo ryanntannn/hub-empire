@@ -21,7 +21,7 @@ class Game {
         this.status = game.status || "Not started";
     }
 
-    executeTurn() {
+    async executeTurn() {
         //console.log(cardIdArray)  
 
         if (this.playerIds == [] || this.playerIds == null){
@@ -29,22 +29,14 @@ class Game {
             return;
         }
         for(var playerId of this.playerIds) {
-            var playerInfo = queries.getUserDataById(playerId)
-                .then(playerInfo => {
-                    return playerInfo;                
-            })
-            .catch(err => {
-                console.log(err);
-            });
+            var playerInfo = await queries.getUserDataById(playerId);
+            console.log(playerInfo)
             var newCardArray = this.generateCards(playerInfo)
             //console.log(playerInfo.numberOfCardsDrawn)
             queries.addNewCardsToPlayerHand(playerInfo._id, newCardArray, playerInfo.numberOfCardsDrawn).catch(console.dir);
 
-            calculateTurnIncome(playerInfo);
+            //calculateTurnIncome(playerInfo);
         }
-
-        calculateTurnIncome
-        
 
         console.log("Turn executed");
         return;
@@ -57,7 +49,8 @@ class Game {
         for (var i = 0; i < 3; i++){
             var number = Math.floor(Math.random() * (deckArray.length - 1) +1)
             //console.log(number);
-            var chosenCardId = deckArray[number];
+            var chosenCardId = parseInt(deckArray[number]);
+            //console.log(typeof chosenCardId)
             var cardDb = {
                 instanceId: playerInfo.numberOfCardsDrawn,
                 cardId: chosenCardId,

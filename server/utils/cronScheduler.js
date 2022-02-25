@@ -24,7 +24,7 @@ var task = cron.schedule('* * * * *', () => {
             // });
             cursor.forEach(dbGame => {
 				var game = new GameInstance(dbGame);
-                game.executeTurn();
+                game.executeTurn().catch(console.dir);
             });
         })
         .catch(err => {
