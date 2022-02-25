@@ -208,13 +208,19 @@ const unwrapCard = (card) =>
 
 async function useCard(req, res) {
 	try {
-		const hasCard = await queries.userHasCard(
+		console.log(req.user.id, req.query.cardId, req.query.instanceId);
+		const user = await queries.userHasCard(
 			req.user.id,
 			req.query.cardId,
 			req.query.instanceId
 		);
-		console.log(hasCard);
+		console.log(user);
 		const r = await Cards[req.query.cardId].onUse(req.query, req.user);
+		await queries.destroyCard(
+			req.user.id,
+			req.query.cardId,
+			req.query.instanceId
+		);
 		res.status(200).json(r);
 	} catch (err) {
 		res.status(400).json(err);

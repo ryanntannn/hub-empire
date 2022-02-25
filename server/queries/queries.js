@@ -182,14 +182,34 @@ async function addMoney(playerId, amount) {
 		.catch(console.dir);
 }
 
-async function userHasCard(playerId, cardId, instanceId) {
+async function userHasCard(playerId, cid, iid) {
 	return await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
-		.find({
-			_id: ObjectId(playerId),
-			cardIds: { $elemMatch: { instanceId: instanceId } },
-		})
+		.findOne(
+			{
+				_id: ObjectId(playerId),
+			},
+			{
+				cardIds: {
+					$elemMatch: { cardId: cid, instanceId: iid },
+				},
+			}
+		)
+		.catch(console.dir);
+}
+
+async function destroyCard(playerId, cid, iid) {
+	const query = {
+		_id: ObjectId(playerId),
+	};
+	const options = {
+		$pull: { cardIds: { cardId: cid, instanceId: iid } },
+	};
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateOne(query, options)
 		.catch(console.dir);
 }
 
@@ -207,6 +227,7 @@ const queries = {
 	addNewCardsToPlayerHand,
 	addMoney,
 	userHasCard,
+	destroyCard,
 };
 
 module.exports = queries;
