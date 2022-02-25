@@ -1,61 +1,79 @@
-//const cardCollection = require ("./cards.js");
 const queries = require('../queries/queries');
+const deck = require('../api/cards.js');
 
 class Game {
-    joinId = null;
+    joinCode = null;
     turnNumber = null;
     playerIds = null;
-    //cardIds = cardCollection.cards
+    status = null;
 
-    constructor(game, isNew) {
-        if(isNew){
-            //new game
-            this.id = game.id;
-            this.turnNumber = 0;
-            this.playerIds = []
-        } else {
-            //get all this from mongo
-            this.turnNumber = 0;
-            this.playerIds = [1, 2, 3]
-            //console.log(cardCollection.cardsById[1001])
-        }   
+    constructor(game) {
+        // console.log(game.playerIds)
+        // console.log(game.status)
+        // //No value = New game
+        if (game.code == null) {
+            console.log("Game Code required. Game object creation failed.");
+            return -1;
+        }
+        this.joinCode = game.code;
+        this.turnNumber = game.turnNumber || 0;
+        this.playerIds = game.playerIds || [];
+        this.status = game.status || "Not started";
     }
 
     executeTurn() {
-        queries.getAllExistingGames()
-        .then(cursor => {
-            cursor.count(function(err, count) {
-                console.log("Number of Games found: " + count)
-            });
-            cursor.forEach(game => {
-                //Do things for each game in the db
-                //console.log(game)
-            });
-            //console.log(gameArray.count)
-        })
-        .catch(err => {
-            console.log(err)
-        });
+        //console.log(cardIdArray)  
 
+        if (this.playerIds == [] || this.playerIds == null){
+            console.log("No players in the game");
+            return;
+        }
+        for(var playerId of this.playerIds) {
+            var playerInfo = queries.getUserDataById(playerId)
+                .then(playerInfo => {
+                    return playerInfo;                
+            })
+            .catch(err => {
+                console.log(err);
+            });
+            var newCardArray = this.generateCards(playerInfo)
+            //console.log(playerInfo.numberOfCardsDrawn)
+            queries.addNewCardsToPlayerHand(playerInfo._id, newCardArray, playerInfo.numberOfCardsDrawn).catch(console.dir);
+
+            calculateTurnIncome(playerInfo);
+        }
+
+        calculateTurnIncome
+        
+
+        console.log("Turn executed");
         return;
-        this.turnNumber += 1;
-        console.log("Turn " + this.turnNumber + ":")
-        //calculate income
-            //lone cards
-            //collections
-        //update leaderboard
-
-        //give players new cards
-        this.playerIds.forEach(player => {
-            this.chosenCard = this.cardIds[Math.floor(Math.random() * this.cardIds.length)]
-            console.log(player + " gets " + this.chosenCard.description)
-            console.log(this.chosenCard.type)
-            // if(this.chosenCard.type == "Action") {
-            //     this.chosenCard.applyEffect(1);
-            // }
-        });
-
         //put new cards into database
+    }
+
+    generateCards(playerInfo) {
+        var deckArray = Object.keys(deck.Cards);
+        var newCardArray = []
+        for (var i = 0; i < 3; i++){
+            var number = Math.floor(Math.random() * (deckArray.length - 1) +1)
+            //console.log(number);
+            var chosenCardId = deckArray[number];
+            var cardDb = {
+                instanceId: playerInfo.numberOfCardsDrawn,
+                cardId: chosenCardId,
+            }
+            playerInfo.numberOfCardsDrawn += 1;
+            //console.log("Card", i, ":", cardDb);
+            newCardArray.push(cardDb)
+        }
+
+        console.log(playerInfo.username + "'s New Cards:")
+        console.log(newCardArray)
+        return newCardArray
+    }
+
+    calculateTurnIncome(playerInfo){
+        //rewrite this
     }
 
 }

@@ -1,9 +1,10 @@
 const cron = require('node-cron');
-const GameHandler = require('../game/game.js');
+const GameInstance = require('../game/game.js');
+const queries = require('../queries/queries.js');
 
 //Cron values can be changed for testing
 //Revery back to '0 07,11,15 * * *' when done
-var task = cron.schedule('0 07,11,15 * * *', () => {
+var task = cron.schedule('* * * * *', () => {
 	let date = new Date()
 	let day = ("0" + date.getDate()).slice(-2);
 	let month = ("0" + (date.getMonth() + 1)).slice(-2);
@@ -12,12 +13,24 @@ var task = cron.schedule('0 07,11,15 * * *', () => {
 	let minutes = date.getMinutes();
 	let seconds = date.getSeconds();
 
-    console.log('Starting scheduled job...');
+    console.log('Starting Turn Calculation...');
 	// prints date & time in YYYY-MM-DD HH:MM:SS format
 	console.log('Current date: ' + day + '-' + month + '-' + year + ' ' + hours + ':' + minutes + ':' + seconds);
 
-	var game = new GameHandler(0, isNew = false)
-	game.executeTurn()
+	queries.getAllExistingGames()
+        .then(cursor => {
+            // cursor.count(function(err, count) {
+            //     console.log("Number of Games found: " + count)
+            // });
+            cursor.forEach(dbGame => {
+				var game = new GameInstance(dbGame);
+                game.executeTurn();
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+	
 }, 
 {
 	scheduled: false,

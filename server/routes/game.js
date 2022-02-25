@@ -6,9 +6,10 @@ const GameHandler = require('../game/game');
 router.post('/create', (req, res) => {
 	try{
 		var gameId = req.body.id;
-		var newGame = new GameHandler({id: gameId}, isNew = true);
+		if (gameId == null) return res.status(400).json("New game has no ID!")
+
+		var newGame = new GameHandler({code: gameId});
 		queries.addNewGame(newGame)
-		//console.log(newGame)
 		
 		//req.body[]
 		res.send('Game successfully created')

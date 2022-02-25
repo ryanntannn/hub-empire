@@ -46,6 +46,13 @@ const Cards = {
 		step: 2,
 		industry: 2,
 	},
+	101: {},
+	102: {},
+	103: {},
+	104: {},
+	105: {},
+	106: {},
+	107: {},
 };
 
 const getCardById = (id) => (Cards[id] != undefined ? Cards[id] : Cards[0]);
@@ -111,4 +118,4 @@ async function getCards(req, res) {
 	res.json(unwrapped);
 }
 
-module.exports = { useCard, getCards };
+module.exports = { Cards, useCard, getCards };

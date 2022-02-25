@@ -24,7 +24,7 @@ async function getUserDataMinById(playerId) {
 		var userDataMinArray = []
 
 		for(playerId of game.playerIds) {
-			console.log(playerId)
+			//console.log(playerId)
 			const query = {
 				_id: ObjectId(playerId)
 			};
@@ -103,6 +103,7 @@ async function getUserCardsById(id) {
 }
 
 async function addNewGame(newGame) {
+	//Need to check if Game ID already exists in DB
 	return await mongo.client
 		.db('HubEmpireDB')
 		.collection('Games')
@@ -153,6 +154,20 @@ async function addPlayerToGame(gameId, playerId) {
 		.catch(console.dir);
 }
 
+async function addNewCardsToPlayerHand(playerId, newCardArray, numberOfCardsDrawn) {
+	const query = { _id: ObjectId(playerId) };
+	const valueToChange = { 
+		$set: { numberOfCardsDrawn: numberOfCardsDrawn },
+		$push: { cardIds: { $each: newCardArray }},
+	 };
+
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateOne(query, valueToChange)
+		.catch(console.dir);
+}
+
 const queries = {
 	getUserDataByUsername,
 	getUserDataMinById,
@@ -164,6 +179,7 @@ const queries = {
 	getGameByGameId,
 	assignGameIdToPlayer,
 	addPlayerToGame,
+	addNewCardsToPlayerHand,
 };
 
 module.exports = queries;
