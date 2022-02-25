@@ -14,35 +14,35 @@ async function getUserDataMinById(playerId) {
 	const game = await mongo.client
 		.db('HubEmpireDB')
 		.collection('Games')
-		.findOne({ 
-			playerIds: playerId, 
+		.findOne({
+			playerIds: playerId,
 		})
 		.catch(console.dir);
 
-	if(game) {
+	if (game) {
 		//Get all users in the same game
-		var userDataMinArray = []
+		var userDataMinArray = [];
 
-		for(playerId of game.playerIds) {
+		for (playerId of game.playerIds) {
 			//console.log(playerId)
 			const query = {
-				_id: ObjectId(playerId)
+				_id: ObjectId(playerId),
 			};
-		
+
 			const projection = {
 				//_id is returned by default
 				displayName: 1,
 			};
-			
+
 			const userDataMin = await mongo.client
 				.db('HubEmpireDB')
 				.collection('Users')
 				.findOne(query, { projection: projection })
 				.catch(console.dir);
-			
+
 			userDataMinArray.push(userDataMin);
 		}
-		return (userDataMinArray);
+		return userDataMinArray;
 	} else {
 		return null;
 	}
@@ -112,10 +112,7 @@ async function addNewGame(newGame) {
 }
 
 async function getAllExistingGames() {
-	return await mongo.client
-		.db('HubEmpireDB')
-		.collection('Games')
-		.find();
+	return await mongo.client.db('HubEmpireDB').collection('Games').find();
 }
 
 async function getGameByGameId(gameId) {
@@ -154,17 +151,45 @@ async function addPlayerToGame(gameId, playerId) {
 		.catch(console.dir);
 }
 
-async function addNewCardsToPlayerHand(playerId, newCardArray, numberOfCardsDrawn) {
+async function addNewCardsToPlayerHand(
+	playerId,
+	newCardArray,
+	numberOfCardsDrawn
+) {
 	const query = { _id: ObjectId(playerId) };
-	const valueToChange = { 
+	const valueToChange = {
 		$set: { numberOfCardsDrawn: numberOfCardsDrawn },
-		$push: { cardIds: { $each: newCardArray }},
-	 };
+		$push: { cardIds: { $each: newCardArray } },
+	};
 
 	return await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
 		.updateOne(query, valueToChange)
+		.catch(console.dir);
+}
+
+async function addMoney(playerId, amount) {
+	const query = { _id: ObjectId(playerId) };
+	const valueToChange = {
+		$inc: { cash: amount },
+	};
+
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateOne(query, valueToChange)
+		.catch(console.dir);
+}
+
+async function userHasCard(playerId, cardId, instanceId) {
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.find({
+			_id: ObjectId(playerId),
+			cardIds: { $elemMatch: { instanceId: instanceId } },
+		})
 		.catch(console.dir);
 }
 
@@ -180,6 +205,8 @@ const queries = {
 	assignGameIdToPlayer,
 	addPlayerToGame,
 	addNewCardsToPlayerHand,
+	addMoney,
+	userHasCard,
 };
 
 module.exports = queries;

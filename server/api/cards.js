@@ -1,3 +1,6 @@
+const { userHasCard } = require('../queries/queries');
+const queries = require('../queries/queries');
+
 const Cards = {
 	0: {
 		id: 0,
@@ -13,54 +16,46 @@ const Cards = {
 	10: {
 		id: 10,
 		emoji: '🏢',
-		displayName: 'Au au',
-		description: 'Limpeh go salakau fight gang lmao who u',
+		displayName: 'Pickpocket',
+		description: 'Steal $300 from a player',
 		cardType: 1,
 		rarity: 0,
-		isTargetCard: true,
+		isTargetCard: false,
 		isTargetPlayer: true,
 		isTargetSelfCard: false,
-		onUse: ({ targetId, targetCardId, selfCardId }) =>
-			new Promise((res, rej) => {
-				console.log(targetId, targetCardId, selfCardId);
-				return res('test');
+		onUse: ({ targetId, targetCardId, selfCardId }, user) =>
+			new Promise(async (res, rej) => {
+				try {
+					console.log(targetId, targetCardId, selfCardId);
+					await queries.addMoney(targetId, -300);
+					await queries.addMoney(user.id, 300);
+					return res(`$300 was stolen from ${targetId}`);
+				} catch (err) {
+					rej(err);
+				}
 			}),
-	},
-	103: {
-		id: 103,
-		emoji: '🏢',
-		displayName: 'hub103',
-		description: 'test',
-		cardType: 0,
-		rarity: 0,
-		value: 11,
-		baseIncome: 2,
-		step: 0,
-		industry: 0,
-	},
-	107: {
-		id: 107,
-		emoji: '🏢',
-		displayName: 'hub107',
-		description: 'test',
-		cardType: 0,
-		rarity: 0,
-		value: 12,
-		baseIncome: 2,
-		step: 1,
-		industry: 0,
 	},
 	11: {
 		id: 11,
 		emoji: '🏢',
-		displayName: 'hub11',
-		description: 'test',
-		cardType: 0,
-		rarity: 0,
-		value: 13,
-		baseIncome: 2,
-		step: 2,
-		industry: 1,
+		displayName: 'Pickpocket II',
+		description: 'Steal $500 from a player',
+		cardType: 1,
+		rarity: 1,
+		isTargetCard: false,
+		isTargetPlayer: true,
+		isTargetSelfCard: false,
+		onUse: ({ targetId, targetCardId, selfCardId }, user) =>
+			new Promise(async (res, rej) => {
+				try {
+					console.log(targetId, targetCardId, selfCardId);
+					await queries.addMoney(targetId, -500);
+					await queries.addMoney(user.id, 500);
+					return res(`$500 was stolen from ${targetId}`);
+				} catch (err) {
+					rej(err);
+				}
+			}),
 	},
 	25: {
 		id: 25,
@@ -74,13 +69,90 @@ const Cards = {
 		step: 2,
 		industry: 2,
 	},
-	101: {},
-	102: {},
-	103: {},
-	104: {},
-	105: {},
-	106: {},
-	107: {},
+	101: {
+		id: 101,
+		emoji: '🏢',
+		displayName: 'hub101',
+		description: 'test',
+		cardType: 0,
+		rarity: 0,
+		value: 11,
+		baseIncome: 2,
+		step: 0,
+		industry: 0,
+	},
+	102: {
+		id: 102,
+		emoji: '🏢',
+		displayName: 'hub102',
+		description: 'test',
+		cardType: 0,
+		rarity: 2,
+		value: 11,
+		baseIncome: 2,
+		step: 1,
+		industry: 0,
+	},
+	103: {
+		id: 103,
+		emoji: '🏢',
+		displayName: 'hub103',
+		description: 'test',
+		cardType: 0,
+		rarity: 3,
+		value: 11,
+		baseIncome: 2,
+		step: 2,
+		industry: 0,
+	},
+	104: {
+		id: 104,
+		emoji: '🏢',
+		displayName: 'hub103',
+		description: 'test',
+		cardType: 0,
+		rarity: 0,
+		value: 11,
+		baseIncome: 2,
+		step: 3,
+		industry: 0,
+	},
+	105: {
+		id: 105,
+		emoji: '🏢',
+		displayName: 'hub103',
+		description: 'test',
+		cardType: 0,
+		rarity: 0,
+		value: 11,
+		baseIncome: 2,
+		step: 1,
+		industry: 0,
+	},
+	106: {
+		id: 106,
+		emoji: '🏢',
+		displayName: 'hub103',
+		description: 'test',
+		cardType: 0,
+		rarity: 0,
+		value: 11,
+		baseIncome: 2,
+		step: 1,
+		industry: 1,
+	},
+	107: {
+		id: 107,
+		emoji: '🏢',
+		displayName: 'hub107',
+		description: 'test',
+		cardType: 0,
+		rarity: 0,
+		value: 12,
+		baseIncome: 2,
+		step: 1,
+		industry: 0,
+	},
 };
 
 const getCardById = (id) => (Cards[id] != undefined ? Cards[id] : Cards[0]);
@@ -135,10 +207,18 @@ const unwrapCard = (card) =>
 	card.cardType == 1 ? unwrapActionCard(card) : unwrapHubCard(card);
 
 async function useCard(req, res) {
-	Cards[req.query.cardId]
-		.onUse(req.query)
-		.then((r) => res.status(200).json(r))
-		.catch((err) => res.status(400).json(err));
+	try {
+		const hasCard = await queries.userHasCard(
+			req.user.id,
+			req.query.cardId,
+			req.query.instanceId
+		);
+		console.log(hasCard);
+		const r = await Cards[req.query.cardId].onUse(req.query, req.user);
+		res.status(200).json(r);
+	} catch (err) {
+		res.status(400).json(err);
+	}
 }
 
 async function getCards(req, res) {
