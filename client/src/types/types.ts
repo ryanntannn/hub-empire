@@ -23,9 +23,22 @@ export enum CardType {
 	ACTION,
 }
 
+export interface CardFlag {
+	effector: {
+		playerId: number;
+		cardId: number;
+	};
+	isTemporary: boolean;
+	turnsLeft?: number;
+	incomeBoost: number;
+	isStolen: boolean;
+}
+
 export interface CardInstance {
 	instanceId: number;
 	card: Card;
+	mods?: any;
+	flags?: CardFlag[];
 }
 
 export interface Card {

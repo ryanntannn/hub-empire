@@ -2,6 +2,7 @@ import { Button } from 'reactstrap';
 import {
 	ActionCard,
 	Card,
+	CardRarity,
 	CardType,
 	HubCard,
 	Industry,
@@ -16,6 +17,32 @@ function IndustryToColor(industry: Industry) {
 			return '#84BCDA';
 		case Industry.CLOTHES:
 			return '#F37748';
+	}
+}
+
+function RarityToColor(rarity: CardRarity) {
+	switch (rarity) {
+		case CardRarity.COMMON:
+			return '#505050';
+		case CardRarity.RARE:
+			return '#5050bb';
+		case CardRarity.EPIC:
+			return '#bb50aa';
+		case CardRarity.LEGENDARY:
+			return '#ee9050';
+	}
+}
+
+function RarityToBgColor(rarity: CardRarity) {
+	switch (rarity) {
+		case CardRarity.COMMON:
+			return '#ffffff';
+		case CardRarity.RARE:
+			return '#ddddff';
+		case CardRarity.EPIC:
+			return '#eeddff';
+		case CardRarity.LEGENDARY:
+			return '#ffeedd';
 	}
 }
 
@@ -49,7 +76,10 @@ function ActionCardComponent(props: {
 			className={`rounded-box shadow card ${
 				props.selected ? 'selected' : null
 			}`}
-			onClick={props.onClick}>
+			onClick={props.onClick}
+			style={{
+				backgroundColor: RarityToBgColor(props.card.rarity),
+			}}>
 			<div
 				className='top-color-area'
 				style={{
@@ -61,7 +91,11 @@ function ActionCardComponent(props: {
 				}}>
 				{props.card.emoji}
 			</h1>
-			<p className='normal-and-bold no-padding'>
+			<p
+				style={{
+					color: RarityToColor(props.card.rarity),
+				}}
+				className='normal-and-bold no-padding'>
 				{props.card.displayName}
 			</p>
 			<p className='no-padding'>{props.card.description}</p>
@@ -79,7 +113,10 @@ function HubCardComponent(props: {
 			className={`rounded-box shadow card ${
 				props.selected ? 'selected' : null
 			}`}
-			onClick={props.onClick}>
+			onClick={props.onClick}
+			style={{
+				backgroundColor: RarityToBgColor(props.card.rarity),
+			}}>
 			<div
 				className='top-color-area'
 				style={{
@@ -95,7 +132,11 @@ function HubCardComponent(props: {
 				}}>
 				{props.card.emoji}
 			</h1>
-			<p className='normal-and-bold no-padding'>
+			<p
+				style={{
+					color: RarityToColor(props.card.rarity),
+				}}
+				className='normal-and-bold no-padding'>
 				{props.card.displayName}
 			</p>
 			<p className='normal-and-bold no-padding'>${props.card.value}</p>
