@@ -91,6 +91,15 @@ export interface UserData extends UserDataBasic {
 	expensesPerTurn: number;
 }
 
+export interface ActionLog {
+	userId: number;
+	cardId: number;
+	instanceId?: number;
+	targetId?: number;
+	targetCardId?: number;
+	selfCardId?: number;
+}
+
 export enum TradeStatus {
 	PENDING,
 	ACCEPTED,

@@ -213,6 +213,21 @@ async function destroyCard(playerId, cid, iid) {
 		.catch(console.dir);
 }
 
+async function updateActionLog(gameId, data) {
+	const query = {
+		code: gameId,
+	};
+	const valueToChange = {
+		$push: { log: { ...data } },
+	};
+
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Games')
+		.updateOne(query, valueToChange)
+		.catch(console.dir);
+}
+
 const queries = {
 	getUserDataByUsername,
 	getUserDataMinById,
@@ -228,6 +243,7 @@ const queries = {
 	addMoney,
 	userHasCard,
 	destroyCard,
+	updateActionLog,
 };
 
 module.exports = queries;

@@ -34,6 +34,15 @@ export interface PostUseCardParams {
 	selfCardId?: number;
 }
 
+//GET /action-log
+export interface GetActionLogParams {
+	showAmount: number;
+	page: number;
+}
+export interface GetActionLogRes {
+	log: ActionLog[];
+}
+
 //POST /send-trade
 export interface PostSendTradeParams {
 	idTo: number;
