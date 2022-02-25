@@ -37,11 +37,18 @@
 	text-align: center;
 	overflow: hidden;
 	padding-top: 70px;
-	width: 100%;
+	width: 100vw;
 	height: 260px;
 	max-width: 190px;
 	margin: 0;
 	display: inline-block;
+}
+
+.card .step {
+	margin-top: 15px;
+	font-weight: 900;
+	font-size: 13px;
+	color: rgba(10, 10, 10, 0.5);
 }
 
 .card.selected {
@@ -68,9 +75,15 @@
 }
 
 .card-container.small {
-	max-width: 400px;
+	max-width: 430px;
 	grid-template-columns: 1fr 1fr;
 	text-align: center;
+}
+
+.card-details {
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+	gap: 30px;
 }
 
 .mini .top-color-area {
@@ -79,13 +92,13 @@
 
 .top-color-area {
 	position: absolute;
-	height: 60px;
+	height: 50px;
 	width: 100%;
 	left: 0;
 	top: 0;
 
-	transform: skewY(-5deg);
-	transform-origin: left;
+	/* transform: skewY(-5deg);
+	transform-origin: left; */
 }
 
 .back-button {
@@ -95,8 +108,8 @@
 }
 
 .scroll-y {
-	overflow-x: scroll;
-	overflow-y: hidden;
+	overflow-y: scroll;
+	overflow-x: hidden;
 	white-space: nowrap;
 }
 
@@ -135,10 +148,15 @@
 	background: #555;
 }
 
-@media only screen and (max-width: 550px) {
+@media only screen and (max-width: 650px) {
 	.card-container {
 		grid-template-columns: 1fr 1fr;
 		grid-gap: 20px;
 		padding: 0 20px;
+	}
+
+	.card-details {
+		display: inline;
+		grid-template-columns: 1fr 2fr;
 	}
 }

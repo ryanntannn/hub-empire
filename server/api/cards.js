@@ -7,9 +7,8 @@ const Cards = {
 		cardType: 1,
 		rarity: 0,
 		isTargetCard: false,
-		isTargetPlayer: true,
+		isTargetPlayer: false,
 		isTargetSelfCard: false,
-		onUse: () => {},
 	},
 	10: {
 		id: 10,
@@ -21,6 +20,35 @@ const Cards = {
 		isTargetCard: true,
 		isTargetPlayer: true,
 		isTargetSelfCard: false,
+		onUse: ({ targetId, targetCardId, selfCardId }) =>
+			new Promise((res, rej) => {
+				console.log(targetId, targetCardId, selfCardId);
+				return res('test');
+			}),
+	},
+	103: {
+		id: 103,
+		emoji: '🏢',
+		displayName: 'hub103',
+		description: 'test',
+		cardType: 0,
+		rarity: 0,
+		value: 11,
+		baseIncome: 2,
+		step: 0,
+		industry: 0,
+	},
+	107: {
+		id: 107,
+		emoji: '🏢',
+		displayName: 'hub107',
+		description: 'test',
+		cardType: 0,
+		rarity: 0,
+		value: 12,
+		baseIncome: 2,
+		step: 1,
+		industry: 0,
 	},
 	11: {
 		id: 11,
@@ -29,10 +57,10 @@ const Cards = {
 		description: 'test',
 		cardType: 0,
 		rarity: 0,
-		value: 10,
+		value: 13,
 		baseIncome: 2,
 		step: 2,
-		industry: 2,
+		industry: 1,
 	},
 	25: {
 		id: 25,
@@ -41,7 +69,7 @@ const Cards = {
 		description: 'test',
 		cardType: 0,
 		rarity: 0,
-		value: 10,
+		value: 14,
 		baseIncome: 1,
 		step: 2,
 		industry: 2,
@@ -107,7 +135,10 @@ const unwrapCard = (card) =>
 	card.cardType == 1 ? unwrapActionCard(card) : unwrapHubCard(card);
 
 async function useCard(req, res) {
-	console.log(req);
+	Cards[req.query.cardId]
+		.onUse(req.query)
+		.then((r) => res.status(200).json(r))
+		.catch((err) => res.status(400).json(err));
 }
 
 async function getCards(req, res) {
