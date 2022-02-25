@@ -89,6 +89,7 @@ export interface UserData extends UserDataBasic {
 	assetValue: number;
 	incomePerTurn: number;
 	expensesPerTurn: number;
+	gameId: string;
 }
 
 export interface ActionLog {

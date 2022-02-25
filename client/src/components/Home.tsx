@@ -22,6 +22,17 @@ function Home() {
 			.catch((err) => {
 				console.log(err);
 			});
+		auth.authenticatedGet('/action-log', {
+			gameId: '1234',
+			showAmount: 5,
+			page: 1,
+		})
+			.then((res: any) => {
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
 
 	React.useEffect(() => {

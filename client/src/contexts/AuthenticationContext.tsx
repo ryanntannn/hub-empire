@@ -23,7 +23,7 @@ interface UseAuth {
 	user: LocalUserData;
 	login: (responseData: LocalUserData, saveCookie: boolean) => void;
 	logout: () => void;
-	authenticatedGet: <T>(url: string) => Promise<T>;
+	authenticatedGet: <T>(url: string, params?: any) => Promise<T>;
 	authenticatedPost: <T>(url: string, params?: any) => Promise<T>;
 }
 

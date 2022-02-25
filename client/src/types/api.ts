@@ -1,4 +1,10 @@
-import { TradeOffer, UserData, UserDataBasic, UserDataMin } from './types';
+import {
+	ActionLog,
+	TradeOffer,
+	UserData,
+	UserDataBasic,
+	UserDataMin,
+} from './types';
 
 // GET /home
 export interface GetHomeDataRes {
@@ -36,6 +42,7 @@ export interface PostUseCardParams {
 
 //GET /action-log
 export interface GetActionLogParams {
+	gameId: string;
 	showAmount: number;
 	page: number;
 }
