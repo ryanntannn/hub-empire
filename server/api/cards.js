@@ -72,7 +72,7 @@ const Cards = {
 	101: {
 		id: 101,
 		emoji: '🏢',
-		displayName: 'hub101',
+		displayName: "Chee's Poultry",
 		description: 'test',
 		cardType: 0,
 		rarity: 0,
@@ -208,15 +208,14 @@ const unwrapCard = (card) =>
 
 async function useCard(req, res) {
 	try {
-		console.log(req.user.id, req.query.cardId, req.query.instanceId);
 		const user = await queries.userHasCard(
 			req.user.id,
 			req.query.cardId,
 			req.query.instanceId
 		);
-		console.log(user);
+		if (!user) return res.status(400).json('Card does not exist');
 		const r = await Cards[req.query.cardId].onUse(req.query, req.user);
-		await queries.destroyCard(
+		const del = await queries.destroyCard(
 			req.user.id,
 			req.query.cardId,
 			req.query.instanceId
@@ -226,9 +225,9 @@ async function useCard(req, res) {
 			...req.query,
 		};
 		await queries.updateActionLog(user.gameId, logData);
-		res.status(200).json(r);
+		return res.status(200).json(r);
 	} catch (err) {
-		res.status(400).json(err);
+		return res.status(400).json(err);
 	}
 }
 
