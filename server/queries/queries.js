@@ -232,13 +232,23 @@ async function getActionLog(gameId, start, amount) {
 	const query = {
 		code: gameId,
 	};
-	const options = { log: 1 };
+	const projection = { $slice: [start, amount] };
 
 	return await mongo.client
 		.db('HubEmpireDB')
 		.collection('Games')
-		.find(query, options)
-		.catch(console.dir);
+		.aggregate([
+			{
+				$match: query,
+			},
+			{
+				$project: {
+					log: {
+						$slice: ['$log', parseInt(start), parseInt(amount)],
+					},
+				},
+			},
+		]);
 }
 
 const queries = {

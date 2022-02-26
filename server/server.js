@@ -122,7 +122,9 @@ app.get('/action-log', authenticateToken, async function (req, res) {
 			start,
 			amount
 		);
-		res.status(200).json(actionLog);
+		actionLog.forEach((log) => {
+			res.status(200).json(log.log);
+		});
 	} catch (error) {
 		console.log(error);
 		return res.status(400).json(error);
