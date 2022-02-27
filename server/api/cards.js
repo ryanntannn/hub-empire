@@ -217,8 +217,8 @@ async function useCard(req, res) {
 		const r = await Cards[req.query.cardId].onUse(req.query, req.user);
 		const del = await queries.destroyCard(
 			req.user.id,
-			req.query.cardId,
-			req.query.instanceId
+			parseInt(req.query.cardId),
+			parseInt(req.query.instanceId)
 		);
 		const logData = {
 			userId: req.user.id,
