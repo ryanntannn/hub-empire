@@ -18,6 +18,7 @@ import NewTrade from './components/trading/NewTrade';
 import TradeInbox from './components/trading/TradeInbox';
 import ModalContainer from 'react-modal-promise';
 import { CardProvider } from './contexts/CardsContext';
+import { History } from './components/History';
 
 const rootElement = document.getElementById('root');
 
@@ -80,6 +81,14 @@ render(
 						element={
 							<RequireAuth>
 								<Profile />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='history'
+						element={
+							<RequireAuth>
+								<History />
 							</RequireAuth>
 						}
 					/>

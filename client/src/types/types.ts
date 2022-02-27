@@ -95,6 +95,7 @@ export interface UserData extends UserDataBasic {
 export interface ActionLog {
 	userId: number;
 	cardId: number;
+	time: number;
 	instanceId?: number;
 	targetId?: number;
 	targetCardId?: number;

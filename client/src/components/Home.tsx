@@ -23,17 +23,6 @@ function Home() {
 			.catch((err) => {
 				console.log(err);
 			});
-		auth.authenticatedGet('/action-log', {
-			gameId: '1234',
-			showAmount: 5,
-			page: 1,
-		})
-			.then((res: any) => {
-				console.log(res.data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
 	};
 
 	React.useEffect(() => {
@@ -106,6 +95,16 @@ function Home() {
 								emoji='👤'
 								linkTo='/profile'
 								color='#EBB30B'
+							/>
+						</Col>
+					</Row>
+					<Row className='mb-3 gx-3'>
+						<Col>
+							<NavButton
+								title='History'
+								emoji='📓'
+								linkTo='/history'
+								color='#dd5050'
 							/>
 						</Col>
 					</Row>
