@@ -57,9 +57,7 @@ async function register(req, res) {
 			cash: 0,
 			netWorth: 0,
 			netEarnings: 0,
-			assetValue: 0,
-			incomePerTurn: 0,
-			expensesPerTurn: 0,
+			turnIncome: 0,
 			numberOfCardsDrawn: 0,
 		};
 		mongo.client.db('HubEmpireDB').collection('Users').insertOne(newUser);

@@ -251,6 +251,22 @@ async function getActionLog(gameId, start, amount) {
 		]);
 }
 
+async function updatePlayerIncome(playerId, turnIncome, cash) {
+	const query = { _id: ObjectId(playerId) };
+	const valueToUpdate = { 
+		$set: { 
+			turnIncome: turnIncome,
+			cash: cash,
+	 	} 
+	};
+
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateOne(query, valueToUpdate)
+		.catch(console.dir);
+}
+
 const queries = {
 	getUserDataByUsername,
 	getUserDataMinById,
@@ -268,6 +284,7 @@ const queries = {
 	destroyCard,
 	updateActionLog,
 	getActionLog,
+	updatePlayerIncome,
 };
 
 module.exports = queries;
