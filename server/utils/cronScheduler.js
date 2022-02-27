@@ -3,8 +3,8 @@ const GameInstance = require('../game/game.js');
 const queries = require('../queries/queries.js');
 
 //Cron values can be changed for testing
-//Revery back to '0 07,11,15 * * *' when done
-var task = cron.schedule('* * * * *', () => {
+//Revert back to '0 07,11,15 * * *' when done
+var task = cron.schedule('0 07,11,15 * * *', () => {
 	let date = new Date()
 	let day = ("0" + date.getDate()).slice(-2);
 	let month = ("0" + (date.getMonth() + 1)).slice(-2);
