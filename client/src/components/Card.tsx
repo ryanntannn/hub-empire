@@ -8,6 +8,7 @@ import {
 	Industry,
 	Step,
 } from '../types/types';
+import { numberWithCommas } from '../utils/Misc';
 
 function IndustryToColor(industry: Industry) {
 	switch (industry) {
@@ -98,7 +99,7 @@ function ActionCardComponent(props: {
 				className='normal-and-bold no-padding'>
 				{props.card.displayName}
 			</p>
-			<p className='no-padding'>{props.card.description}</p>
+			<p className='no-padding mt-2'>{props.card.description}</p>
 		</div>
 	);
 }
@@ -139,11 +140,14 @@ function HubCardComponent(props: {
 				className='normal-and-bold no-padding'>
 				{props.card.displayName}
 			</p>
-			<p className='normal-and-bold no-padding'>${props.card.value}</p>
+			<p className='normal-and-bold no-padding mt-2'>
+				${numberWithCommas(props.card.value)}M
+			</p>
 			<p
 				style={{ color: props.card.baseIncome >= 0 ? 'green' : 'red' }}
-				className='normal-and-bold no-padding'>
-				{props.card.baseIncome >= 0 ? '+' : '-'}${props.card.baseIncome}
+				className='normal-and-bold no-padding mt-2'>
+				{props.card.baseIncome >= 0 ? '+' : '-'}$
+				{numberWithCommas(Math.abs(props.card.baseIncome))}M
 			</p>
 		</div>
 	);

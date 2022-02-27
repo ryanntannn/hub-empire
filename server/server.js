@@ -43,7 +43,7 @@ app.get('/home', authenticateToken, async function (req, res) {
 			res.status(404).json('Page not found');
 		}
 	} catch (error) {
-		return res.status(404).json('Page not found');
+		return res.status(400).json(error);
 	}
 });
 

@@ -4,6 +4,7 @@ function getAssetValue(cards) {
 	let value = 0;
 	cards.forEach((cardInstance) => {
 		const thisCard = Cards[cardInstance.cardId];
+		if (thisCard == undefined) return;
 		if (thisCard.cardType != 0) return;
 		value += thisCard.value;
 	});

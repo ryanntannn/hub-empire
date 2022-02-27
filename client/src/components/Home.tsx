@@ -91,20 +91,20 @@ function Home() {
 
 						<Col>
 							<NavButton
-								title='My Profile'
-								emoji='👤'
-								linkTo='/profile'
-								color='#EBB30B'
+								title='History'
+								emoji='📓'
+								linkTo='/history'
+								color='#dd5050'
 							/>
 						</Col>
 					</Row>
 					<Row className='mb-3 gx-3'>
 						<Col>
 							<NavButton
-								title='History'
-								emoji='📓'
-								linkTo='/history'
-								color='#dd5050'
+								title='My Profile'
+								emoji='👤'
+								linkTo='/profile'
+								color='#EBB30B'
 							/>
 						</Col>
 					</Row>
