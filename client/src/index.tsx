@@ -1,19 +1,103 @@
 import './index.css';
 import Home from './components/Home';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { render } from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/shadow.css';
 import './styles/master.css';
+import MyCards from './components/MyCards';
+import Trade from './components/Trade';
+import Leaderboard from './components/Leaderboard';
+import Profile, { ProfileProps } from './components/Profile';
+import Login from './components/Login';
+import { AuthenticationProvider } from './contexts/AuthenticationContext';
+import useAuth from './contexts/AuthenticationContext';
+import React from 'react';
+import NewTrade from './components/trading/NewTrade';
+import TradeInbox from './components/trading/TradeInbox';
+import ModalContainer from 'react-modal-promise';
+import { CardProvider } from './contexts/CardsContext';
+import { History } from './components/History';
 
 const rootElement = document.getElementById('root');
+
+const RequireAuth: React.FC = ({ children }: any) => {
+	const { authed } = useAuth();
+
+	return authed == true ? children : <Login />;
+};
+
 render(
-	<BrowserRouter>
-		<Routes>
-			<Route path='/' element={<Home />} />
-		</Routes>
-	</BrowserRouter>,
+	<AuthenticationProvider>
+		<CardProvider>
+			<BrowserRouter>
+				<Routes>
+					<Route
+						path='/'
+						element={
+							<RequireAuth>
+								<Home />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='my-cards'
+						element={
+							<RequireAuth>
+								<MyCards />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='trade'
+						element={
+							<RequireAuth>
+								<Trade />
+							</RequireAuth>
+						}>
+						<Route path='inbox' element={<TradeInbox />} />
+						<Route path='history' element={<TradeInbox />} />
+						<Route path='new' element={<NewTrade />} />
+					</Route>
+					<Route
+						path='leaderboard'
+						element={
+							<RequireAuth>
+								<Leaderboard />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='profile'
+						element={
+							<RequireAuth>
+								<Profile />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='profile/:userId'
+						element={
+							<RequireAuth>
+								<Profile />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='history'
+						element={
+							<RequireAuth>
+								<History />
+							</RequireAuth>
+						}
+					/>
+					<Route path='login' element={<Login />} />
+				</Routes>
+			</BrowserRouter>
+			<ModalContainer />
+		</CardProvider>
+	</AuthenticationProvider>,
 	rootElement
 );
 
