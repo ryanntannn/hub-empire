@@ -17,6 +17,7 @@ function Home() {
 	const getHomeData = () => {
 		auth.authenticatedGet('/home')
 			.then((res: any) => {
+				console.log(res.data);
 				setHomeData(res.data);
 			})
 			.catch((err) => {
@@ -59,13 +60,13 @@ function Home() {
 								</h2>
 								<p className='no-padding'>net-worth:</p>
 								<h2 className='no-padding huge-and-bold'>
-									${homeData.myData.netWorth}
+									${homeData.myData.netWorth}M
 								</h2>
 								<p className='no-padding'>earnings per day:</p>
 								<h2
 									className='no-padding big-and-bold'
 									style={{ color: 'green' }}>
-									${homeData.myData.netEarnings}
+									${homeData.myData.turnIncome}M
 								</h2>
 							</div>
 						</Col>

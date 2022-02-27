@@ -73,7 +73,7 @@ export interface UserDataBasic extends UserDataMin {
 	id: number;
 	displayName: string;
 	netWorth: number;
-	netEarnings: number;
+	turnIncome: number;
 }
 
 export interface UserData extends UserDataBasic {
@@ -87,7 +87,7 @@ export interface UserData extends UserDataBasic {
 	netWorth: number;
 	netEarnings: number;
 	assetValue: number;
-	incomePerTurn: number;
+	turnIncome: number;
 	expensesPerTurn: number;
 	gameId: string;
 }

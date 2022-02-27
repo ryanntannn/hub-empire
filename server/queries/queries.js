@@ -58,8 +58,9 @@ async function getUserDataBasicById(id) {
 	const projection = {
 		//_id is returned by default
 		displayName: 1,
-		netWorth: 1,
-		netEarnings: 1,
+		cash: 1,
+		cardIds: 1,
+		turnIncome: 1,
 	};
 
 	return await mongo.client
@@ -253,11 +254,11 @@ async function getActionLog(gameId, start, amount) {
 
 async function updatePlayerIncome(playerId, turnIncome, cash) {
 	const query = { _id: ObjectId(playerId) };
-	const valueToUpdate = { 
-		$set: { 
+	const valueToUpdate = {
+		$set: {
 			turnIncome: turnIncome,
 			cash: cash,
-	 	} 
+		},
 	};
 
 	return await mongo.client

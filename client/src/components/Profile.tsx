@@ -67,7 +67,7 @@ export default function Profile() {
 						</h1>
 						<p className='no-padding'>net-worth:</p>
 						<h2 className='no-padding huge-and-bold'>
-							${userData.netWorth}
+							${userData.cash + userData.assetValue}M
 						</h2>
 						<p className='no-padding'>earnings per day:</p>
 						<h2
@@ -76,8 +76,8 @@ export default function Profile() {
 									userData.netEarnings >= 0 ? 'green' : 'red',
 							}}
 							className='huge-and-bold no-padding'>
-							{userData.netEarnings >= 0 ? '+' : '-'}$
-							{userData.netEarnings}
+							{userData.turnIncome >= 0 ? '+' : '-'}$
+							{userData.turnIncome}M
 						</h2>
 					</div>
 					<br />
@@ -87,31 +87,11 @@ export default function Profile() {
 					</h2>
 					<p className='no-padding'>total cash value:</p>
 					<h2 className='no-padding huge-and-bold'>
-						${userData.cash}
+						${userData.cash}M
 					</h2>
 					<p className='no-padding'>total asset value:</p>
 					<h2 className='no-padding huge-and-bold'>
-						${userData.assetValue}
-					</h2>
-					<p className='no-padding'>revenue:</p>
-					<h2
-						style={{
-							color:
-								userData.incomePerTurn >= 0 ? 'green' : 'red',
-						}}
-						className='huge-and-bold no-padding'>
-						{userData.incomePerTurn >= 0 ? '+' : '-'}$
-						{userData.incomePerTurn}
-					</h2>
-					<p className='no-padding'>expenses:</p>
-					<h2
-						style={{
-							color:
-								userData.expensesPerTurn >= 0 ? 'green' : 'red',
-						}}
-						className='huge-and-bold no-padding'>
-						{userData.expensesPerTurn >= 0 ? '+' : '-'}$
-						{Math.abs(userData.expensesPerTurn)}
+						${userData.assetValue}M
 					</h2>
 					{ownProfile ? (
 						<>

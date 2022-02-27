@@ -8,7 +8,7 @@ const defaultUserState: LocalUserData = {
 		id: -1,
 		displayName: '',
 		netWorth: 0,
-		netEarnings: 0,
+		turnIncome: 0,
 	},
 	accessToken: '',
 };

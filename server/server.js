@@ -35,8 +35,10 @@ app.get('/home', authenticateToken, async function (req, res) {
 		}
 		userData = await queries.getUserDataBasicById(req.user.id);
 		if (userData) {
+			console.log(userData);
+			const netWorth = userData.cash + getAssetValue(userData.cardIds);
 			//Return UserDataBasic
-			res.status(200).json({ myData: userData });
+			res.status(200).json({ myData: { ...userData, netWorth } });
 		} else {
 			res.status(404).json('Page not found');
 		}
@@ -90,8 +92,10 @@ app.get('/user', authenticateToken, async function (req, res) {
 		}
 		userData = await queries.getUserDataById(req.query.id);
 		if (userData) {
+			console.log(userData);
+			const assetValue = getAssetValue(userData.cardIds);
 			//Return cards
-			return res.status(200).json({ user: userData });
+			return res.status(200).json({ user: { ...userData, assetValue } });
 		} else {
 			return res.status(404).json('Page not found');
 		}
@@ -104,6 +108,7 @@ const tradeRouter = require('./routes/trade.js');
 app.use('/trade', tradeRouter);
 
 const gameRouter = require('./routes/game.js');
+const { getAssetValue } = require('./utils/userUtils');
 app.use('/game', gameRouter);
 
 app.post('/use-card', authenticateToken, useCard);
