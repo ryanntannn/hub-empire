@@ -40,7 +40,7 @@ p {
 .card {
 	text-align: center;
 	overflow: hidden;
-	padding-top: 70px;
+	padding: 70px 10px 10px 10px;
 	width: 100vw;
 	height: 260px;
 	max-width: 190px;
