@@ -57,13 +57,18 @@ function Home() {
 								</p>
 								<h2
 									className='no-padding big-and-bold'
-									style={{ color: 'green' }}>
+									style={{
+										color:
+											homeData.myData.turnIncome >= 0
+												? 'green'
+												: 'red',
+									}}>
 									{homeData.myData.turnIncome >= 0
 										? '+'
 										: '-'}
 									$
 									{numberWithCommas(
-										homeData.myData.turnIncome
+										Math.abs(homeData.myData.turnIncome)
 									)}
 									M
 								</h2>

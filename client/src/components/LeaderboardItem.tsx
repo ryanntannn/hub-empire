@@ -38,7 +38,7 @@ export default function LeaderboardItem(props: { data: LeaderboardItemProps }) {
 				style={{ color: data.turnIncome >= 0 ? 'green' : 'red' }}
 				className='normal-and-bold no-padding'>
 				{data.turnIncome >= 0 ? '+' : '-'}$
-				{numberWithCommas(data.turnIncome)}M
+				{numberWithCommas(Math.abs(data.turnIncome))}M
 			</h2>
 		</div>
 	);
