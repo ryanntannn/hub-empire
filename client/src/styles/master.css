@@ -40,7 +40,7 @@ p {
 .card {
 	text-align: center;
 	overflow: hidden;
-	padding-top: 70px;
+	padding: 70px 10px 10px 10px;
 	width: 100vw;
 	height: 260px;
 	max-width: 190px;
@@ -155,8 +155,7 @@ p {
 @media only screen and (max-width: 650px) {
 	.card-container {
 		grid-template-columns: 1fr 1fr;
-		grid-gap: 20px;
-		padding: 0 20px;
+		grid-gap: 10px;
 	}
 
 	.card-details {

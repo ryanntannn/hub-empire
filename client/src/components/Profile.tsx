@@ -6,6 +6,7 @@ import React from 'react';
 import { UserData } from '../types/types';
 import Loading from './Loading';
 import { GetUserDataRes } from '../types/api';
+import { numberWithCommas } from '../utils/Misc';
 
 export interface ProfileProps {
 	name: string;
@@ -39,6 +40,7 @@ export default function Profile() {
 	const ownProfile = userId() == auth.user.userData.id;
 
 	const getUserData = () => {
+		console.log(userId());
 		auth.authenticatedGet(`/user?id=${userId()}`)
 			.then((res: any) => {
 				setUserData(res.data.user);
@@ -69,15 +71,15 @@ export default function Profile() {
 						<h2 className='no-padding huge-and-bold'>
 							${userData.cash + userData.assetValue}M
 						</h2>
-						<p className='no-padding'>earnings per day:</p>
+						<p className='no-padding'>earnings this turn:</p>
 						<h2
 							style={{
 								color:
 									userData.netEarnings >= 0 ? 'green' : 'red',
 							}}
-							className='huge-and-bold no-padding'>
+							className='no-padding big-and-bold'>
 							{userData.turnIncome >= 0 ? '+' : '-'}$
-							{userData.turnIncome}M
+							{numberWithCommas(userData.turnIncome)}M
 						</h2>
 					</div>
 					<br />

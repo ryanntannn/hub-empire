@@ -18,7 +18,7 @@ export interface GetMyCardsRes {
 
 //GET /leaderboard
 export interface GetLeaderboardRes {
-	users: UserDataBasic[];
+	players: UserDataBasic[];
 }
 
 //GET /users-min
