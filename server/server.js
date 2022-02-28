@@ -37,8 +37,25 @@ app.get('/home', authenticateToken, async function (req, res) {
 		if (userData) {
 			console.log(userData);
 			const netWorth = userData.cash + getAssetValue(userData.cardIds);
+
+			var currentDate = new Date();
+			var nextTurnDate = new Date();
+			nextTurnDate.setDate(currentDate.getDate());
+			var currentHour = currentDate.getHours()
+			if(currentHour < 7) nextTurnDate.setHours(7, 0, 0, 0);
+			else if (currentHour < 11) nextTurnDate.setHours(11, 0, 0, 0);
+			else if (currentHour < 15) nextTurnDate.setHours(15, 0, 0, 0);
+			else {
+				nextTurnDate.setDate(currentDate.getDate() + 1);
+				nextTurnDate.setHours(7, 0, 0, 0);
+			}
+			var timeToNextTurn = Date.parse(nextTurnDate);
+
 			//Return UserDataBasic
-			res.status(200).json({ myData: { ...userData, netWorth } });
+			res.status(200).json({
+				myData: { ...userData, netWorth },
+				timeToNextTurn: timeToNextTurn,
+			});
 		} else {
 			res.status(404).json('Page not found');
 		}
