@@ -235,8 +235,8 @@ async function getActionLog(gameId, start, amount) {
 }
 
 async function updateUserStatsAndInventory(player) {
-	const query = { 
-		_id: ObjectId(player.id)
+	const query = {
+		_id: ObjectId(player.id),
 	};
 
 	const valuesToUpdate = {
@@ -248,8 +248,8 @@ async function updateUserStatsAndInventory(player) {
 		},
 		$push: {
 			cardIds: {
-				$each: player.newCards
-			}
+				$each: player.newCards,
+			},
 		},
 	};
 
@@ -261,14 +261,14 @@ async function updateUserStatsAndInventory(player) {
 }
 
 async function updateGameTurnNumber(code, turnNumber) {
-	const query = { 
-		code: code
+	const query = {
+		code: code,
 	};
 
 	const valuesToUpdate = {
 		$set: {
 			turnNumber: turnNumber,
-		}
+		},
 	};
 
 	return await mongo.client
@@ -279,21 +279,21 @@ async function updateGameTurnNumber(code, turnNumber) {
 }
 
 async function getLeaderboard(gameId) {
-	const query = { 
-		gameId: gameId
+	const query = {
+		gameId: gameId,
 	};
 
 	const projection = {
-		username: 1,
+		displayName: 1,
 		netWorth: 1,
-		turnIncome: 1
+		turnIncome: 1,
 	};
 
 	return await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
 		.find(query, { projection: projection })
-		.sort( { netWorth: -1 } )
+		.sort({ netWorth: -1 })
 		.toArray();
 }
 

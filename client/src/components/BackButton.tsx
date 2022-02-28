@@ -6,7 +6,7 @@ export default function BackButton() {
 	const navigate = useNavigate();
 
 	return (
-		<Button className='back-button' outline onClick={() => navigate('/')}>
+		<Button className='back-button' outline onClick={() => navigate(-1)}>
 			<BiArrowBack /> Back
 		</Button>
 	);

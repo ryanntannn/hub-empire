@@ -40,6 +40,7 @@ export default function Profile() {
 	const ownProfile = userId() == auth.user.userData.id;
 
 	const getUserData = () => {
+		console.log(userId());
 		auth.authenticatedGet(`/user?id=${userId()}`)
 			.then((res: any) => {
 				setUserData(res.data.user);
