@@ -7,6 +7,7 @@ import useAuth from '../contexts/AuthenticationContext';
 import { useNavigate } from 'react-router-dom';
 import { GetHomeDataRes } from '../types/api';
 import Loading from './Loading';
+import { numberWithCommas } from '../utils/Misc';
 
 function Home() {
 	let navigate = useNavigate();
@@ -51,11 +52,20 @@ function Home() {
 								<h2 className='no-padding huge-and-bold'>
 									${homeData.myData.netWorth}M
 								</h2>
-								<p className='no-padding'>earnings per day:</p>
+								<p className='no-padding'>
+									earnings this turn:
+								</p>
 								<h2
 									className='no-padding big-and-bold'
 									style={{ color: 'green' }}>
-									${homeData.myData.turnIncome}M
+									{homeData.myData.turnIncome >= 0
+										? '+'
+										: '-'}
+									$
+									{numberWithCommas(
+										homeData.myData.turnIncome
+									)}
+									M
 								</h2>
 							</div>
 						</Col>
