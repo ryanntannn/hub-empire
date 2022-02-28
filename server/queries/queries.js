@@ -283,7 +283,7 @@ async function getLeaderboard(gameId) {
 	};
 
 	const projection = {
-		username: 1,
+		displayName: 1,
 		netWorth: 1,
 		turnIncome: 1
 	};
