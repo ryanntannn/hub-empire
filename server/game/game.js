@@ -1,5 +1,6 @@
 const queries = require('../queries/queries');
 const deck = require('../api/cards.js');
+const Player = require('./player');
 
 class Game {
 	joinCode = null;
@@ -9,9 +10,6 @@ class Game {
 	deckArray = null;
 
 	constructor(game) {
-		// console.log(game.playerIds)
-		// console.log(game.status)
-		// //No value = New game
 		if (game.code == null) {
 			console.log('Game Code required. Game object creation failed.');
 			return -1;
@@ -23,29 +21,32 @@ class Game {
 	}
 
 	async executeTurn() {
-		return;
 		if (this.playerIds == [] || this.playerIds == null) {
 			console.log('No players in the game');
 			return;
 		}
 
-		//queries.destroyCard("6200f29d4b5a181689df75cb", 10, 0).catch(console.dir);
 		for (var playerId of this.playerIds) {
 			var playerInfo = await queries.getUserDataById(playerId);
-			console.log(playerInfo.username);
-			this.calculateTurnIncome(playerInfo).catch(console.dir);
-			this.drawCards(playerInfo).catch(console.dir);
+			var player = new Player(playerInfo);
+			console.log(player.username)
+
+			this.calculateTurnIncome(player);
+			this.drawCards(player);
+			this.calculateNetWorth(player)
+
+			queries.updateUserStatsAndInventory(player).catch(console.dir);
 		}
-		//update turn number
+		this.turnNumber += 1;
+		queries.updateGameTurnNumber(this.joinCode, this.turnNumber).catch(console.dir);
 		console.log('Turn executed');
 		return;
-		//put new cards into database
 	}
 
-	calculateTurnIncome(playerInfo) {
+	calculateTurnIncome(player) {
 		var turnIncome = 0;
 		//console.log(playerInfo.cardIds)
-		playerInfo.cardIds.forEach((card) => {
+		player.cardIds.forEach((card) => {
 			var key = parseInt(card.cardId);
 			if (key in deck.Cards) {
 				//Only add hub income
@@ -53,31 +54,36 @@ class Game {
 					turnIncome += deck.Cards[key].baseIncome;
 				}
 			} else {
-				console.log('Invalid Card ID: ' + key);
+				//console.log('Invalid Card ID: ' + key);
 			}
 		});
-		console.log('Money Earned this Turn: ' + turnIncome);
-		var totalCash = playerInfo.cash + turnIncome;
+		//console.log('Money Earned this Turn: ' + turnIncome);
+		var totalCash = player.cash + turnIncome;
+
+		player.turnIncome = turnIncome;
+		player.cash = totalCash;
+
+		return;
 
 		return queries
 			.updatePlayerIncome(playerInfo._id, turnIncome, totalCash)
 			.catch(console.dir);
 	}
 
-	drawCards(playerInfo) {
-		var newCardArray = [];
+	drawCards(player) {
 		for (var i = 0; i < 3; i++) {
 			var chosenCardId = this.drawOneCard();
 			var cardDb = {
-				instanceId: playerInfo.numberOfCardsDrawn,
+				instanceId: player.numberOfCardsDrawn,
 				cardId: chosenCardId,
 			};
-			playerInfo.numberOfCardsDrawn += 1;
-			newCardArray.push(cardDb);
+			player.numberOfCardsDrawn += 1;
+			player.newCards.push(cardDb);
 		}
-		console.log(playerInfo.username + "'s New Cards:");
-		console.log(newCardArray);
+		//console.log(player.username + "'s New Cards:");
+		//console.log(player.newCards);
 
+		return;
 		return queries
 			.addNewCardsToPlayerHand(
 				playerInfo._id,
@@ -91,6 +97,13 @@ class Game {
 		var deckArray = Object.keys(deck.Cards);
 		var number = Math.floor(Math.random() * (deckArray.length - 1) + 1);
 		return parseInt(deckArray[number]);
+	}
+
+	calculateNetWorth(player){
+		const userUtils = require('../utils/userUtils');
+		var assetValue = userUtils.getAssetValue(player.cardIds) + userUtils.getAssetValue(player.newCards);
+		player.netWorth = player.cash + assetValue;
+		return;
 	}
 }
 

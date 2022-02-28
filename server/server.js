@@ -64,8 +64,17 @@ app.get('/my-cards', authenticateToken, async function (req, res) {
 	}
 });
 
-app.get('/leaderboard', function (req, res) {
-	res.send('leaderboard');
+app.get('/leaderboard', async function (req, res) {
+	try {
+		console.log(req.query.gameId);
+		var players = await queries.getLeaderboard(req.query.gameId).catch(console.dir);
+		res.status(200).json({
+			players: players,
+		});
+	} catch (error) {
+		return res.status(404).json('Page not found');
+	}
+	
 });
 
 app.get('/users-min', authenticateToken, async function (req, res) {

@@ -152,24 +152,6 @@ async function addPlayerToGame(gameId, playerId) {
 		.catch(console.dir);
 }
 
-async function addNewCardsToPlayerHand(
-	playerId,
-	newCardArray,
-	numberOfCardsDrawn
-) {
-	const query = { _id: ObjectId(playerId) };
-	const valueToChange = {
-		$set: { numberOfCardsDrawn: numberOfCardsDrawn },
-		$push: { cardIds: { $each: newCardArray } },
-	};
-
-	return await mongo.client
-		.db('HubEmpireDB')
-		.collection('Users')
-		.updateOne(query, valueToChange)
-		.catch(console.dir);
-}
-
 async function addMoney(playerId, amount) {
 	const query = { _id: ObjectId(playerId) };
 	const valueToChange = {
@@ -252,20 +234,67 @@ async function getActionLog(gameId, start, amount) {
 		]);
 }
 
-async function updatePlayerIncome(playerId, turnIncome, cash) {
-	const query = { _id: ObjectId(playerId) };
-	const valueToUpdate = {
+async function updateUserStatsAndInventory(player) {
+	const query = { 
+		_id: ObjectId(player.id)
+	};
+
+	const valuesToUpdate = {
 		$set: {
-			turnIncome: turnIncome,
-			cash: cash,
+			cash: player.cash,
+			netWorth: player.netWorth,
+			turnIncome: player.turnIncome,
+			numberOfCardsDrawn: player.numberOfCardsDrawn,
+		},
+		$push: {
+			cardIds: {
+				$each: player.newCards
+			}
 		},
 	};
 
 	return await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
-		.updateOne(query, valueToUpdate)
+		.updateOne(query, valuesToUpdate)
 		.catch(console.dir);
+}
+
+async function updateGameTurnNumber(code, turnNumber) {
+	const query = { 
+		code: code
+	};
+
+	const valuesToUpdate = {
+		$set: {
+			turnNumber: turnNumber,
+		}
+	};
+
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Games')
+		.updateOne(query, valuesToUpdate)
+		.catch(console.dir);
+}
+
+async function getLeaderboard(gameId) {
+	const query = { 
+		gameId: gameId
+	};
+
+	const projection = {
+		username: 1,
+		netWorth: 1,
+		turnIncome: 1
+	};
+
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.find(query, { projection: projection })
+		.sort( { netWorth: -1 } )
+		.toArray();
 }
 
 const queries = {
@@ -279,13 +308,14 @@ const queries = {
 	getGameByGameId,
 	assignGameIdToPlayer,
 	addPlayerToGame,
-	addNewCardsToPlayerHand,
 	addMoney,
 	userHasCard,
 	destroyCard,
 	updateActionLog,
 	getActionLog,
-	updatePlayerIncome,
+	updateUserStatsAndInventory,
+	updateGameTurnNumber,
+	getLeaderboard,
 };
 
 module.exports = queries;

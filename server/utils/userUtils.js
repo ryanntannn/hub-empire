@@ -8,7 +8,7 @@ function getAssetValue(cards) {
 		if (thisCard.cardType != 0) return;
 		value += thisCard.value;
 	});
-	console.log('Value: ', value);
+	console.log('Value:', value);
 	return value;
 }
 
