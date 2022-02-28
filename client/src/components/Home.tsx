@@ -50,7 +50,9 @@ function Home() {
 								</h2>
 								<p className='no-padding'>net-worth:</p>
 								<h2 className='no-padding huge-and-bold'>
-									${homeData.myData.netWorth}M
+									$
+									{numberWithCommas(homeData.myData.netWorth)}
+									M
 								</h2>
 								<p className='no-padding'>
 									earnings this turn:
