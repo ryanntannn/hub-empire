@@ -155,8 +155,7 @@ p {
 @media only screen and (max-width: 650px) {
 	.card-container {
 		grid-template-columns: 1fr 1fr;
-		grid-gap: 20px;
-		padding: 0 20px;
+		grid-gap: 10px;
 	}
 
 	.card-details {
