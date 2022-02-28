@@ -116,9 +116,9 @@ async function getAllExistingGames() {
 	return await mongo.client.db('HubEmpireDB').collection('Games').find();
 }
 
-async function getGameByGameId(gameId) {
+async function getGameByGameId(gameCode) {
 	const query = {
-		gameId: gameId,
+		code: gameCode,
 	};
 
 	return await mongo.client
@@ -141,8 +141,7 @@ async function assignGameIdToPlayer(gameId, playerId) {
 
 async function addPlayerToGame(gameId, playerId) {
 	//Check if player is already in a game
-
-	const query = { gameId: gameId };
+	const query = { code: gameId };
 	const valueToAppend = { $push: { playerIds: playerId } };
 
 	return await mongo.client
