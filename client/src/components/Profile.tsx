@@ -40,6 +40,7 @@ export default function Profile() {
 	const ownProfile = userId() == auth.user.userData.id;
 
 	const getUserData = () => {
+		console.log(userId());
 		auth.authenticatedGet(`/user?id=${userId()}`)
 			.then((res: any) => {
 				setUserData(res.data.user);
@@ -68,7 +69,11 @@ export default function Profile() {
 						</h1>
 						<p className='no-padding'>net-worth:</p>
 						<h2 className='no-padding huge-and-bold'>
-							${userData.cash + userData.assetValue}M
+							$
+							{numberWithCommas(
+								userData.cash + userData.assetValue
+							)}
+							M
 						</h2>
 						<p className='no-padding'>earnings this turn:</p>
 						<h2
@@ -78,7 +83,7 @@ export default function Profile() {
 							}}
 							className='no-padding big-and-bold'>
 							{userData.turnIncome >= 0 ? '+' : '-'}$
-							{numberWithCommas(userData.turnIncome)}M
+							{numberWithCommas(Math.abs(userData.turnIncome))}M
 						</h2>
 					</div>
 					<br />

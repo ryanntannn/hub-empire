@@ -25,7 +25,7 @@ const Cards = {
 		id: 10,
 		emoji: '💸',
 		displayName: 'Pickpocket',
-		description: 'Steal $300 from a player',
+		description: 'Steal $30M from a player',
 		cardType: 1,
 		rarity: 0,
 		isTargetCard: false,
@@ -35,9 +35,9 @@ const Cards = {
 			new Promise(async (res, rej) => {
 				try {
 					console.log(targetId, targetCardId, selfCardId);
-					await queries.addMoney(targetId, -300);
-					await queries.addMoney(user.id, 300);
-					return res(`$300 was stolen from ${targetId}`);
+					await queries.addMoney(targetId, -30);
+					await queries.addMoney(user.id, 30);
+					return res(`$30M was stolen from ${targetId}`);
 				} catch (err) {
 					rej(err);
 				}
@@ -47,7 +47,7 @@ const Cards = {
 		id: 11,
 		emoji: '🏢',
 		displayName: 'Pickpocket II',
-		description: 'Steal $500 from a player',
+		description: 'Steal $50M from a player',
 		cardType: 1,
 		rarity: 1,
 		isTargetCard: false,
@@ -57,9 +57,9 @@ const Cards = {
 			new Promise(async (res, rej) => {
 				try {
 					console.log(targetId, targetCardId, selfCardId);
-					await queries.addMoney(targetId, -500);
-					await queries.addMoney(user.id, 500);
-					return res(`$500 was stolen from ${targetId}`);
+					await queries.addMoney(targetId, -50);
+					await queries.addMoney(user.id, 50);
+					return res(`$50M was stolen from ${targetId}`);
 				} catch (err) {
 					rej(err);
 				}

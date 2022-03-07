@@ -50,20 +50,27 @@ function Home() {
 								</h2>
 								<p className='no-padding'>net-worth:</p>
 								<h2 className='no-padding huge-and-bold'>
-									${homeData.myData.netWorth}M
+									$
+									{numberWithCommas(homeData.myData.netWorth)}
+									M
 								</h2>
 								<p className='no-padding'>
 									earnings this turn:
 								</p>
 								<h2
 									className='no-padding big-and-bold'
-									style={{ color: 'green' }}>
+									style={{
+										color:
+											homeData.myData.turnIncome >= 0
+												? 'green'
+												: 'red',
+									}}>
 									{homeData.myData.turnIncome >= 0
 										? '+'
 										: '-'}
 									$
 									{numberWithCommas(
-										homeData.myData.turnIncome
+										Math.abs(homeData.myData.turnIncome)
 									)}
 									M
 								</h2>
