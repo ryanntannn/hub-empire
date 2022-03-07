@@ -6,7 +6,7 @@ async function getUserDataByUsername(username) {
 	return await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
-		.findOne({ username: username })
+		.findOne({ 'profile.username': username })
 		.catch(console.dir);
 }
 
@@ -15,7 +15,7 @@ async function getUserDataMinById(playerId) {
 		.db('HubEmpireDB')
 		.collection('Games')
 		.findOne({
-			playerIds: playerId,
+			'playerIds': playerId,
 		})
 		.catch(console.dir);
 
@@ -26,12 +26,12 @@ async function getUserDataMinById(playerId) {
 		for (playerId of game.playerIds) {
 			//console.log(playerId)
 			const query = {
-				_id: ObjectId(playerId),
+				'_id': ObjectId(playerId),
 			};
 
 			const projection = {
 				//_id is returned by default
-				displayName: 1,
+				'profile.displayName': 1,
 			};
 
 			const userDataMin = await mongo.client
@@ -50,17 +50,21 @@ async function getUserDataMinById(playerId) {
 
 async function getUserDataBasicById(id) {
 	const query = {
-		_id: ObjectId(id),
-		// username: req.body.username,
-		// password: req.body.password
+		'_id': ObjectId(id),
 	};
 
 	const projection = {
 		//_id is returned by default
-		displayName: 1,
-		cash: 1,
-		cardIds: 1,
-		turnIncome: 1,
+		'profile.displayName': 1,
+		'game': {
+			'stats': {
+				'cash': 1,
+				'turnIncome': 1,
+			},
+			'inventory': {
+				'cardInstances': 1,
+			},
+		},
 	};
 
 	return await mongo.client
@@ -72,9 +76,7 @@ async function getUserDataBasicById(id) {
 
 async function getUserDataById(id) {
 	const query = {
-		_id: ObjectId(id),
-		// username: req.body.username,
-		// password: req.body.password
+		'_id': ObjectId(id),
 	};
 
 	return await mongo.client
@@ -86,14 +88,12 @@ async function getUserDataById(id) {
 
 async function getUserCardsById(id) {
 	const query = {
-		_id: ObjectId(id),
-		// username: req.body.username,
-		// password: req.body.password
+		'_id': ObjectId(id),
 	};
 
 	const projection = {
 		//_id is returned by default
-		cardIds: 1,
+		'game.inventory.cardInstances': 1,
 	};
 
 	return await mongo.client
@@ -116,9 +116,9 @@ async function getAllExistingGames() {
 	return await mongo.client.db('HubEmpireDB').collection('Games').find();
 }
 
-async function getGameByGameId(gameCode) {
+async function getGameByGameId(joinCode) {
 	const query = {
-		code: gameCode,
+		'joinCode': joinCode,
 	};
 
 	return await mongo.client
@@ -129,8 +129,8 @@ async function getGameByGameId(gameCode) {
 }
 
 async function assignGameIdToPlayer(gameId, playerId) {
-	const query = { _id: ObjectId(playerId) };
-	const valueToAppend = { $set: { gameId: gameId } };
+	const query = { '_id': ObjectId(playerId) };
+	const valueToAppend = { $set: { 'game.id': gameId } };
 
 	return await mongo.client
 		.db('HubEmpireDB')
@@ -139,10 +139,14 @@ async function assignGameIdToPlayer(gameId, playerId) {
 		.catch(console.dir);
 }
 
-async function addPlayerToGame(gameId, playerId) {
+async function addPlayerToGame(joinCode, playerId) {
 	//Check if player is already in a game
-	const query = { code: gameId };
-	const valueToAppend = { $push: { playerIds: playerId } };
+
+	const query = { 'joinCode': joinCode };
+	const valueToAppend = { $push: { 'playerIds': playerId } };
+
+	console.log("query: " + query )
+	console.log("valueToAppend: " + valueToAppend )
 
 	return await mongo.client
 		.db('HubEmpireDB')
@@ -152,9 +156,9 @@ async function addPlayerToGame(gameId, playerId) {
 }
 
 async function addMoney(playerId, amount) {
-	const query = { _id: ObjectId(playerId) };
+	const query = { '_id': ObjectId(playerId) };
 	const valueToChange = {
-		$inc: { cash: amount },
+		$inc: { 'game.stats.cash': amount },
 	};
 
 	return await mongo.client
@@ -173,8 +177,8 @@ async function userHasCard(playerId, cid, iid) {
 				_id: ObjectId(playerId),
 			},
 			{
-				cardIds: {
-					$elemMatch: { cardId: cid, instanceId: iid },
+				'game.inventory.cardInstances': {
+					$elemMatch: { 'cardId': cid, 'instanceId': iid },
 				},
 			}
 		)
@@ -183,10 +187,10 @@ async function userHasCard(playerId, cid, iid) {
 
 async function destroyCard(playerId, cid, iid) {
 	const query = {
-		_id: ObjectId(playerId),
+		'_id': ObjectId(playerId),
 	};
 	const options = {
-		$pull: { cardIds: { cardId: cid, instanceId: iid } },
+		$pull: { 'game.inventory.cardInstances': { 'cardId': cid, 'instanceId': iid } },
 	};
 	return await mongo.client
 		.db('HubEmpireDB')
@@ -197,10 +201,10 @@ async function destroyCard(playerId, cid, iid) {
 
 async function updateActionLog(gameId, data) {
 	const query = {
-		code: gameId,
+		'code': gameId,
 	};
 	const valueToChange = {
-		$push: { log: { ...data, time: Date.now() } },
+		$push: { 'log': { ...data, time: Date.now() } },
 	};
 
 	return await mongo.client
@@ -212,9 +216,8 @@ async function updateActionLog(gameId, data) {
 
 async function getActionLog(gameId, start, amount) {
 	const query = {
-		code: gameId,
+		'code': gameId,
 	};
-	const projection = { $slice: [start, amount] };
 
 	return await mongo.client
 		.db('HubEmpireDB')
@@ -225,7 +228,7 @@ async function getActionLog(gameId, start, amount) {
 			},
 			{
 				$project: {
-					log: {
+					'log': {
 						$slice: ['$log', parseInt(start), parseInt(amount)],
 					},
 				},
@@ -234,39 +237,52 @@ async function getActionLog(gameId, start, amount) {
 }
 
 async function updateUserStatsAndInventory(player) {
+	//console.log(player)
 	const query = { 
-		_id: ObjectId(player.id)
+		'_id': ObjectId(player.profile.id)
 	};
 
-	const valuesToUpdate = {
+	const valuesToSet = {
 		$set: {
-			cash: player.cash,
-			netWorth: player.netWorth,
-			turnIncome: player.turnIncome,
-			numberOfCardsDrawn: player.numberOfCardsDrawn,
-		},
+			'game.stats': {
+				'cash': player.game.stats.cash,
+				'netWorth': player.game.stats.netWorth,
+				'turnIncome': player.game.stats.turnIncome,
+				'numberOfCardsDrawn': player.game.stats.numberOfCardsDrawn,
+			},
+			'game.inventory.newCards': player.game.inventory.newCards,
+		}
+	};
+
+	await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateOne(query, valuesToSet)
+		.catch(console.dir);
+
+	const valuesToPush = {
 		$push: {
-			cardIds: {
-				$each: player.newCards
+			'game.inventory.cardInstances': {
+				$each: player.game.inventory.newCards,
 			}
 		},
 	};
-
+		
 	return await mongo.client
-		.db('HubEmpireDB')
-		.collection('Users')
-		.updateOne(query, valuesToUpdate)
-		.catch(console.dir);
+	.db('HubEmpireDB')
+	.collection('Users')
+	.updateOne(query, valuesToPush)
+	.catch(console.dir);
 }
 
 async function updateGameTurnNumber(code, turnNumber) {
 	const query = { 
-		code: code
+		'code': code
 	};
 
 	const valuesToUpdate = {
 		$set: {
-			turnNumber: turnNumber,
+			'turnNumber': turnNumber,
 		}
 	};
 
@@ -279,20 +295,22 @@ async function updateGameTurnNumber(code, turnNumber) {
 
 async function getLeaderboard(gameId) {
 	const query = { 
-		gameId: gameId
+		'game.id': gameId,
 	};
 
 	const projection = {
-		displayName: 1,
-		netWorth: 1,
-		turnIncome: 1
+		'profile.displayName': 1,
+		'game.stats': {
+			'netWorth': 1,
+			'turnIncome': 1
+		}
 	};
 
 	return await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
 		.find(query, { projection: projection })
-		.sort( { netWorth: -1 } )
+		.sort( { 'game.stats.netWorth': -1 } )
 		.toArray();
 }
 
