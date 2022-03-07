@@ -11,9 +11,8 @@ const { useCard, getCards } = require('./api/cards');
 const queries = require('./queries/queries');
 const { authenticateToken, refreshToken } = require('./utils/authentication');
 
-const task = require('./utils/cronScheduler');
-//Start method is called to start the cron job
-task.start();
+const job = require('./clock');
+job.start();
 
 //Cors
 app.use((req, res, next) => {
