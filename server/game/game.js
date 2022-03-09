@@ -34,16 +34,17 @@ class Game {
 
 			//TODO add function to remove invalid cards
 			this.calculateTurnIncome(player);
-			this.drawCards(player);
-			this.calculateNetWorth(player)
-
+			//this.drawCards(player);
+			this.calculateNetWorth(player);
 
 			queries.updateUserStatsAndInventory(player).catch(console.dir);
 		}
 
 		return;
 		this.turnNumber += 1;
-		queries.updateGameTurnNumber(this.joinCode, this.turnNumber).catch(console.dir);
+		queries
+			.updateGameTurnNumber(this.joinCode, this.turnNumber)
+			.catch(console.dir);
 		console.log('Turn executed');
 		return;
 	}
@@ -52,14 +53,15 @@ class Game {
 		var turnIncome = 0;
 		var cardsInInventory = player.game.inventory.cardInstances;
 		if (cardsInInventory == null) {
-			console.log("Player " + player.profile.id + " has no cards")
+			console.log('Player ' + player.profile.id + ' has no cards');
 			return;
 		}
-		cardsInInventory.forEach(card => {
+		cardsInInventory.forEach((card) => {
 			var key = parseInt(card.cardId);
 			if (key in deck.Cards) {
 				//Only add hub income
-				if (deck.Cards[key].cardType == 0) turnIncome += deck.Cards[key].baseIncome;
+				if (deck.Cards[key].cardType == 0)
+					turnIncome += deck.Cards[key].baseIncome;
 			} else {
 				//console.log('Invalid Card ID: ' + key);
 			}
@@ -67,9 +69,10 @@ class Game {
 		//console.log('Money Earned this Turn: ' + turnIncome);
 		var totalCash = player.game.stats.cash + turnIncome;
 
-		player.game.stats.turnIncome = userUtils.truncateValueToTwoDp(turnIncome);
+		player.game.stats.turnIncome =
+			userUtils.truncateValueToTwoDp(turnIncome);
 		player.game.stats.cash = userUtils.truncateValueToTwoDp(totalCash);
-		console.log(player.game.stats)
+		console.log(player.game.stats);
 
 		return;
 		// return queries
@@ -88,7 +91,7 @@ class Game {
 			player.game.inventory.newCards.push(cardDb);
 		}
 		//console.log(player.username + "'s New Cards:");
-		console.log("New Cards for Player: " + player.profile.displayName);
+		console.log('New Cards for Player: ' + player.profile.displayName);
 		console.log(player.game.inventory.newCards);
 
 		return;
@@ -108,9 +111,13 @@ class Game {
 		return parseInt(deckArray[number]);
 	}
 
-	calculateNetWorth(player){
-		var assetValue = userUtils.getAssetValue(player.game.inventory.cardInstances) + userUtils.getAssetValue(player.game.inventory.newCards);
-		player.game.stats.netWorth = userUtils.truncateValueToTwoDp(player.game.stats.cash + assetValue);
+	calculateNetWorth(player) {
+		var assetValue =
+			userUtils.getAssetValue(player.game.inventory.cardInstances) +
+			userUtils.getAssetValue(player.game.inventory.newCards);
+		player.game.stats.netWorth = userUtils.truncateValueToTwoDp(
+			player.game.stats.cash + assetValue
+		);
 		return;
 	}
 }

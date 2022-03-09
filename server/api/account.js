@@ -2,7 +2,7 @@ const { generateAccessToken } = require('../utils/authentication');
 const bcrypt = require('bcrypt');
 const mongo = require('../utils/mongo');
 const queries = require('../queries/queries');
-const Player = require('../game/player')
+const Player = require('../game/player');
 
 //will be moved to a db
 // const users = [
@@ -20,7 +20,7 @@ async function login(req, res) {
 	if (user == null) return res.status(400).send('User not found');
 
 	try {
-		if (!(await bcrypt.compare(req.body.password, user.password))) {
+		if (!(await bcrypt.compare(req.body.password, user.profile.password))) {
 			return res.status(400).send('Password is incorrect');
 		}
 		const userData = {
@@ -69,7 +69,7 @@ async function register(req, res) {
 					newCards: [],
 				},
 			},
-		}
+		};
 		mongo.client.db('HubEmpireDB').collection('Users').insertOne(newUser);
 
 		const accessToken = generateAccessToken({ name: newUser.username });

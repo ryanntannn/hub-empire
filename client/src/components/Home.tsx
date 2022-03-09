@@ -46,12 +46,14 @@ function Home() {
 						<Col>
 							<div className='rounded-box shadow'>
 								<h2 className='no-padding huge-and-bold'>
-									{homeData.myData.displayName}
+									{homeData.myData.profile?.displayName}
 								</h2>
 								<p className='no-padding'>net-worth:</p>
 								<h2 className='no-padding huge-and-bold'>
 									$
-									{numberWithCommas(homeData.myData.netWorth)}
+									{numberWithCommas(
+										homeData.myData.game!.stats!.netWorth
+									)}
 									M
 								</h2>
 								<p className='no-padding'>
@@ -61,16 +63,21 @@ function Home() {
 									className='no-padding big-and-bold'
 									style={{
 										color:
-											homeData.myData.turnIncome >= 0
+											homeData.myData.game!.stats!
+												.turnIncome >= 0
 												? 'green'
 												: 'red',
 									}}>
-									{homeData.myData.turnIncome >= 0
+									{homeData.myData.game!.stats!.turnIncome >=
+									0
 										? '+'
 										: '-'}
 									$
 									{numberWithCommas(
-										Math.abs(homeData.myData.turnIncome)
+										Math.abs(
+											homeData.myData.game!.stats!
+												.turnIncome
+										)
 									)}
 									M
 								</h2>

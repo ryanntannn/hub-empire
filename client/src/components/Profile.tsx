@@ -8,28 +8,7 @@ import Loading from './Loading';
 import { GetUserDataRes } from '../types/api';
 import { numberWithCommas } from '../utils/Misc';
 
-export interface ProfileProps {
-	name: string;
-	netWorth: number;
-	earnings: number;
-	cash: number;
-	assetValue: number;
-	revenue: number;
-	losses: number;
-}
-
-const testProfile: ProfileProps = {
-	name: 'test',
-	netWorth: 10900,
-	earnings: 900,
-	cash: 900,
-	assetValue: 10000,
-	revenue: 1000,
-	losses: -100,
-};
-
 export default function Profile() {
-	const data = testProfile;
 	const auth = useAuth();
 	const params = useParams();
 	const [userData, setUserData] = React.useState<UserData | null>(null);
@@ -61,43 +40,40 @@ export default function Profile() {
 				<Container className='mt-5'>
 					<BackButton />
 					<h1 className='title'>
-						👤 {userData.displayName}'s Profile
+						👤 {userData.profile!.displayName}'s Profile
 					</h1>
 					<div className='rounded-box shadow mt-3'>
 						<h1 className='no-padding huge-and-bold'>
-							{userData.displayName}
+							{userData.profile!.displayName}
 						</h1>
 						<p className='no-padding'>net-worth:</p>
 						<h2 className='no-padding huge-and-bold'>
-							$
-							{numberWithCommas(
-								userData.cash + userData.assetValue
-							)}
-							M
+							${numberWithCommas(userData.game!.stats!.netWorth)}M
 						</h2>
 						<p className='no-padding'>earnings this turn:</p>
 						<h2
 							style={{
 								color:
-									userData.netEarnings >= 0 ? 'green' : 'red',
+									userData.game!.stats!.turnIncome >= 0
+										? 'green'
+										: 'red',
 							}}
 							className='no-padding big-and-bold'>
-							{userData.turnIncome >= 0 ? '+' : '-'}$
-							{numberWithCommas(Math.abs(userData.turnIncome))}M
+							{userData.game!.stats!.turnIncome >= 0 ? '+' : '-'}$
+							{numberWithCommas(
+								Math.abs(userData.game!.stats!.turnIncome)
+							)}
+							M
 						</h2>
 					</div>
 					<br />
 					<p className='no-padding'>cards owned:</p>
 					<h2 className='no-padding huge-and-bold'>
-						{userData.cardIds.length}
+						{userData.game!.inventory!.cardInstances.length}
 					</h2>
 					<p className='no-padding'>total cash value:</p>
 					<h2 className='no-padding huge-and-bold'>
-						${userData.cash}M
-					</h2>
-					<p className='no-padding'>total asset value:</p>
-					<h2 className='no-padding huge-and-bold'>
-						${userData.assetValue}M
+						${numberWithCommas(userData.game!.stats!.cash)}M
 					</h2>
 					{ownProfile ? (
 						<>

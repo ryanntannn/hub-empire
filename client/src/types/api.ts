@@ -1,14 +1,8 @@
-import {
-	ActionLog,
-	TradeOffer,
-	UserData,
-	UserDataBasic,
-	UserDataMin,
-} from './types';
+import { ActionLog, UserData } from './types';
 
 // GET /home
 export interface GetHomeDataRes {
-	myData: UserDataBasic;
+	myData: UserData;
 }
 
 //GET /my-cards
@@ -18,12 +12,12 @@ export interface GetMyCardsRes {
 
 //GET /leaderboard
 export interface GetLeaderboardRes {
-	players: UserDataBasic[];
+	players: UserData[];
 }
 
 //GET /users-min
 export interface GetUsersMinRes {
-	users: UserDataMin[];
+	users: UserData[];
 }
 
 //GET /user
@@ -48,29 +42,4 @@ export interface GetActionLogParams {
 }
 export interface GetActionLogRes {
 	log: ActionLog[];
-}
-
-//POST /send-trade
-export interface PostSendTradeParams {
-	idTo: number;
-	cardIdsFrom: number[];
-	cashFrom: number;
-	cardIdsTo: number[];
-	cashTo: number;
-}
-
-//GET /trade/inbox & /trade/history
-export interface GetTradeInboxParams {
-	showAmount: number; // e.g. show 5 in one page
-	page: number; //page number
-}
-export interface GetTradeInboxRes {
-	trades: TradeOffer[];
-	pages: number; //total number of pages
-}
-
-//POST /trade/action
-export interface PostAcceptTradeParams {
-	id: number;
-	accept: boolean;
 }

@@ -34,9 +34,13 @@ export interface CardFlag {
 	isStolen: boolean;
 }
 
-export interface CardInstance {
-	instanceId: number;
+export interface CardInstance extends CardInstanceData {
 	card: Card;
+}
+
+export interface CardInstanceData {
+	instanceId: number;
+	cardId: number;
 	mods?: any;
 	flags?: CardFlag[];
 }
@@ -64,32 +68,25 @@ export interface ActionCard extends Card {
 	isTargetCard: boolean;
 }
 
-export interface UserDataMin {
+export interface UserData {
 	id: number;
-	displayName: string;
+	profile?: {
+		username?: string;
+		displayName?: string;
+	};
+	game?: UserGameData;
 }
 
-export interface UserDataBasic extends UserDataMin {
-	id: number;
-	displayName: string;
-	netWorth: number;
-	turnIncome: number;
-}
-
-export interface UserData extends UserDataBasic {
-	id: number;
-	displayName: string;
-	cardIds: {
-		instanceId: number;
-		cardId: number;
-	}[];
-	cash: number;
-	netWorth: number;
-	netEarnings: number;
-	assetValue: number;
-	turnIncome: number;
-	expensesPerTurn: number;
-	gameId: string;
+export interface UserGameData {
+	id: string;
+	inventory?: {
+		cardInstances: CardInstance[];
+	};
+	stats?: {
+		cash: number;
+		netWorth: number;
+		turnIncome: number;
+	};
 }
 
 export interface ActionLog {
@@ -100,21 +97,4 @@ export interface ActionLog {
 	targetId?: number;
 	targetCardId?: number;
 	selfCardId?: number;
-}
-
-export enum TradeStatus {
-	PENDING,
-	ACCEPTED,
-	REJECTED,
-}
-
-export interface TradeOffer {
-	id: number;
-	from: UserDataMin;
-	to: UserDataMin;
-	cardIdsFrom: number[];
-	cashFrom: number;
-	cardIdsTo: number[];
-	cashTo: number;
-	status: TradeStatus;
 }

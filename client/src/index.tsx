@@ -9,7 +9,7 @@ import './styles/master.css';
 import MyCards from './components/MyCards';
 import Trade from './components/Trade';
 import Leaderboard from './components/Leaderboard';
-import Profile, { ProfileProps } from './components/Profile';
+import Profile from './components/Profile';
 import Login from './components/Login';
 import { AuthenticationProvider } from './contexts/AuthenticationContext';
 import useAuth from './contexts/AuthenticationContext';

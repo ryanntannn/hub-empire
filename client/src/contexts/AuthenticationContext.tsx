@@ -1,20 +1,17 @@
 import React from 'react';
-import { UserDataBasic } from '../types/types';
+import { UserData } from '../types/types';
 import { AxiosBase } from '../utils/AxiosBase';
 import cookies from '../utils/Cookies';
 
 const defaultUserState: LocalUserData = {
 	userData: {
 		id: -1,
-		displayName: '',
-		netWorth: 0,
-		turnIncome: 0,
 	},
 	accessToken: '',
 };
 
 interface LocalUserData {
-	userData: UserDataBasic;
+	userData: UserData;
 	accessToken: string;
 }
 

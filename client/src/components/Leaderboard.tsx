@@ -5,20 +5,23 @@ import LeaderboardItem, { LeaderboardItemProps } from './LeaderboardItem';
 import useAuth from '../contexts/AuthenticationContext';
 import React from 'react';
 import Loading from './Loading';
-import { UserDataBasic } from '../types/types';
+import { UserData } from '../types/types';
 
 export default function Leaderboard() {
 	const auth = useAuth();
 
 	const [leaderboardData, setLeaderboardData] = React.useState<
-		UserDataBasic[] | null
+		UserData[] | null
 	>();
 
 	React.useEffect(() => {
-		if (leaderboardData != null) return;
 		console.log(auth.user);
-		auth.authenticatedGet('/leaderboard', { gameId: '1234' })
+		if (leaderboardData != null) return;
+		auth.authenticatedGet('/leaderboard', {
+			gameId: auth.user.userData.game!.id!,
+		})
 			.then((res: any) => {
+				console.log(res);
 				setLeaderboardData(
 					res.data.players.map((x: any) => ({ ...x, id: x._id }))
 				);
@@ -36,7 +39,7 @@ export default function Leaderboard() {
 					<h1 className='title'>🏆 Leaderboard</h1>
 					{leaderboardData!.map((item, i) => {
 						const newProps = { ...item, position: i };
-						return <LeaderboardItem data={newProps} />;
+						return <LeaderboardItem data={newProps} key={i} />;
 					})}
 				</Container>
 			) : (

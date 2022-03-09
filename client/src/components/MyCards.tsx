@@ -19,12 +19,13 @@ import { GetMyCardsRes, PostUseCardParams } from '../types/api';
 import {
 	ActionCard,
 	CardInstance,
+	CardInstanceData,
 	CardRarity,
 	CardType,
 	HubCard,
 	Industry,
 	Step,
-	UserDataMin,
+	UserData,
 } from '../types/types';
 import BackButton from './BackButton';
 import CardComponent from './Card';
@@ -116,8 +117,8 @@ export default function MyCards() {
 		auth.authenticatedGet('/my-cards')
 			.then((res: any) => {
 				if (res == null) return;
-				const cardIds: { instanceId: number; cardId: number }[] =
-					res.data.cards;
+				console.log(res);
+				const cardIds: CardInstanceData[] = res.data.cards;
 				console.log(cardIds);
 				setCards(
 					cardIds.map((id) => {
@@ -337,9 +338,7 @@ function ActiveCardModal(props: CardModalProps) {
 interface TargetPlayerProps extends InstanceProps<number, null> {}
 
 function ChooseTargetPlayer(props: TargetPlayerProps) {
-	const [playerList, setPlayerList] = React.useState<UserDataMin[] | null>(
-		null
-	);
+	const [playerList, setPlayerList] = React.useState<UserData[] | null>(null);
 	const [selectedPlayerId, setSelectedPlayerId] = React.useState<
 		number | null
 	>(null);
@@ -381,7 +380,7 @@ function ChooseTargetPlayer(props: TargetPlayerProps) {
 								name={`radio-playerSelect`}
 								type='radio'
 							/>{' '}
-							{userData.displayName}
+							{userData.profile!.displayName}
 						</div>
 					))
 				) : (
