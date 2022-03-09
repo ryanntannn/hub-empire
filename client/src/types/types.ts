@@ -69,7 +69,7 @@ export interface ActionCard extends Card {
 }
 
 export interface UserData {
-	id: number;
+	_id: number;
 	profile?: {
 		username?: string;
 		displayName?: string;

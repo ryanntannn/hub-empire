@@ -351,7 +351,7 @@ function ChooseTargetPlayer(props: TargetPlayerProps) {
 			.then((res: any) => {
 				setPlayerList(
 					res.data.user
-						.filter((x: any) => x._id != auth.user.userData.id)
+						.filter((x: any) => x._id != auth.user.userData._id)
 						.map((x: any) => ({
 							id: x._id,
 							displayName: x.displayName,
@@ -375,7 +375,7 @@ function ChooseTargetPlayer(props: TargetPlayerProps) {
 						<div key={i}>
 							<Input
 								onClick={() => {
-									setSelectedPlayerId(userData.id);
+									setSelectedPlayerId(userData._id);
 								}}
 								name={`radio-playerSelect`}
 								type='radio'

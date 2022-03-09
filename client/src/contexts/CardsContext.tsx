@@ -49,8 +49,8 @@ const CardProvider: React.FC = ({ children }) => {
 	const [inited, setInited] = React.useState(false);
 
 	React.useEffect(() => {
-		if (auth.user.userData.id == -1 || inited) return;
-		console.log(auth.user.userData.id);
+		if (auth.user.userData._id == -1 || inited) return;
+		console.log(auth.user.userData._id);
 		setInited(true);
 		cards.init();
 	}, [auth, cards]);

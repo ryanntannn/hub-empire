@@ -24,7 +24,7 @@ export default function LeaderboardItem(props: { data: LeaderboardItemProps }) {
 	};
 	return (
 		<div
-			onClick={() => navigate(`/profile/${data.id}`)}
+			onClick={() => navigate(`/profile/${data._id}`)}
 			className='rounded-box shadow mt-3'>
 			<h1 className='no-padding huge-and-bold'>
 				{getPositionEmoji()} {data.profile?.displayName}

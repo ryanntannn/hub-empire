@@ -14,9 +14,9 @@ export default function Profile() {
 	const [userData, setUserData] = React.useState<UserData | null>(null);
 
 	const userId = () =>
-		params.userId != undefined ? params.userId : auth.user.userData.id;
+		params.userId != undefined ? params.userId : auth.user.userData._id;
 
-	const ownProfile = userId() == auth.user.userData.id;
+	const ownProfile = userId() == auth.user.userData._id;
 
 	const getUserData = () => {
 		console.log(userId());
@@ -30,7 +30,7 @@ export default function Profile() {
 	};
 
 	React.useEffect(() => {
-		if (userData != null || auth.user.userData.id == -1) return;
+		if (userData != null || auth.user.userData._id == -1) return;
 		getUserData();
 	}, [userData, auth]);
 

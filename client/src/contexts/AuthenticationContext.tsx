@@ -5,7 +5,7 @@ import cookies from '../utils/Cookies';
 
 const defaultUserState: LocalUserData = {
 	userData: {
-		id: -1,
+		_id: -1,
 	},
 	accessToken: '',
 };
