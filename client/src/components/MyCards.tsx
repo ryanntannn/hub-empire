@@ -23,7 +23,7 @@ import {
 	CardRarity,
 	CardType,
 	HubCard,
-	Industry,
+	HubType,
 	Step,
 	UserData,
 } from '../types/types';
@@ -84,18 +84,7 @@ export default function MyCards() {
 			method: (a, b) => {
 				if (a.card.cardType == 1) return 1;
 				if (b.card.cardType == 1) return -1;
-				return (a.card as HubCard).industry >
-					(b.card as HubCard).industry
-					? 1
-					: -1;
-			},
-		},
-		{
-			name: 'Sort by Supply Chain Step',
-			method: (a, b) => {
-				if (a.card.cardType == 1) return 1;
-				if (b.card.cardType == 1) return -1;
-				return (a.card as HubCard).step > (b.card as HubCard).step
+				return (a.card as HubCard).hubType > (b.card as HubCard).hubType
 					? 1
 					: -1;
 			},
@@ -258,9 +247,8 @@ function ActiveCardModal(props: CardModalProps) {
 		return (
 			<div>
 				<p>
-					Supply Chain Step: <b>{Step[currentCard.step]}</b>
 					<br />
-					Industry: <b>{Industry[currentCard.industry]}</b>
+					Industry: <b>{HubType[currentCard.hubType]}</b>
 					<br />
 					Value: <b>${currentCard.value}</b>
 					<br />

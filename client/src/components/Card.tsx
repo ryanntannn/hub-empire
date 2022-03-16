@@ -5,19 +5,21 @@ import {
 	CardRarity,
 	CardType,
 	HubCard,
-	Industry,
+	HubType,
 	Step,
 } from '../types/types';
 import { numberWithCommas } from '../utils/Misc';
 
-function IndustryToColor(industry: Industry) {
-	switch (industry) {
-		case Industry.FOOD:
+function HubTypeToColor(type: HubType) {
+	switch (type) {
+		case HubType.AIRPORT:
 			return '#ECC30B';
-		case Industry.TECH:
+		case HubType.SEAPORT:
 			return '#84BCDA';
-		case Industry.CLOTHES:
+		case HubType.WAREHOUSE:
 			return '#F37748';
+		case HubType.DISTRIBUTION:
+			return '#e84898';
 	}
 }
 
@@ -121,12 +123,8 @@ function HubCardComponent(props: {
 			<div
 				className='top-color-area'
 				style={{
-					backgroundColor: IndustryToColor(props.card.industry),
-				}}>
-				<div className='step'>
-					{Industry[props.card.industry]} {Step[props.card.step]}
-				</div>
-			</div>
+					backgroundColor: HubTypeToColor(props.card.hubType),
+				}}></div>
 			<h1
 				style={{
 					fontSize: 50,
