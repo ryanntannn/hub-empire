@@ -207,7 +207,13 @@ async function updateActionLog(gameId, data) {
 		code: gameId,
 	};
 	const valueToChange = {
-		$push: { log: { ...data, time: Date.now() } },
+		$push: {
+			log: {
+				...data,
+				time: Date.now(),
+				logType: 0, // LogType: ACTION_LOG
+			},
+		},
 	};
 
 	return await mongo.client

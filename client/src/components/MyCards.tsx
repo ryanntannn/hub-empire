@@ -80,7 +80,7 @@ export default function MyCards() {
 			},
 		},
 		{
-			name: 'Sort by Industry',
+			name: 'Sort by Hub Type',
 			method: (a, b) => {
 				if (a.card.cardType == 1) return 1;
 				if (b.card.cardType == 1) return -1;
