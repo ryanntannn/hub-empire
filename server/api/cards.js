@@ -334,7 +334,7 @@ async function useCard(req, res) {
 			userId: req.user.id,
 			...req.query,
 		};
-		await queries.updateActionLog(user.gameId, logData);
+		await queries.updateActionLog(user.game.id, logData, 0);
 		return res.status(200).json(r);
 	} catch (err) {
 		return res.status(400).json(err);

@@ -4,8 +4,9 @@ import BackButton from './BackButton';
 import Loading from './Loading';
 import useAuth from '../contexts/AuthenticationContext';
 import useCards from '../contexts/CardsContext';
-import { ActionLog } from '../types/types';
+import { ActionLog, DrawLog, Log, LogType } from '../types/types';
 import { CardMini } from './trading/TradeInbox';
+import { Link } from 'react-router-dom';
 
 export function History() {
 	const [logs, setLogs] = React.useState<ActionLog[] | null>(null);
@@ -31,12 +32,13 @@ export function History() {
 				return auth.authenticatedGet('/users-min');
 			})
 			.then((res: any) => {
+				console.log(res);
 				const list: {
 					[id: string]: string;
 				} = {};
 				res.data.user.forEach(
-					(x: { _id: string; displayName: string }) =>
-						(list[x._id] = x.displayName)
+					(x: { _id: string; profile: { displayName: string } }) =>
+						(list[x._id] = x.profile.displayName)
 				);
 				setPlayerList(list);
 				console.log(list);
@@ -83,6 +85,43 @@ export function History() {
 		return time;
 	}
 
+	function logToString(log: Log) {
+		console.log(log);
+		switch (log.logType) {
+			case LogType.ACTION_LOG:
+				return actionLogToString(log as ActionLog);
+			case LogType.DRAW_LOG:
+				return drawLogToString(log as DrawLog);
+		}
+	}
+
+	function actionLogToString(log: ActionLog) {
+		const thisCard = cardsData.getCard(log.cardId);
+		return (
+			<p>
+				[{timeConverter(log.time)}]{' '}
+				<Link to={`../profile/${log.userId}`}>
+					{playerList![log.userId]}
+				</Link>{' '}
+				used {thisCard.displayName} {thisCard.emoji}
+				{log.targetId ? ` on ${playerList![log.targetId]}` : null}
+			</p>
+		);
+	}
+
+	function drawLogToString(log: DrawLog) {
+		const thisCard = cardsData.getCard(log.cardId);
+		return (
+			<p>
+				[{timeConverter(log.time)}]{' '}
+				<Link to={`../profile/${log.userId}`}>
+					{playerList![log.userId]}
+				</Link>{' '}
+				drew {thisCard.displayName} {thisCard.emoji}
+			</p>
+		);
+	}
+
 	return (
 		<div className='page'>
 			{(logs != null && playerList != null) || false ? (
@@ -110,18 +149,12 @@ export function History() {
 					{logs.length == 0 ? (
 						<p className='big-and-bold'>No items to show</p>
 					) : null}
-					{logs.map((log) => {
-						const thisCard = cardsData.getCard(log.cardId);
+					{logs.map((log, i) => {
 						return (
-							<div className='rounded-box shadow pt-3 pb-1 mb-3'>
-								<p>
-									[{timeConverter(log.time)}]{' '}
-									{playerList[log.userId]} used{' '}
-									{thisCard.displayName} {thisCard.emoji}
-									{log.targetId
-										? ` on ${playerList[log.targetId]}`
-										: null}
-								</p>
+							<div
+								className='rounded-box shadow pt-3 pb-1 mb-3'
+								key={i}>
+								{logToString(log)}
 							</div>
 						);
 					})}

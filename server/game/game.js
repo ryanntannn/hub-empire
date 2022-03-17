@@ -32,6 +32,8 @@ class Game {
 			var playerInfo = await queries.getUserDataById(playerId);
 			var player = new Player(playerInfo);
 
+			console.log(player);
+
 			//TODO add function to remove invalid cards
 			this.calculateTurnIncome(player);
 			//this.drawCards(player);
@@ -89,6 +91,12 @@ class Game {
 			};
 			player.game.stats.numberOfCardsDrawn += 1;
 			player.game.inventory.newCards.push(cardDb);
+
+			const logData = {
+				userId: player.profile.id,
+				...cardDb,
+			};
+			queries.updateActionLog(player.game.id, logData, 1);
 		}
 		//console.log(player.username + "'s New Cards:");
 		console.log('New Cards for Player: ' + player.profile.displayName);

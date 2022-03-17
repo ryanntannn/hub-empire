@@ -202,16 +202,17 @@ async function destroyCard(playerId, cid, iid) {
 		.catch(console.dir);
 }
 
-async function updateActionLog(gameId, data) {
+async function updateActionLog(gameId, data, logType) {
+	console.log(gameId, data, logType);
 	const query = {
-		code: gameId,
+		joinCode: gameId,
 	};
 	const valueToChange = {
 		$push: {
 			log: {
 				...data,
 				time: Date.now(),
-				logType: 0, // LogType: ACTION_LOG
+				logType, // LogType: ACTION_LOG
 			},
 		},
 	};
@@ -225,7 +226,7 @@ async function updateActionLog(gameId, data) {
 
 async function getActionLog(gameId, start, amount) {
 	const query = {
-		code: gameId,
+		joinCode: gameId,
 	};
 
 	return await mongo.client
