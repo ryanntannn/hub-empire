@@ -67,6 +67,7 @@ async function register(req, res) {
 				inventory: {
 					cardInstances: [],
 					newCards: [],
+					stolenCards: [],
 				},
 			},
 		};

@@ -1,6 +1,9 @@
 const { userHasCard } = require('../queries/queries');
 const queries = require('../queries/queries');
 
+const cardUtils = require('../utils/cardUtils');
+const Mods = require('./mods');
+
 const Cards = {
 	0: {
 		id: 0,
@@ -59,7 +62,53 @@ const Cards = {
 					console.log(targetId, targetCardId, selfCardId);
 					await queries.addMoney(targetId, -50);
 					await queries.addMoney(user.id, 50);
+					//recalculate player stats
 					return res(`$50M was stolen from ${targetId}`);
+				} catch (err) {
+					rej(err);
+				}
+			}),
+	},
+	12: {
+		id: 12,
+		emoji: '🏢',
+		displayName: 'Stonks',
+		description: 'Increase a Hub\\\'s income by 10%.',
+		cardType: 1,
+		rarity: 1,
+		isTargetCard: true,
+		isTargetPlayer: true,
+		isTargetSelfCard: false,
+		onUse: ({ targetPlayerId, targetCardInstanceId }, user) =>
+			new Promise(async (res, rej) => {
+				try {
+					await queries.applyNewModToCard(targetPlayerId, targetCardInstanceId, new Mods.IncomeMod(true, null, 1.1, false));
+					var cardArray = await queries.getUserCardsById(targetPlayerId);
+					var card = cardUtils.getOneCardFromCardArrayByInstanceId(cardArray.game.inventory.cardInstances, targetCardInstanceId);
+					var newEffectiveIncome = cardUtils.calculateEffectiveIncomeOfCard(card, Cards);
+					await queries.updateEffectiveIncomeOfCard(targetPlayerId, targetCardInstanceId, newEffectiveIncome);
+					return res(`Hub's Income has been increased by 10%.`);
+				} catch (err) {
+					rej(err);
+				}
+			}),
+	},
+	20: {
+		id: 20,
+		emoji: '🏢',
+		displayName: 'Proxy Income',
+		description: 'Gain control of a Player\\\'s Hub and receive its income for 2 turns',
+		cardType: 1,
+		rarity: 1,
+		isTargetCard: true,
+		isTargetPlayer: true,
+		isTargetSelfCard: false,
+		onUse: ({ targetPlayerId, targetCardId, targetCardInstanceId }, user) =>
+			new Promise(async (res, rej) => {
+				try {
+					await queries.applyNewModToCard(targetPlayerId, targetCardInstanceId, new Mods.OwnerMod(user.id, false, 2));
+					await queries.addStolenCardToPlayerInventory(user.id, targetPlayerId, targetCardId, targetCardInstanceId);
+					return res('Hub Stolen.');
 				} catch (err) {
 					rej(err);
 				}

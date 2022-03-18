@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const queries = require('../queries/queries');
 const Game = require('../game/game');
+const Mods = require('../api/mods')
 
 router.post('/create', (req, res) => {
 	try{
@@ -45,6 +46,26 @@ router.post('/join', async (req, res) => {
 
 router.post('/leave', async (req, res) => {
 	//WIP
+});
+
+router.post('/card/mod/apply', async (req, res) => {
+	switch(req.body.mod.modType){
+		case 0: 
+			var ownerMod = new Mods.OwnerMod(req.body.mod.playerId, req.body.mod.isPermanent, req.body.mod.turnsLeft);
+			res.status(200).json("Mod Type " + 0 + " Created")
+			break;
+		case 1:
+			var hubMod = new Mods.HubMod(req.body.mod.newHubType, req.body.mod.isPermanent, req.body.mod.turnsLeft);
+			res.status(200).json("Mod Type " + 1 + " Created")
+			break;
+		case 2:
+			var incomeMod = new Mods.IncomeMod(req.body.mod.incomeBoost, req.body.mod.isAdditive, req.body.mod.isPermanent, req.body.mod.turnsLeft);
+			res.status(200).json("Mod Type " + 2 + " Created")
+			break;
+		default:
+			res.status(400).json("Invalid Mod Type Specified")
+			break;
+	}
 });
 
 module.exports = router;

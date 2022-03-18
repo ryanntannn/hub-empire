@@ -39,6 +39,7 @@ class Player {
             inventory: {
                 cardInstances: info.game.inventory.cardInstances,
                 newCards: [],
+                stolenCards: info.game.inventory.stolenCards,
             }
         }
 	}
