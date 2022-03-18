@@ -77,6 +77,12 @@ class Game {
 		console.log(cardIncome)
 		console.log(stolenCardIncome)
 
+		const logData = {
+			userId: player.profile.id,
+			turnIncome,
+		};
+		queries.updateActionLog(player.game.id, logData, 2);
+
 		var turnIncome = userUtils.truncateValueToTwoDp(cardIncome + stolenCardIncome);
 		player.game.stats.turnIncome = turnIncome;
 
@@ -147,6 +153,12 @@ class Game {
 			player.game.stats.numberOfCardsDrawn += 1;
 			player.game.inventory.cardInstances.push(newCard);
 			player.game.inventory.newCards.push(newCard);
+
+			const logData = {
+				userId: player.profile.id,
+				...cardDb,
+			};
+			queries.updateActionLog(player.game.id, logData, 1);
 		}
 		return;
 	}
