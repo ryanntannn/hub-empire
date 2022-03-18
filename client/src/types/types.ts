@@ -92,6 +92,7 @@ export interface UserGameData {
 export enum LogType {
 	ACTION_LOG,
 	DRAW_LOG,
+	INCOME_LOG,
 }
 
 export interface Log {
@@ -111,4 +112,8 @@ export interface ActionLog extends Log {
 export interface DrawLog extends Log {
 	instanceId?: number;
 	cardId: number;
+}
+
+export interface IncomeLog extends Log {
+	turnIncome: number;
 }

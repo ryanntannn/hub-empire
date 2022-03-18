@@ -4,7 +4,7 @@ import BackButton from './BackButton';
 import Loading from './Loading';
 import useAuth from '../contexts/AuthenticationContext';
 import useCards from '../contexts/CardsContext';
-import { ActionLog, DrawLog, Log, LogType } from '../types/types';
+import { ActionLog, DrawLog, IncomeLog, Log, LogType } from '../types/types';
 import { CardMini } from './trading/TradeInbox';
 import { Link } from 'react-router-dom';
 
@@ -92,6 +92,8 @@ export function History() {
 				return actionLogToString(log as ActionLog);
 			case LogType.DRAW_LOG:
 				return drawLogToString(log as DrawLog);
+			case LogType.INCOME_LOG:
+				return incomeLogToString(log as IncomeLog);
 		}
 	}
 
@@ -118,6 +120,18 @@ export function History() {
 					{playerList![log.userId]}
 				</Link>{' '}
 				drew {thisCard.displayName} {thisCard.emoji}
+			</p>
+		);
+	}
+
+	function incomeLogToString(log: IncomeLog) {
+		return (
+			<p>
+				[{timeConverter(log.time)}]{' '}
+				<Link to={`../profile/${log.userId}`}>
+					{playerList![log.userId]}
+				</Link>{' '}
+				earned ${log.turnIncome}
 			</p>
 		);
 	}

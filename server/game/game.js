@@ -71,8 +71,15 @@ class Game {
 		//console.log('Money Earned this Turn: ' + turnIncome);
 		var totalCash = player.game.stats.cash + turnIncome;
 
-		player.game.stats.turnIncome =
-			userUtils.truncateValueToTwoDp(turnIncome);
+		turnIncome = userUtils.truncateValueToTwoDp(turnIncome);
+
+		const logData = {
+			userId: player.profile.id,
+			turnIncome,
+		};
+		queries.updateActionLog(player.game.id, logData, 2);
+
+		player.game.stats.turnIncome = turnIncome;
 		player.game.stats.cash = userUtils.truncateValueToTwoDp(totalCash);
 		console.log(player.game.stats);
 
