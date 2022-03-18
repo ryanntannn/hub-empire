@@ -37,7 +37,7 @@ class Game {
 
 			// TODO add function to remove invalid cards
 			// this.decrementTurnsLeftInCardModifiers(player);
-			this.calculateTurnIncome(player);
+			await this.calculateTurnIncome(player);
 			this.drawCards(player, 3);
 			this.calculateNetWorth(player);
 
@@ -77,19 +77,19 @@ class Game {
 		console.log(cardIncome)
 		console.log(stolenCardIncome)
 
+		var turnIncome = userUtils.truncateValueToTwoDp(cardIncome + stolenCardIncome);
+		player.game.stats.turnIncome = turnIncome;
+
 		const logData = {
 			userId: player.profile.id,
 			turnIncome,
 		};
 		queries.updateActionLog(player.game.id, logData, 2);
 
-		var turnIncome = userUtils.truncateValueToTwoDp(cardIncome + stolenCardIncome);
-		player.game.stats.turnIncome = turnIncome;
-
 		var totalCash = userUtils.truncateValueToTwoDp(player.game.stats.cash + turnIncome);
 		player.game.stats.cash = totalCash;
 
-		return;
+		return Promise.resolve();
 	}
 
 	calculateCardIncome(cardInstances){
@@ -156,7 +156,7 @@ class Game {
 
 			const logData = {
 				userId: player.profile.id,
-				...cardDb,
+				...newCard,
 			};
 			queries.updateActionLog(player.game.id, logData, 1);
 		}
