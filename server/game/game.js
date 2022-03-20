@@ -4,7 +4,7 @@ const Player = require('./player');
 const userUtils = require('../utils/userUtils');
 const cardUtils = require('../utils/cardUtils');
 
-const Mods = require('../api/mods')
+const Mods = require('../api/mods');
 
 class Game {
 	joinCode = null;
@@ -37,12 +37,11 @@ class Game {
 
 			// TODO add function to remove invalid cards
 			// this.decrementTurnsLeftInCardModifiers(player);
-			await this.calculateTurnIncome(player);
-			this.drawCards(player, 3);
+			//await this.calculateTurnIncome(player);
+			//this.drawCards(player, 3);
 			this.calculateNetWorth(player);
 
 			queries.updateUserStatsAndInventory(player).catch(console.dir);
-
 
 			//FOR TESTING MODS
 			//var playerId = "622599dafe42733f560ee58f";
@@ -55,7 +54,7 @@ class Game {
 
 			// deck.Cards[20].onUse(
 			// 	{ targetPlayerId: playerId, targetCardId: 101, targetCardInstanceId: 0 },
-			// 	{ 
+			// 	{
 			// 		id: playerId,
 			// 	})
 			// .then(res => {
@@ -67,17 +66,24 @@ class Game {
 		console.log('Turn executed');
 		this.turnNumber += 1;
 		queries.updateGameTurnNumber(this.joinCode, this.turnNumber);
-		
+
 		return;
 	}
 
 	async calculateTurnIncome(player) {
-		var cardIncome = this.calculateCardIncome(player.game.inventory.cardInstances);
-		var stolenCardIncome = await this.calculateStolenCardIncome(player.profile.id, player.game.inventory.stolenCards).catch(console.dir);
-		console.log(cardIncome)
-		console.log(stolenCardIncome)
+		var cardIncome = this.calculateCardIncome(
+			player.game.inventory.cardInstances
+		);
+		var stolenCardIncome = await this.calculateStolenCardIncome(
+			player.profile.id,
+			player.game.inventory.stolenCards
+		).catch(console.dir);
+		console.log(cardIncome);
+		console.log(stolenCardIncome);
 
-		var turnIncome = userUtils.truncateValueToTwoDp(cardIncome + stolenCardIncome);
+		var turnIncome = userUtils.truncateValueToTwoDp(
+			cardIncome + stolenCardIncome
+		);
 		player.game.stats.turnIncome = turnIncome;
 
 		const logData = {
@@ -86,30 +92,34 @@ class Game {
 		};
 		queries.updateActionLog(player.game.id, logData, 2);
 
-		var totalCash = userUtils.truncateValueToTwoDp(player.game.stats.cash + turnIncome);
+		var totalCash = userUtils.truncateValueToTwoDp(
+			player.game.stats.cash + turnIncome
+		);
 		player.game.stats.cash = totalCash;
 
 		return Promise.resolve();
 	}
 
-	calculateCardIncome(cardInstances){
+	calculateCardIncome(cardInstances) {
 		var turnIncome = 0;
 		if (cardInstances == null) {
 			console.log('No Cards in Player Inventory');
 			return turnIncome;
 		}
-		cardInstances.forEach(card => {
+		cardInstances.forEach((card) => {
 			var key = parseInt(card.cardId);
-			if (key in deck.Cards &&
-					deck.Cards[key].cardType == 0 &&
-					userUtils.isEmptyObject(card.modifiers.owner)) {
+			if (
+				key in deck.Cards &&
+				deck.Cards[key].cardType == 0 &&
+				userUtils.isEmptyObject(card.modifiers.owner)
+			) {
 				turnIncome += card.effectiveIncome;
 			}
 		});
 		return turnIncome;
 	}
 
-	async calculateStolenCardIncome(playerId, stolenCards){
+	async calculateStolenCardIncome(playerId, stolenCards) {
 		var stolenCardIncome = 0;
 		if (stolenCards == null) {
 			console.log('No Stolen Cards in Player Inventory');
@@ -118,11 +128,16 @@ class Game {
 
 		for (const card of stolenCards) {
 			var otherUserCards = await queries.getUserCardsById(card.playerId);
-			var stolenCard = cardUtils.getOneCardFromCardArrayByInstanceId(otherUserCards.game.inventory.cardInstances, card.instanceId);
+			var stolenCard = cardUtils.getOneCardFromCardArrayByInstanceId(
+				otherUserCards.game.inventory.cardInstances,
+				card.instanceId
+			);
 			var key = parseInt(stolenCard.cardId);
-			if (key in deck.Cards &&
-					deck.Cards[key].cardType == 0 &&
-					stolenCard.modifiers.owner.playerId == playerId) {
+			if (
+				key in deck.Cards &&
+				deck.Cards[key].cardType == 0 &&
+				stolenCard.modifiers.owner.playerId == playerId
+			) {
 				stolenCardIncome += stolenCard.effectiveIncome;
 			}
 		}
@@ -130,26 +145,27 @@ class Game {
 	}
 
 	//Unused
-	decrementTurnsLeftInCardModifiers(player){
-		player.game.inventory.cardInstances.forEach(card => {
-			if(card.modifiers.owner.isStolen)
+	decrementTurnsLeftInCardModifiers(player) {
+		player.game.inventory.cardInstances.forEach((card) => {
+			if (card.modifiers.owner.isStolen)
 				card.modifiers.owner.turnsLeft -= 1;
 
-			if(!card.modifiers.type.isPermanent)
+			if (!card.modifiers.type.isPermanent)
 				card.modifiers.type.turnsLeft -= 1;
 
-			card.modifiers.incomeBoost.forEach(boost => {
-				if(!boost.isPermanent){
+			card.modifiers.incomeBoost.forEach((boost) => {
+				if (!boost.isPermanent) {
 					boost.turnsLeft -= 1;
 				}
-			})
-			
-		})
+			});
+		});
 	}
 
 	drawCards(player, numberOfCardsToDraw) {
 		for (var i = 0; i < numberOfCardsToDraw; i++) {
-			var newCard = this.drawOneCard(player.game.stats.numberOfCardsDrawn);
+			var newCard = this.drawOneCard(
+				player.game.stats.numberOfCardsDrawn
+			);
 			player.game.stats.numberOfCardsDrawn += 1;
 			player.game.inventory.cardInstances.push(newCard);
 			player.game.inventory.newCards.push(newCard);
@@ -166,7 +182,7 @@ class Game {
 	drawOneCard(instanceId) {
 		var newCardId = this.getRandomCardId();
 		// Card Type 0 is a Hub Card, 1 is an Action Card
-		if(deck.Cards[newCardId].cardType == 0) {
+		if (deck.Cards[newCardId].cardType == 0) {
 			return {
 				effectiveIncome: deck.Cards[newCardId].baseIncome,
 				instanceId: instanceId,
@@ -185,7 +201,7 @@ class Game {
 		}
 	}
 
-	getRandomCardId(){
+	getRandomCardId() {
 		var deckArray = Object.keys(deck.Cards);
 		var number = Math.floor(Math.random() * (deckArray.length - 1) + 1);
 		return parseInt(deckArray[number]);

@@ -65,7 +65,9 @@ app.get('/my-cards', authenticateToken, async function (req, res) {
 		if (req.user.id.length != 24) {
 			return res.status(400).send('Invalid User ID');
 		}
-		userData = await queries.getUserCardsById(req.user.id);
+		let userId = req.user.id;
+		if (req.query.id != undefined) userId = req.query.id;
+		userData = await queries.getUserCardsById(userId);
 		if (userData.game.inventory.cardInstances) {
 			console.log(userData);
 			//Return cards

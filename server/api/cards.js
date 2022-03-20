@@ -71,23 +71,145 @@ const Cards = {
 	},
 	12: {
 		id: 12,
-		emoji: '🏢',
-		displayName: 'Stonks',
-		description: 'Increase a Hub\\\'s income by 10%.',
+		emoji: '🚨',
+		displayName: 'Stock Discrepancy',
+		description: "Decrease a Hub's income by 50%.",
 		cardType: 1,
 		rarity: 1,
 		isTargetCard: true,
 		isTargetPlayer: true,
 		isTargetSelfCard: false,
-		onUse: ({ targetPlayerId, targetCardInstanceId }, user) =>
+		onUse: ({ targetId, targetCardId }, user) =>
 			new Promise(async (res, rej) => {
 				try {
-					await queries.applyNewModToCard(targetPlayerId, targetCardInstanceId, new Mods.IncomeMod(true, null, 1.1, false));
-					var cardArray = await queries.getUserCardsById(targetPlayerId);
-					var card = cardUtils.getOneCardFromCardArrayByInstanceId(cardArray.game.inventory.cardInstances, targetCardInstanceId);
-					var newEffectiveIncome = cardUtils.calculateEffectiveIncomeOfCard(card, Cards);
-					await queries.updateEffectiveIncomeOfCard(targetPlayerId, targetCardInstanceId, newEffectiveIncome);
-					return res(`Hub's Income has been increased by 10%.`);
+					await queries.applyNewModToCard(
+						targetId,
+						targetCardId,
+						new Mods.IncomeMod(true, null, 0.5, false)
+					);
+					var cardArray = await queries.getUserCardsById(targetId);
+					var card = cardUtils.getOneCardFromCardArrayByInstanceId(
+						cardArray.game.inventory.cardInstances,
+						targetCardId
+					);
+					var newEffectiveIncome =
+						cardUtils.calculateEffectiveIncomeOfCard(card, Cards);
+					await queries.updateEffectiveIncomeOfCard(
+						targetId,
+						targetCardId,
+						newEffectiveIncome
+					);
+					return res(`Hub's Income has been decreased by 50%.`);
+				} catch (err) {
+					rej(err);
+				}
+			}),
+	},
+	13: {
+		id: 13,
+		emoji: '🚨',
+		displayName: 'Stock Discrepancy II',
+		description: "Decrease a Hub's income by 100%.",
+		cardType: 1,
+		rarity: 2,
+		isTargetCard: true,
+		isTargetPlayer: true,
+		isTargetSelfCard: false,
+		onUse: ({ targetId, targetCardId }, user) =>
+			new Promise(async (res, rej) => {
+				try {
+					await queries.applyNewModToCard(
+						targetId,
+						targetCardId,
+						new Mods.IncomeMod(true, null, 0, false)
+					);
+					var cardArray = await queries.getUserCardsById(targetId);
+					var card = cardUtils.getOneCardFromCardArrayByInstanceId(
+						cardArray.game.inventory.cardInstances,
+						targetCardId
+					);
+					var newEffectiveIncome =
+						cardUtils.calculateEffectiveIncomeOfCard(card, Cards);
+					await queries.updateEffectiveIncomeOfCard(
+						targetId,
+						targetCardId,
+						newEffectiveIncome
+					);
+					return res(`Hub's Income has been decreased by 100%.`);
+				} catch (err) {
+					rej(err);
+				}
+			}),
+	},
+	14: {
+		id: 14,
+		emoji: '🚨',
+		displayName: 'Market Breakthrough',
+		description: "Increase a Hub's income by 50%.",
+		cardType: 1,
+		rarity: 1,
+		isTargetCard: false,
+		isTargetPlayer: false,
+		isTargetSelfCard: true,
+		onUse: ({ selfCardId }, user) =>
+			new Promise(async (res, rej) => {
+				try {
+					const targetId = user.id;
+					await queries.applyNewModToCard(
+						targetId,
+						selfCardId,
+						new Mods.IncomeMod(true, null, 0.5, false)
+					);
+					var cardArray = await queries.getUserCardsById(targetId);
+					var card = cardUtils.getOneCardFromCardArrayByInstanceId(
+						cardArray.game.inventory.cardInstances,
+						selfCardId
+					);
+					var newEffectiveIncome =
+						cardUtils.calculateEffectiveIncomeOfCard(card, Cards);
+					await queries.updateEffectiveIncomeOfCard(
+						targetId,
+						selfCardId,
+						newEffectiveIncome
+					);
+					return res(`Hub's Income has been decreased by 50%.`);
+				} catch (err) {
+					rej(err);
+				}
+			}),
+	},
+	15: {
+		id: 15,
+		emoji: '🚨',
+		displayName: 'Market Breakthrough II',
+		description: "Increase a Hub's income by 100%.",
+		cardType: 1,
+		rarity: 2,
+		isTargetCard: false,
+		isTargetPlayer: false,
+		isTargetSelfCard: true,
+		onUse: ({ selfCardId }, user) =>
+			new Promise(async (res, rej) => {
+				try {
+					const targetId = user.id;
+					await queries.applyNewModToCard(
+						targetId,
+						selfCardId,
+						new Mods.IncomeMod(true, null, 0, false)
+					);
+					var cardArray = await queries.getUserCardsById(targetId);
+					var card = cardUtils.getOneCardFromCardArrayByInstanceId(
+						cardArray.game.inventory.cardInstances,
+						selfCardId
+					);
+					var newEffectiveIncome =
+						cardUtils.calculateEffectiveIncomeOfCard(card, Cards);
+					await queries.updateEffectiveIncomeOfCard(
+						targetId,
+						selfCardId,
+						newEffectiveIncome
+					);
+					return res(`Hub's Income has been decreased by 100%.`);
 				} catch (err) {
 					rej(err);
 				}
@@ -97,7 +219,8 @@ const Cards = {
 		id: 20,
 		emoji: '🏢',
 		displayName: 'Proxy Income',
-		description: 'Gain control of a Player\\\'s Hub and receive its income for 2 turns',
+		description:
+			"Gain control of a Player\\'s Hub and receive its income for 2 turns",
 		cardType: 1,
 		rarity: 1,
 		isTargetCard: true,
@@ -106,8 +229,17 @@ const Cards = {
 		onUse: ({ targetPlayerId, targetCardId, targetCardInstanceId }, user) =>
 			new Promise(async (res, rej) => {
 				try {
-					await queries.applyNewModToCard(targetPlayerId, targetCardInstanceId, new Mods.OwnerMod(user.id, false, 2));
-					await queries.addStolenCardToPlayerInventory(user.id, targetPlayerId, targetCardId, targetCardInstanceId);
+					await queries.applyNewModToCard(
+						targetPlayerId,
+						targetCardInstanceId,
+						new Mods.OwnerMod(user.id, false, 2)
+					);
+					await queries.addStolenCardToPlayerInventory(
+						user.id,
+						targetPlayerId,
+						targetCardId,
+						targetCardInstanceId
+					);
 					return res('Hub Stolen.');
 				} catch (err) {
 					rej(err);
@@ -367,6 +499,7 @@ const unwrapCard = (card) =>
 
 async function useCard(req, res) {
 	try {
+		console.log(req.query);
 		const user = await queries.userHasCard(
 			req.user.id,
 			req.query.cardId,
@@ -386,6 +519,7 @@ async function useCard(req, res) {
 		await queries.updateActionLog(user.game.id, logData, 0);
 		return res.status(200).json(r);
 	} catch (err) {
+		console.log(err);
 		return res.status(400).json(err);
 	}
 }

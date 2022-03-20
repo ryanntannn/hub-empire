@@ -40,7 +40,8 @@ export default function Login() {
 				auth.login(res.data, true);
 			})
 			.catch((error) => {
-				console.log(error.response.data);
+				console.log(error);
+				if (error.response) setErrorMessage(error.response.data);
 			});
 	});
 

@@ -138,8 +138,9 @@ export default function MyCards() {
 				color='secondary'>
 				<DropdownToggle caret>{activeSortMethod.name}</DropdownToggle>
 				<DropdownMenu container='body'>
-					{sortMethods.map((sortMethod) => (
+					{sortMethods.map((sortMethod, i) => (
 						<DropdownItem
+							key={i}
 							onClick={() => setActiveSortMethod(sortMethod)}>
 							{sortMethod.name}
 						</DropdownItem>
@@ -164,6 +165,7 @@ export default function MyCards() {
 								return (
 									<Col key={i}>
 										<CardComponent
+											key={i}
 											card={x.card}
 											onClick={async () => {
 												try {
@@ -258,6 +260,8 @@ function ActiveCardModal(props: CardModalProps) {
 		);
 	}
 
+	function renderModifiers() {}
+
 	return (
 		<Modal isOpen={props.isOpen} style={{ maxWidth: 600 }}>
 			<ModalHeader toggle={() => props.onReject()}>
@@ -337,13 +341,11 @@ function ChooseTargetPlayer(props: TargetPlayerProps) {
 		if (playerList != null) return;
 		auth.authenticatedGet('/users-min')
 			.then((res: any) => {
+				console.log(res);
 				setPlayerList(
-					res.data.user
-						.filter((x: any) => x._id != auth.user.userData._id)
-						.map((x: any) => ({
-							id: x._id,
-							displayName: x.displayName,
-						}))
+					res.data.user.filter(
+						(x: any) => x._id != auth.user.userData._id
+					)
 				);
 				console.log(res);
 			})
@@ -408,9 +410,11 @@ function ChooseTargetCard(props: TargetCardProps) {
 
 	React.useEffect(() => {
 		if (cardList != null) return;
-		auth.authenticatedGet(`/user?id=${props.playerId}`)
+		let id = props.playerId;
+		if (id == 0) id = auth.user.userData._id;
+		auth.authenticatedGet(`/my-cards?id=${id}`)
 			.then((res: any) => {
-				setCardList(res.data.user.cardIds);
+				setCardList(res.data.cards);
 				console.log(res);
 			})
 			.catch((err) => {
