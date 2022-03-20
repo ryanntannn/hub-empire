@@ -17,6 +17,10 @@ p {
 	padding: 40px 20px;
 }
 
+.rounded-box.short {
+	padding: 20px 20px;
+}
+
 .huge-and-bold {
 	font-weight: 700;
 	font-size: 35px;

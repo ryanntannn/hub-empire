@@ -24,6 +24,7 @@ import {
 	CardType,
 	HubCard,
 	HubType,
+	IncomeModifier,
 	Step,
 	UserData,
 } from '../types/types';
@@ -166,7 +167,7 @@ export default function MyCards() {
 									<Col key={i}>
 										<CardComponent
 											key={i}
-											card={x.card}
+											cardInstance={x}
 											onClick={async () => {
 												try {
 													cardModal({
@@ -260,7 +261,26 @@ function ActiveCardModal(props: CardModalProps) {
 		);
 	}
 
-	function renderModifiers() {}
+	function renderModifiers() {
+		console.log(props.cardInstance);
+		return (
+			<div>
+				<b>Active Effects:</b>
+				{renderIncomeModifiers(props.cardInstance.modifiers.income)}
+			</div>
+		);
+	}
+
+	function renderIncomeModifiers(incomeMods: IncomeModifier[]) {
+		return incomeMods.map((mod, i) => (
+			<div className='rounded-box short shadow' key={i}>
+				Income is {mod.incomeBoost > 0 ? 'increased' : 'decreased'} by{' '}
+				{<b>{mod.incomeBoost}x</b>} (
+				{mod.isPermanent ? 'Permanent' : `Turns Left: ${mod.turnsLeft}`}
+				)
+			</div>
+		));
+	}
 
 	return (
 		<Modal isOpen={props.isOpen} style={{ maxWidth: 600 }}>
@@ -272,11 +292,11 @@ function ActiveCardModal(props: CardModalProps) {
 			<ModalBody>
 				<div className='card-details'>
 					<CardComponent
-						card={props.cardInstance.card}
+						cardInstance={props.cardInstance}
 						onClick={() => {}}
 					/>
 					<div>
-						<p
+						{/* <p
 							style={{
 								fontSize: 10,
 								position: 'absolute',
@@ -284,7 +304,7 @@ function ActiveCardModal(props: CardModalProps) {
 							}}>
 							cardId: {props.cardInstance.card.id}, instanceId:{' '}
 							{props.cardInstance.instanceId}
-						</p>
+						</p> */}
 						<h2 className='big-and-bold'>
 							{props.cardInstance.card.emoji}{' '}
 							{props.cardInstance.card.displayName}
@@ -303,6 +323,9 @@ function ActiveCardModal(props: CardModalProps) {
 							? ActiveHubCardDetails(
 									props.cardInstance.card as HubCard
 							  )
+							: null}
+						{props.cardInstance.card.cardType == CardType.HUB
+							? renderModifiers()
 							: null}
 					</div>
 				</div>
@@ -399,9 +422,7 @@ interface TargetCardProps extends InstanceProps<number, null> {
 }
 
 function ChooseTargetCard(props: TargetCardProps) {
-	const [cardList, setCardList] = React.useState<
-		{ instanceId: number; cardId: number }[] | null
-	>(null);
+	const [cards, setCards] = React.useState<CardInstance[] | null>(null);
 	const [selectedCardId, setSelectedCardId] = React.useState<number | null>(
 		null
 	);
@@ -409,12 +430,23 @@ function ChooseTargetCard(props: TargetCardProps) {
 	const cardsData = useCards();
 
 	React.useEffect(() => {
-		if (cardList != null) return;
+		if (cards != null) return;
 		let id = props.playerId;
 		if (id == 0) id = auth.user.userData._id;
 		auth.authenticatedGet(`/my-cards?id=${id}`)
 			.then((res: any) => {
-				setCardList(res.data.cards);
+				if (res == null) return;
+				console.log(res);
+				const cardIds: CardInstanceData[] = (
+					res.data.cards as CardInstanceData[]
+				).filter(
+					(x) => cardsData.getCard(x.cardId).cardType == CardType.HUB
+				);
+				setCards(
+					cardIds.map((id) => {
+						return cardsData.getCardInstance(id);
+					})
+				);
 				console.log(res);
 			})
 			.catch((err) => {
@@ -424,7 +456,7 @@ function ChooseTargetCard(props: TargetCardProps) {
 
 	return (
 		<Modal isOpen={props.isOpen} toggle={() => props.onReject()}>
-			<ModalHeader toggle={() => props.onReject()}>
+			<ModalHeader as='h2' toggle={() => props.onReject()}>
 				<h2 className='big-and-bold'>Choose a card</h2>
 			</ModalHeader>
 			<ModalBody style={{ textAlign: 'center' }}>
@@ -432,10 +464,11 @@ function ChooseTargetCard(props: TargetCardProps) {
 					<div
 						className='card-container small scroll-y'
 						style={{ maxHeight: 400, paddingRight: 30 }}>
-						{cardList != null ? (
-							cardList.map((card, i) => (
+						{cards != null ? (
+							cards.map((card, i) => (
 								<CardComponent
-									card={cardsData.getCard(card.cardId)}
+									key={i}
+									cardInstance={card}
 									onClick={() => {
 										setSelectedCardId(card.instanceId);
 									}}

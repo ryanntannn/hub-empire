@@ -2,6 +2,7 @@ import { Button } from 'reactstrap';
 import {
 	ActionCard,
 	Card,
+	CardInstance,
 	CardRarity,
 	CardType,
 	HubCard,
@@ -50,19 +51,19 @@ function RarityToBgColor(rarity: CardRarity) {
 }
 
 export default function CardComponent(props: {
-	card: Card;
+	cardInstance: CardInstance;
 	onClick: () => void;
 	selected?: boolean;
 }) {
-	return props.card.cardType == CardType.ACTION ? (
+	return props.cardInstance.card.cardType == CardType.ACTION ? (
 		<ActionCardComponent
-			card={props.card as ActionCard}
+			card={props.cardInstance.card as ActionCard}
 			onClick={props.onClick}
 			selected={props.selected}
 		/>
 	) : (
 		<HubCardComponent
-			card={props.card as HubCard}
+			cardInstance={props.cardInstance as CardInstance}
 			onClick={props.onClick}
 			selected={props.selected}
 		/>
@@ -107,10 +108,11 @@ function ActionCardComponent(props: {
 }
 
 function HubCardComponent(props: {
-	card: HubCard;
+	cardInstance: CardInstance;
 	onClick: () => void;
 	selected?: boolean;
 }) {
+	const card = props.cardInstance.card as HubCard;
 	return (
 		<div
 			className={`rounded-box shadow card ${
@@ -118,34 +120,40 @@ function HubCardComponent(props: {
 			}`}
 			onClick={props.onClick}
 			style={{
-				backgroundColor: RarityToBgColor(props.card.rarity),
+				backgroundColor: RarityToBgColor(card.rarity),
 			}}>
 			<div
 				className='top-color-area'
 				style={{
-					backgroundColor: HubTypeToColor(props.card.hubType),
+					backgroundColor: HubTypeToColor(card.hubType),
 				}}></div>
 			<h1
 				style={{
 					fontSize: 50,
 				}}>
-				{props.card.emoji}
+				{card.emoji}
 			</h1>
 			<p
 				style={{
-					color: RarityToColor(props.card.rarity),
+					color: RarityToColor(card.rarity),
 				}}
 				className='normal-and-bold no-padding'>
-				{props.card.displayName}
+				{card.displayName}
 			</p>
 			<p className='normal-and-bold no-padding mt-2'>
-				${numberWithCommas(props.card.value)}M
+				${numberWithCommas(card.value)}M
 			</p>
 			<p
-				style={{ color: props.card.baseIncome >= 0 ? 'green' : 'red' }}
+				style={{
+					color:
+						props.cardInstance.effectiveIncome >= 0
+							? 'green'
+							: 'red',
+				}}
 				className='normal-and-bold no-padding mt-2'>
-				{props.card.baseIncome >= 0 ? '+' : '-'}$
-				{numberWithCommas(Math.abs(props.card.baseIncome))}M
+				{props.cardInstance.effectiveIncome >= 0 ? '+' : '-'}$
+				{numberWithCommas(Math.abs(props.cardInstance.effectiveIncome))}
+				M
 			</p>
 		</div>
 	);

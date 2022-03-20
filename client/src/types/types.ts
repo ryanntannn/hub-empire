@@ -39,11 +39,23 @@ export interface CardInstance extends CardInstanceData {
 	card: Card;
 }
 
+export interface IncomeModifier {
+	incomeBoost: number;
+	isAdditive: boolean;
+	isPermanent: number;
+	modType: number;
+	turnsLeft: number;
+}
+
 export interface CardInstanceData {
 	instanceId: number;
 	cardId: number;
-	mods?: any;
-	flags?: CardFlag[];
+	effectiveIncome: number;
+	modifiers: {
+		hub: {};
+		income: IncomeModifier[];
+		owner: {};
+	};
 }
 
 export interface Card {
