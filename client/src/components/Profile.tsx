@@ -7,6 +7,7 @@ import { UserData } from '../types/types';
 import Loading from './Loading';
 import { GetUserDataRes } from '../types/api';
 import { numberWithCommas } from '../utils/Misc';
+import ProfileBox from './ProfileBox';
 
 export default function Profile() {
 	const auth = useAuth();
@@ -42,30 +43,12 @@ export default function Profile() {
 					<h1 className='title'>
 						👤 {userData.profile!.displayName}'s Profile
 					</h1>
-					<div className='rounded-box shadow mt-3'>
-						<h1 className='no-padding huge-and-bold'>
-							{userData.profile!.displayName}
-						</h1>
-						<p className='no-padding'>net-worth:</p>
-						<h2 className='no-padding huge-and-bold'>
-							${numberWithCommas(userData.game!.stats!.netWorth)}M
-						</h2>
-						<p className='no-padding'>earnings this turn:</p>
-						<h2
-							style={{
-								color:
-									userData.game!.stats!.turnIncome >= 0
-										? 'green'
-										: 'red',
-							}}
-							className='no-padding big-and-bold'>
-							{userData.game!.stats!.turnIncome >= 0 ? '+' : '-'}$
-							{numberWithCommas(
-								Math.abs(userData.game!.stats!.turnIncome)
-							)}
-							M
-						</h2>
-					</div>
+					<ProfileBox
+						avatar={userData.profile?.avatar!}
+						displayName={userData.profile?.displayName!}
+						netWorth={userData.game?.stats?.netWorth!}
+						turnIncome={userData.game?.stats?.turnIncome!}
+					/>
 					<br />
 					<p className='no-padding'>cards owned:</p>
 					<h2 className='no-padding huge-and-bold'>

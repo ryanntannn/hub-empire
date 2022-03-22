@@ -52,7 +52,7 @@ function RarityToBgColor(rarity: CardRarity) {
 
 export default function CardComponent(props: {
 	cardInstance: CardInstance;
-	onClick: () => void;
+	onClick?: () => void;
 	selected?: boolean;
 }) {
 	return props.cardInstance.card.cardType == CardType.ACTION ? (
@@ -72,15 +72,15 @@ export default function CardComponent(props: {
 
 function ActionCardComponent(props: {
 	card: ActionCard;
-	onClick: () => void;
+	onClick?: () => void;
 	selected?: boolean;
 }) {
 	return (
 		<div
 			className={`rounded-box shadow card ${
 				props.selected ? 'selected' : null
-			}`}
-			onClick={props.onClick}
+			} ${props.onClick != undefined ? 'clickable' : null}`}
+			onClick={props.onClick != undefined ? props.onClick : () => {}}
 			style={{
 				backgroundColor: RarityToBgColor(props.card.rarity),
 			}}>
@@ -109,7 +109,7 @@ function ActionCardComponent(props: {
 
 function HubCardComponent(props: {
 	cardInstance: CardInstance;
-	onClick: () => void;
+	onClick?: () => void;
 	selected?: boolean;
 }) {
 	const card = props.cardInstance.card as HubCard;
@@ -124,8 +124,8 @@ function HubCardComponent(props: {
 		<div
 			className={`rounded-box shadow card ${
 				props.selected ? 'selected' : null
-			}`}
-			onClick={props.onClick}
+			} ${props.onClick != undefined ? 'clickable' : null}`}
+			onClick={props.onClick != undefined ? props.onClick : () => {}}
 			style={{
 				backgroundColor: RarityToBgColor(card.rarity),
 			}}>

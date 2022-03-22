@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { GetHomeDataRes } from '../types/api';
 import Loading from './Loading';
 import { numberWithCommas } from '../utils/Misc';
+import ProfileBox from './ProfileBox';
 
 function Home() {
 	let navigate = useNavigate();
@@ -44,44 +45,18 @@ function Home() {
 					<h1 className='title'>🏠 Hub Empire</h1>
 					<Row className='mb-3'>
 						<Col>
-							<div className='rounded-box shadow'>
-								<h2 className='no-padding huge-and-bold'>
-									{homeData.myData.profile?.displayName}
-								</h2>
-								<p className='no-padding'>net-worth:</p>
-								<h2 className='no-padding huge-and-bold'>
-									$
-									{numberWithCommas(
-										homeData.myData.game!.stats!.netWorth
-									)}
-									M
-								</h2>
-								<p className='no-padding'>
-									earnings this turn:
-								</p>
-								<h2
-									className='no-padding big-and-bold'
-									style={{
-										color:
-											homeData.myData.game!.stats!
-												.turnIncome >= 0
-												? 'green'
-												: 'red',
-									}}>
-									{homeData.myData.game!.stats!.turnIncome >=
-									0
-										? '+'
-										: '-'}
-									$
-									{numberWithCommas(
-										Math.abs(
-											homeData.myData.game!.stats!
-												.turnIncome
-										)
-									)}
-									M
-								</h2>
-							</div>
+							<ProfileBox
+								avatar={homeData.myData.profile?.avatar!}
+								displayName={
+									homeData.myData.profile?.displayName!
+								}
+								netWorth={
+									homeData.myData.game?.stats?.netWorth!
+								}
+								turnIncome={
+									homeData.myData.game?.stats?.turnIncome!
+								}
+							/>
 						</Col>
 					</Row>
 					<Row className='mb-3 gx-3'>

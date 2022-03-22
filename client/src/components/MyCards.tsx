@@ -308,10 +308,7 @@ function ActiveCardModal(props: CardModalProps) {
 			</ModalHeader>
 			<ModalBody>
 				<div className='card-details'>
-					<CardComponent
-						cardInstance={props.cardInstance}
-						onClick={() => {}}
-					/>
+					<CardComponent cardInstance={props.cardInstance} />
 					<div>
 						{/* <p
 							style={{

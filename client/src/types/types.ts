@@ -91,6 +91,7 @@ export interface ActionCard extends Card {
 export interface UserData {
 	_id: number;
 	profile?: {
+		avatar?: number;
 		username?: string;
 		displayName?: string;
 	};

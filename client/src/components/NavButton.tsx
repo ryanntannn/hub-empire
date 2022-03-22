@@ -21,7 +21,7 @@ export default function NavButton(props: NavButtonProps) {
 					textAlign: 'center',
 					textDecoration: 'none',
 				}}
-				className='rounded-box shadow'>
+				className='rounded-box shadow clickable'>
 				<h1
 					style={{
 						fontSize: 50,
