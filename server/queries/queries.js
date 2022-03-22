@@ -421,6 +421,27 @@ async function addStolenCardToPlayerInventory(
 		.catch(console.dir);
 }
 
+async function updateProfile(playerId, displayName, avatar) {
+	const query = {
+		_id: ObjectId(playerId),
+	};
+
+	const newValues = {
+		$set: {
+			'profile.displayName': displayName,
+			'profile.avatar': avatar,
+		},
+	};
+
+	await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateOne(query, newValues)
+		.catch(console.dir);
+
+	return;
+}
+
 const queries = {
 	getUserDataByUsername,
 	getUserDataMinById,
@@ -443,6 +464,7 @@ const queries = {
 	applyNewModToCard,
 	updateEffectiveIncomeOfCard,
 	addStolenCardToPlayerInventory,
+	updateProfile,
 };
 
 module.exports = queries;

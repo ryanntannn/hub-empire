@@ -19,6 +19,7 @@ import TradeInbox from './components/trading/TradeInbox';
 import ModalContainer from 'react-modal-promise';
 import { CardProvider } from './contexts/CardsContext';
 import { History } from './components/History';
+import EditProfile from './components/EditProfile';
 
 const rootElement = document.getElementById('root');
 
@@ -77,6 +78,14 @@ render(
 						}
 					/>
 					<Route
+						path='edit-profile'
+						element={
+							<RequireAuth>
+								<EditProfile />
+							</RequireAuth>
+						}
+					/>
+					<Route
 						path='profile/:userId'
 						element={
 							<RequireAuth>
@@ -100,7 +109,6 @@ render(
 	</AuthenticationProvider>,
 	rootElement
 );
-
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

@@ -84,4 +84,30 @@ async function register(req, res) {
 	}
 }
 
-module.exports = { login, register };
+async function editProfile(req, res) {
+	try {
+		if (req.query.displayName.length < 3)
+			return res
+				.status(400)
+				.json('display name contain at least 3 characters');
+		if (req.query.displayName.length > 17)
+			return res
+				.status(400)
+				.json('display name must be 16 characters or less');
+		if (/[^a-zA-Z0-9 ]/.test(req.query.displayName))
+			return res
+				.status(400)
+				.json('display name cannot contain special characters');
+		await queries.updateProfile(
+			req.user.id,
+			req.query.displayName,
+			req.query.avatar
+		);
+		return res.status(200).send();
+	} catch (err) {
+		console.log(err);
+		return res.status(400).json(err);
+	}
+}
+
+module.exports = { login, register, editProfile };

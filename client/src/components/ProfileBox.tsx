@@ -11,7 +11,7 @@ export default function ProfileBox(props: {
 	return (
 		<div className='rounded-box shadow profile-grid' {...props}>
 			<div style={{ textAlign: 'center' }}>
-				<img src={`/avatars/${avatar}.jpeg`} style={{ height: 200 }} />
+				<Avatar avatar={avatar} />
 			</div>
 			<div>
 				<h2 className='no-padding huge-and-bold'>{displayName}</h2>
@@ -30,5 +30,11 @@ export default function ProfileBox(props: {
 				</h2>
 			</div>
 		</div>
+	);
+}
+
+export function Avatar(props: { avatar: number }) {
+	return (
+		<img src={`/avatars/${props.avatar}.jpeg`} style={{ height: 200 }} />
 	);
 }

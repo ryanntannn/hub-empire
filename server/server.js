@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const { login, register } = require('./api/account');
+const { login, register, editProfile } = require('./api/account');
 const { useCard, getCards } = require('./api/cards');
 const queries = require('./queries/queries');
 const { authenticateToken, refreshToken } = require('./utils/authentication');
@@ -184,5 +184,7 @@ app.get('/auth', authenticateToken, async (req, res) => {
 app.post('/login', login);
 
 app.post('/register', register);
+
+app.post('/edit-profile', authenticateToken, editProfile);
 
 app.listen(process.env.PORT || 42069);

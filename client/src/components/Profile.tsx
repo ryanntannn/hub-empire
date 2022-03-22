@@ -1,7 +1,7 @@
 import { Button, Container } from 'reactstrap';
 import BackButton from './BackButton';
 import useAuth from '../contexts/AuthenticationContext';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import React from 'react';
 import { UserData } from '../types/types';
 import Loading from './Loading';
@@ -12,6 +12,7 @@ import ProfileBox from './ProfileBox';
 export default function Profile() {
 	const auth = useAuth();
 	const params = useParams();
+	const navigate = useNavigate();
 	const [userData, setUserData] = React.useState<UserData | null>(null);
 
 	const userId = () =>
@@ -60,6 +61,14 @@ export default function Profile() {
 					</h2>
 					{ownProfile ? (
 						<>
+							<Button
+								className='mt-3 mx-3'
+								outline
+								onClick={() =>
+									navigate('/edit-profile', { replace: true })
+								}>
+								Edit Profile
+							</Button>
 							<Button
 								className='mt-3'
 								color='danger'
