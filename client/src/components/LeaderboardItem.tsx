@@ -31,7 +31,7 @@ export default function LeaderboardItem(props: { data: LeaderboardItemProps }) {
 				displayName={
 					getPositionEmoji() + ' ' + data.profile?.displayName!
 				}
-				netWorth={data.game?.stats?.turnIncome!}
+				netWorth={data.game?.stats?.netWorth!}
 				turnIncome={data.game?.stats?.turnIncome!}
 			/>
 		</div>

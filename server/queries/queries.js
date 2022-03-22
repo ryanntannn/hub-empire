@@ -55,6 +55,7 @@ async function getUserDataBasicById(id) {
 	const projection = {
 		//_id is returned by default
 		'profile.displayName': 1,
+		'profile.avatar': 1,
 		game: {
 			id: 1,
 			stats: {
@@ -262,7 +263,7 @@ async function updateUserStatsAndInventory(player) {
 			'game.inventory': {
 				cardInstances: player.game.inventory.cardInstances,
 				newCards: player.game.inventory.newCards,
-			}
+			},
 		},
 	};
 
@@ -300,6 +301,7 @@ async function getLeaderboard(gameId) {
 
 	const projection = {
 		'profile.displayName': 1,
+		'profile.avatar': 1,
 		'game.stats': {
 			netWorth: 1,
 			turnIncome: 1,
@@ -314,14 +316,14 @@ async function getLeaderboard(gameId) {
 		.toArray();
 }
 
-async function applyNewModToCard(playerId, instanceId, mod){
+async function applyNewModToCard(playerId, instanceId, mod) {
 	const query = {
 		_id: ObjectId(playerId),
 		'game.inventory.cardInstances': {
 			$elemMatch: {
-				'instanceId': instanceId,
-			}
-		}
+				instanceId: instanceId,
+			},
+		},
 	};
 
 	var modToInsert = {};
@@ -332,7 +334,7 @@ async function applyNewModToCard(playerId, instanceId, mod){
 			modToInsert = {
 				$set: {
 					'game.inventory.cardInstances.$.modifiers.owner': mod,
-				}
+				},
 			};
 			break;
 		//Hub Mod
@@ -340,7 +342,7 @@ async function applyNewModToCard(playerId, instanceId, mod){
 			modToInsert = {
 				$set: {
 					'game.inventory.cardInstances.$.modifiers.hub': mod,
-				}
+				},
 			};
 			break;
 		//Income Mod
@@ -348,7 +350,7 @@ async function applyNewModToCard(playerId, instanceId, mod){
 			modToInsert = {
 				$push: {
 					'game.inventory.cardInstances.$.modifiers.income': mod,
-				}
+				},
 			};
 			break;
 		//Invalid Mod Type
@@ -362,19 +364,24 @@ async function applyNewModToCard(playerId, instanceId, mod){
 		.catch(console.dir);
 }
 
-async function updateEffectiveIncomeOfCard(playerId, instanceId, newEffectiveIncome){
+async function updateEffectiveIncomeOfCard(
+	playerId,
+	instanceId,
+	newEffectiveIncome
+) {
 	const query = {
 		_id: ObjectId(playerId),
 		'game.inventory.cardInstances': {
 			$elemMatch: {
-				'instanceId': instanceId,
-			}
-		}
+				instanceId: instanceId,
+			},
+		},
 	};
 
 	const newValues = {
 		$set: {
-			'game.inventory.cardInstances.$.effectiveIncome': newEffectiveIncome,
+			'game.inventory.cardInstances.$.effectiveIncome':
+				newEffectiveIncome,
 		},
 	};
 
@@ -387,7 +394,12 @@ async function updateEffectiveIncomeOfCard(playerId, instanceId, newEffectiveInc
 	return;
 }
 
-async function addStolenCardToPlayerInventory(playerId, targetPlayerId, targetCardId, targetCardInstanceId) {
+async function addStolenCardToPlayerInventory(
+	playerId,
+	targetPlayerId,
+	targetCardId,
+	targetCardInstanceId
+) {
 	const query = {
 		_id: ObjectId(playerId),
 	};
@@ -398,8 +410,8 @@ async function addStolenCardToPlayerInventory(playerId, targetPlayerId, targetCa
 				playerId: targetPlayerId,
 				cardId: targetCardId,
 				instanceId: targetCardInstanceId,
-			}
-		}
+			},
+		},
 	};
 
 	return await mongo.client
@@ -408,8 +420,6 @@ async function addStolenCardToPlayerInventory(playerId, targetPlayerId, targetCa
 		.updateOne(query, newValues)
 		.catch(console.dir);
 }
-
-	
 
 const queries = {
 	getUserDataByUsername,
