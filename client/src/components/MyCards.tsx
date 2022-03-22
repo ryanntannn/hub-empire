@@ -33,6 +33,7 @@ import CardComponent from './Card';
 import useAuth from '../contexts/AuthenticationContext';
 import Loading from './Loading';
 import useCards from '../contexts/CardsContext';
+import { enumToArray } from '../utils/Misc';
 
 interface SortMethod {
 	name: string;
@@ -198,11 +199,13 @@ function ActiveCardModal(props: CardModalProps) {
 
 	const targetPlayerModal = create(ChooseTargetPlayer);
 	const targetCardModal = create(ChooseTargetCard);
+	const targetHubTypeModal = create(ChooseHubType);
 	const acknowledgementModal = create(AcknowledgementModal);
 
 	async function useCard() {
 		try {
 			const card = props.cardInstance.card as ActionCard;
+			console.log(card);
 			const data: PostUseCardParams = {
 				cardId: card.id,
 				instanceId: props.cardInstance.instanceId,
@@ -214,6 +217,8 @@ function ActiveCardModal(props: CardModalProps) {
 				});
 			if (card.isTargetSelfCard)
 				data.selfCardId = await targetCardModal({ playerId: 0 });
+			if (card.isTargetHubType)
+				data.cardType = await targetHubTypeModal();
 			const params = { ...data };
 			console.log(params);
 			const res: any = await auth.authenticatedPost(`/use-card`, {
@@ -488,6 +493,45 @@ function ChooseTargetCard(props: TargetCardProps) {
 					disabled={selectedCardId == null}
 					color='primary'
 					onClick={() => props.onResolve(selectedCardId!)}>
+					Confirm Selection
+				</Button>
+				<Button color='secondary' onClick={() => props.onReject()}>
+					Close
+				</Button>
+			</ModalFooter>
+		</Modal>
+	);
+}
+
+interface HubTypeProps extends InstanceProps<HubType, null> {}
+
+function ChooseHubType(props: HubTypeProps) {
+	const [selectedHubType, setSelectedHubType] =
+		React.useState<HubType | null>(null);
+	return (
+		<Modal isOpen={props.isOpen} toggle={() => props.onReject()}>
+			<ModalHeader toggle={() => props.onReject()}>
+				<h2 className='big-and-bold'>Choose a target player</h2>
+			</ModalHeader>
+			<ModalBody style={{ textAlign: 'center' }}>
+				{enumToArray(HubType).map((hubType, i) => (
+					<div key={i}>
+						<Input
+							onClick={() => {
+								setSelectedHubType(i as HubType);
+							}}
+							name={`radio-hubSelect`}
+							type='radio'
+						/>{' '}
+						{hubType}
+					</div>
+				))}
+			</ModalBody>
+			<ModalFooter>
+				<Button
+					disabled={selectedHubType == null}
+					color='primary'
+					onClick={() => props.onResolve(selectedHubType!)}>
 					Confirm Selection
 				</Button>
 				<Button color='secondary' onClick={() => props.onReject()}>

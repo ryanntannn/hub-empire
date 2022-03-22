@@ -15,6 +15,7 @@ const Cards = {
 		isTargetCard: false,
 		isTargetPlayer: false,
 		isTargetSelfCard: false,
+		isTargetHubType: false,
 		onUse: ({ targetId, targetCardId, selfCardId }, user) =>
 			new Promise(async (res, rej) => {
 				try {
@@ -34,6 +35,7 @@ const Cards = {
 		isTargetCard: false,
 		isTargetPlayer: true,
 		isTargetSelfCard: false,
+		isTargetHubType: false,
 		onUse: ({ targetId, targetCardId, selfCardId }, user) =>
 			new Promise(async (res, rej) => {
 				try {
@@ -55,6 +57,7 @@ const Cards = {
 		isTargetCard: false,
 		isTargetPlayer: true,
 		isTargetSelfCard: false,
+		isTargetHubType: false,
 		onUse: ({ targetId, targetCardId, selfCardId }, user) =>
 			new Promise(async (res, rej) => {
 				try {
@@ -77,6 +80,7 @@ const Cards = {
 		isTargetCard: true,
 		isTargetPlayer: true,
 		isTargetSelfCard: false,
+		isTargetHubType: false,
 		onUse: ({ targetId, targetCardId }, user) =>
 			new Promise(async (res, rej) => {
 				try {
@@ -113,6 +117,7 @@ const Cards = {
 		isTargetCard: true,
 		isTargetPlayer: true,
 		isTargetSelfCard: false,
+		isTargetHubType: false,
 		onUse: ({ targetId, targetCardId }, user) =>
 			new Promise(async (res, rej) => {
 				try {
@@ -149,6 +154,7 @@ const Cards = {
 		isTargetCard: false,
 		isTargetPlayer: false,
 		isTargetSelfCard: true,
+		isTargetHubType: false,
 		onUse: ({ selfCardId }, user) =>
 			new Promise(async (res, rej) => {
 				try {
@@ -186,6 +192,7 @@ const Cards = {
 		isTargetCard: false,
 		isTargetPlayer: false,
 		isTargetSelfCard: true,
+		isTargetHubType: false,
 		onUse: ({ selfCardId }, user) =>
 			new Promise(async (res, rej) => {
 				try {
@@ -208,6 +215,32 @@ const Cards = {
 						newEffectiveIncome
 					);
 					return res(`Hub's Income has been decreased by 100%.`);
+				} catch (err) {
+					rej(err);
+				}
+			}),
+	},
+	16: {
+		id: 16,
+		emoji: '🔨',
+		displayName: 'Repurpose Hub',
+		description: 'Change the industry of a hub permanently',
+		cardType: 1,
+		rarity: 2,
+		isTargetCard: false,
+		isTargetPlayer: false,
+		isTargetSelfCard: true,
+		isTargetHubType: true,
+		onUse: ({ selfCardId, cardType }, user) =>
+			new Promise(async (res, rej) => {
+				try {
+					const targetId = user.id;
+					await queries.applyNewModToCard(
+						targetId,
+						selfCardId,
+						new Mods.HubMod(true, null, cardType)
+					);
+					return res(`Hub's Industry has been changed.`);
 				} catch (err) {
 					rej(err);
 				}
@@ -481,6 +514,7 @@ const unwrapActionCard = ({
 	isTargetCard,
 	isTargetPlayer,
 	isTargetSelfCard,
+	isTargetHubType,
 }) => ({
 	id,
 	emoji,
@@ -491,6 +525,7 @@ const unwrapActionCard = ({
 	isTargetCard,
 	isTargetPlayer,
 	isTargetSelfCard,
+	isTargetHubType,
 });
 
 const unwrapCard = (card) =>
@@ -509,6 +544,7 @@ async function useCard(req, res) {
 			targetId: req.query.targetId,
 			targetCardId: parseInt(req.query.targetCardId),
 			selfCardId: parseInt(req.query.selfCardId),
+			cardType: parseInt(req.query.cardType),
 		};
 		const r = await Cards[req.query.cardId].onUse(parsedQuery, req.user);
 		const del = await queries.destroyCard(

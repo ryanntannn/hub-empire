@@ -78,6 +78,7 @@ export interface ActionCard extends Card {
 	isTargetSelfCard: boolean;
 	isTargetPlayer: boolean;
 	isTargetCard: boolean;
+	isTargetHubType: boolean;
 }
 
 export interface UserData {

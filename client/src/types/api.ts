@@ -1,4 +1,4 @@
-import { ActionLog, UserData } from './types';
+import { ActionLog, CardType, UserData } from './types';
 
 // GET /home
 export interface GetHomeDataRes {
@@ -32,6 +32,7 @@ export interface PostUseCardParams {
 	targetId?: number;
 	targetCardId?: number;
 	selfCardId?: number;
+	cardType?: CardType;
 }
 
 //GET /action-log

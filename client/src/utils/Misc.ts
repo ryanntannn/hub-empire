@@ -1,3 +1,5 @@
+import { EnumType } from 'typescript';
+
 export function numberWithCommas(x: number) {
 	return formatDecimal(x, 2)
 		.toString()
@@ -10,4 +12,13 @@ export function formatDecimal(value: number, decimalPlaces: number) {
 			'e-' +
 			decimalPlaces
 	);
+}
+
+const StringIsNumber = (value: string) => isNaN(Number(value)) === false;
+
+// Turn enum into array
+export function enumToArray(enumme: any) {
+	return Object.keys(enumme)
+		.filter(StringIsNumber)
+		.map((key) => enumme[key]);
 }
