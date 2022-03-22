@@ -37,7 +37,6 @@ const Cards = {
 		onUse: ({ targetId, targetCardId, selfCardId }, user) =>
 			new Promise(async (res, rej) => {
 				try {
-					console.log(targetId, targetCardId, selfCardId);
 					await queries.addMoney(targetId, -30);
 					await queries.addMoney(user.id, 30);
 					return res(`$30M was stolen from ${targetId}`);
@@ -59,7 +58,6 @@ const Cards = {
 		onUse: ({ targetId, targetCardId, selfCardId }, user) =>
 			new Promise(async (res, rej) => {
 				try {
-					console.log(targetId, targetCardId, selfCardId);
 					await queries.addMoney(targetId, -50);
 					await queries.addMoney(user.id, 50);
 					//recalculate player stats
@@ -158,7 +156,7 @@ const Cards = {
 					await queries.applyNewModToCard(
 						targetId,
 						selfCardId,
-						new Mods.IncomeMod(true, null, 0.5, false)
+						new Mods.IncomeMod(true, null, 1.5, false)
 					);
 					var cardArray = await queries.getUserCardsById(targetId);
 					var card = cardUtils.getOneCardFromCardArrayByInstanceId(
@@ -195,7 +193,7 @@ const Cards = {
 					await queries.applyNewModToCard(
 						targetId,
 						selfCardId,
-						new Mods.IncomeMod(true, null, 0, false)
+						new Mods.IncomeMod(true, null, 2, false)
 					);
 					var cardArray = await queries.getUserCardsById(targetId);
 					var card = cardUtils.getOneCardFromCardArrayByInstanceId(
@@ -228,6 +226,7 @@ const Cards = {
 		isTargetSelfCard: false,
 		onUse: ({ targetPlayerId, targetCardId, targetCardInstanceId }, user) =>
 			new Promise(async (res, rej) => {
+				const targetCardIdInt = parseInt(targetCardId);
 				try {
 					await queries.applyNewModToCard(
 						targetPlayerId,
@@ -502,11 +501,16 @@ async function useCard(req, res) {
 		console.log(req.query);
 		const user = await queries.userHasCard(
 			req.user.id,
-			req.query.cardId,
-			req.query.instanceId
+			parseInt(req.query.cardId),
+			parseInt(req.query.instanceId)
 		);
 		if (!user) return res.status(400).json('Card does not exist');
-		const r = await Cards[req.query.cardId].onUse(req.query, req.user);
+		const parsedQuery = {
+			targetId: req.query.targetId,
+			targetCardId: parseInt(req.query.targetCardId),
+			selfCardId: parseInt(req.query.selfCardId),
+		};
+		const r = await Cards[req.query.cardId].onUse(parsedQuery, req.user);
 		const del = await queries.destroyCard(
 			req.user.id,
 			parseInt(req.query.cardId),
