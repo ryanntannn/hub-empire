@@ -113,6 +113,13 @@ function HubCardComponent(props: {
 	selected?: boolean;
 }) {
 	const card = props.cardInstance.card as HubCard;
+	const isRepurposed: boolean =
+		props.cardInstance.modifiers.hub.newHubType != undefined;
+	const hubType: HubType = (
+		isRepurposed
+			? props.cardInstance.modifiers.hub.newHubType
+			: card.hubType
+	)!;
 	return (
 		<div
 			className={`rounded-box shadow card ${
@@ -125,8 +132,12 @@ function HubCardComponent(props: {
 			<div
 				className='top-color-area'
 				style={{
-					backgroundColor: HubTypeToColor(card.hubType),
-				}}></div>
+					padding: 10,
+					color: 'rgba(0,0,0,0.5)',
+					backgroundColor: HubTypeToColor(hubType),
+				}}>
+				{isRepurposed ? <b>REPURPOSED</b> : null}
+			</div>
 			<h1
 				style={{
 					fontSize: 50,

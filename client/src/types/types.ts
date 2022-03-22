@@ -47,12 +47,19 @@ export interface IncomeModifier {
 	turnsLeft: number;
 }
 
+export interface HubModifier {
+	isPermanent?: boolean;
+	modType?: number;
+	newHubType?: HubType;
+	turnsLeft?: number | null;
+}
+
 export interface CardInstanceData {
 	instanceId: number;
 	cardId: number;
 	effectiveIncome: number;
 	modifiers: {
-		hub: {};
+		hub: HubModifier;
 		income: IncomeModifier[];
 		owner: {};
 	};

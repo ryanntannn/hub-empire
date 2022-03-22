@@ -23,6 +23,7 @@ import {
 	CardRarity,
 	CardType,
 	HubCard,
+	HubModifier,
 	HubType,
 	IncomeModifier,
 	Step,
@@ -271,7 +272,18 @@ function ActiveCardModal(props: CardModalProps) {
 		return (
 			<div>
 				<b>Active Effects:</b>
+				{renderHubModifiers(props.cardInstance.modifiers.hub)}
 				{renderIncomeModifiers(props.cardInstance.modifiers.income)}
+			</div>
+		);
+	}
+
+	function renderHubModifiers(hubMods: HubModifier) {
+		if (hubMods.newHubType == undefined) return null;
+		return (
+			<div className='rounded-box short shadow'>
+				Hub has been repurposed to{' '}
+				{HubType[hubMods.newHubType! as HubType]}
 			</div>
 		);
 	}
