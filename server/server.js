@@ -9,6 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 const { login, register, editProfile } = require('./api/account');
 const { useCard, getCards } = require('./api/cards');
 const queries = require('./queries/queries');
+const admin = require('./api/admin');
 const { authenticateToken, refreshToken } = require('./utils/authentication');
 
 const job = require('./clock');
@@ -137,6 +138,7 @@ app.use('/trade', tradeRouter);
 
 const gameRouter = require('./routes/game.js');
 const { getAssetValue } = require('./utils/userUtils');
+const { authenticateAdmin } = require('./api/admin');
 app.use('/game', gameRouter);
 
 app.post('/use-card', authenticateToken, useCard);
@@ -169,7 +171,7 @@ app.get('/auth', authenticateToken, async (req, res) => {
 	try {
 		const userData = await queries.getUserDataBasicById(req.user.id);
 		if (userData) {
-			console.log(userData);
+			//console.log(userData);
 			//Return cards
 			return res.json({ userData: userData, accessToken: req.token });
 		} else {
@@ -186,5 +188,9 @@ app.post('/login', login);
 app.post('/register', register);
 
 app.post('/edit-profile', authenticateToken, editProfile);
+
+app.get('/admin', authenticateToken, authenticateAdmin, (req, res) => {
+	res.status(200).send();
+});
 
 app.listen(process.env.PORT || 42069);

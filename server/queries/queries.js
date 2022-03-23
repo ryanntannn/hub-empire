@@ -56,6 +56,7 @@ async function getUserDataBasicById(id) {
 		//_id is returned by default
 		'profile.displayName': 1,
 		'profile.avatar': 1,
+		'profile.isAdmin': 1,
 		game: {
 			id: 1,
 			stats: {

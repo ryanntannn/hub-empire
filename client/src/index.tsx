@@ -20,6 +20,7 @@ import ModalContainer from 'react-modal-promise';
 import { CardProvider } from './contexts/CardsContext';
 import { History } from './components/History';
 import EditProfile from './components/EditProfile';
+import AdminHome from './components/admin/AdminHome';
 
 const rootElement = document.getElementById('root');
 
@@ -98,6 +99,14 @@ render(
 						element={
 							<RequireAuth>
 								<History />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='admin'
+						element={
+							<RequireAuth>
+								<AdminHome />
 							</RequireAuth>
 						}
 					/>
