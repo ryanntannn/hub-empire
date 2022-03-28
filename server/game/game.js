@@ -38,16 +38,19 @@ class Game {
 			// TODO add function to remove invalid cards
 			// this.decrementTurnsLeftInCardModifiers(player);
 			await this.calculateTurnIncome(player);
-			this.drawCards(player, 1);
+			this.drawCards(player, 5);
 			this.calculateNetWorth(player);
 
 			queries.updateUserStatsAndInventory(player).catch(console.dir);
 		}
 
-		console.log('Turn executed');
+		this.decrementModTurnNumbers();
+		this.deleteExpiredMods();
+
 		this.turnNumber += 1;
 		queries.incrementGameTurnNumber(this.joinCode);
 
+		console.log('Turn executed');
 		return;
 	}
 
@@ -148,7 +151,11 @@ class Game {
 
 			player.game.stats.numberOfCardsDrawn += 1;
 			player.game.inventory.cardInstances.push(newCard);
-			player.game.inventory.newCards.push(newCard);
+			player.game.inventory.newCards.push({
+				instanceId: newCard.instanceId,
+				cardId: newCard.id,
+				cardType: newCard.cardType,
+			});
 
 			const logData = {
 				userId: player.profile.id,
@@ -169,6 +176,7 @@ class Game {
 				effectiveIncome: newCard.baseIncome,
 				instanceId: instanceId,
 				cardId: newCard.id,
+				cardType: newCard.cardType,
 				modifiers: {
 					owner: {},
 					hub: {},
@@ -179,6 +187,7 @@ class Game {
 			return {
 				instanceId: instanceId,
 				cardId: newCard.id,
+				cardType: newCard.cardType,
 			};
 		}
 	}
@@ -190,6 +199,28 @@ class Game {
 		player.game.stats.netWorth = userUtils.truncateValueToTwoDp(
 			player.game.stats.cash + assetValue
 		);
+		return;
+	}
+
+	decrementModTurnNumbers(){
+		try{
+			queries.decrementOwnerModTurnNumber();
+			queries.decrementHubModTurnNumber();
+			queries.decrementIncomeModTurnNumber();
+		} catch (err) {
+			console.dir(err);
+		}
+		return;
+	}
+
+	deleteExpiredMods(){
+		try{
+			queries.deleteExpiredOwnerMods();
+			queries.deleteExpiredHubMods();
+			queries.deleteExpiredIncomeMods();
+		} catch (err) {
+			console.dir(err);
+		}
 		return;
 	}
 }
