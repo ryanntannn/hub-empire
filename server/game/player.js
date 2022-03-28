@@ -17,6 +17,7 @@ class Player {
         inventory: {
             cardInstances: null,
             newCards: null,
+            stolenCards: null,
         }
     };
     

@@ -276,21 +276,21 @@ async function updateUserStatsAndInventory(player) {
 	return;
 }
 
-async function updateGameTurnNumber(code, turnNumber) {
+async function incrementGameTurnNumber(joinCode) {
 	const query = {
-		code: code,
+		joinCode: joinCode,
 	};
 
-	const valuesToUpdate = {
-		$set: {
-			turnNumber: turnNumber,
+	const valueToIncrement = {
+		$inc: {
+			turnNumber: 1,
 		},
 	};
 
 	return await mongo.client
 		.db('HubEmpireDB')
 		.collection('Games')
-		.updateOne(query, valuesToUpdate)
+		.updateOne(query, valueToIncrement)
 		.catch(console.dir);
 }
 
@@ -442,6 +442,18 @@ async function updateProfile(playerId, displayName, avatar) {
 	return;
 }
 
+async function addCardToDb(newCard) {
+	await mongo.client
+		.db('HubEmpireDB')
+		.collection('Cards')
+		.
+
+		// .collection('Cards')
+		// .insertOne(newCard)
+		// .catch(console.dir);
+	return;
+}
+
 const queries = {
 	getUserDataByUsername,
 	getUserDataMinById,
@@ -459,12 +471,13 @@ const queries = {
 	updateActionLog,
 	getActionLog,
 	updateUserStatsAndInventory,
-	updateGameTurnNumber,
+	incrementGameTurnNumber,
 	getLeaderboard,
 	applyNewModToCard,
 	updateEffectiveIncomeOfCard,
 	addStolenCardToPlayerInventory,
 	updateProfile,
+	addCardToDb,
 };
 
 module.exports = queries;

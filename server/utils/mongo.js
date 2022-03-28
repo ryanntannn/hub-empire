@@ -13,7 +13,7 @@ class MongoBot {
   async connect() {
     try{
       await this.client.connect();
-      console.log('connected');
+      console.log('Connected to MongoDB');
     }
     catch (error) {
       console.error(error)
