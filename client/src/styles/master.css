@@ -12,9 +12,28 @@ p {
 	font-size: 45px;
 }
 
+.profile-grid {
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+}
+
 .rounded-box {
 	border-radius: 30px;
 	padding: 40px 20px;
+	transition: 0.5s;
+	background-color: #f7f7f7;
+}
+
+.rounded-box.clickable {
+	cursor: pointer;
+}
+
+.rounded-box.clickable:hover {
+	transform: translateY(-3%);
+}
+
+.rounded-box.short {
+	padding: 20px 20px;
 }
 
 .huge-and-bold {

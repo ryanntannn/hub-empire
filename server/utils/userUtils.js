@@ -1,18 +1,21 @@
 const { Cards } = require('../api/cards');
 const queries = require('../queries/queries');
 
+//Outdated
 function getAssetValue(cards) {
 	let value = 0;
+	if (cards == null) return 0;
 	cards.forEach((cardInstance) => {
 		const thisCard = Cards[cardInstance.cardId];
 		if (thisCard == undefined) return;
 		if (thisCard.cardType != 0) return;
 		value += thisCard.value;
 	});
-	console.log('Value:', value);
+	//console.log('Value:', value);
 	return value;
 }
 
+//Outdated
 function getEarningsThisTurn(cards) {
 	let value = 0;
 	cards.forEach((cardInstance) => {
@@ -35,6 +38,18 @@ async function updateCardsWorth(targetId) {
 	}
 }
 
+function truncateValueToTwoDp(number) {
+    return parseFloat(number.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]);
+}
+
+function isEmptyObject(obj) {
+	return !Object.keys(obj).length;
+}
+
 module.exports = {
 	getAssetValue,
+	getEarningsThisTurn,
+	updateCardsWorth,
+	truncateValueToTwoDp,
+	isEmptyObject,	
 };

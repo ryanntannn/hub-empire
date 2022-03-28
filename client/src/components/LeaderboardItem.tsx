@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { Col } from 'reactstrap';
-import { UserDataBasic } from '../types/types';
+import { UserData } from '../types/types';
 import { numberWithCommas } from '../utils/Misc';
+import ProfileBox from './ProfileBox';
 
-export interface LeaderboardItemProps extends UserDataBasic {
+export interface LeaderboardItemProps extends UserData {
 	position: number;
 }
 
@@ -23,23 +24,16 @@ export default function LeaderboardItem(props: { data: LeaderboardItemProps }) {
 		}
 	};
 	return (
-		<div
-			onClick={() => navigate(`/profile/${data.id}`)}
-			className='rounded-box shadow mt-3'>
-			<h1 className='no-padding huge-and-bold'>
-				{getPositionEmoji()} {data.displayName}
-			</h1>
-			<p className='no-padding'>net-worth:</p>
-			<h2 className='no-padding huge-and-bold'>
-				${numberWithCommas(data.netWorth)}M
-			</h2>
-			<p className='no-padding'>earnings per day:</p>
-			<h2
-				style={{ color: data.turnIncome >= 0 ? 'green' : 'red' }}
-				className='normal-and-bold no-padding'>
-				{data.turnIncome >= 0 ? '+' : '-'}$
-				{numberWithCommas(Math.abs(data.turnIncome))}M
-			</h2>
+		<div className='mt-3'>
+			<ProfileBox
+				onClick={() => navigate(`/profile/${data._id}`)}
+				avatar={data.profile?.avatar!}
+				displayName={
+					getPositionEmoji() + ' ' + data.profile?.displayName!
+				}
+				netWorth={data.game?.stats?.netWorth!}
+				turnIncome={data.game?.stats?.turnIncome!}
+			/>
 		</div>
 	);
 }

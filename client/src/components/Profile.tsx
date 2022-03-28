@@ -1,43 +1,24 @@
 import { Button, Container } from 'reactstrap';
 import BackButton from './BackButton';
 import useAuth from '../contexts/AuthenticationContext';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import React from 'react';
 import { UserData } from '../types/types';
 import Loading from './Loading';
 import { GetUserDataRes } from '../types/api';
 import { numberWithCommas } from '../utils/Misc';
-
-export interface ProfileProps {
-	name: string;
-	netWorth: number;
-	earnings: number;
-	cash: number;
-	assetValue: number;
-	revenue: number;
-	losses: number;
-}
-
-const testProfile: ProfileProps = {
-	name: 'test',
-	netWorth: 10900,
-	earnings: 900,
-	cash: 900,
-	assetValue: 10000,
-	revenue: 1000,
-	losses: -100,
-};
+import ProfileBox from './ProfileBox';
 
 export default function Profile() {
-	const data = testProfile;
 	const auth = useAuth();
 	const params = useParams();
+	const navigate = useNavigate();
 	const [userData, setUserData] = React.useState<UserData | null>(null);
 
 	const userId = () =>
-		params.userId != undefined ? params.userId : auth.user.userData.id;
+		params.userId != undefined ? params.userId : auth.user.userData._id;
 
-	const ownProfile = userId() == auth.user.userData.id;
+	const ownProfile = userId() == auth.user.userData._id;
 
 	const getUserData = () => {
 		console.log(userId());
@@ -51,7 +32,7 @@ export default function Profile() {
 	};
 
 	React.useEffect(() => {
-		if (userData != null || auth.user.userData.id == -1) return;
+		if (userData != null || auth.user.userData._id == -1) return;
 		getUserData();
 	}, [userData, auth]);
 
@@ -61,46 +42,33 @@ export default function Profile() {
 				<Container className='mt-5'>
 					<BackButton />
 					<h1 className='title'>
-						👤 {userData.displayName}'s Profile
+						👤 {userData.profile!.displayName}'s Profile
 					</h1>
-					<div className='rounded-box shadow mt-3'>
-						<h1 className='no-padding huge-and-bold'>
-							{userData.displayName}
-						</h1>
-						<p className='no-padding'>net-worth:</p>
-						<h2 className='no-padding huge-and-bold'>
-							$
-							{numberWithCommas(
-								userData.cash + userData.assetValue
-							)}
-							M
-						</h2>
-						<p className='no-padding'>earnings this turn:</p>
-						<h2
-							style={{
-								color:
-									userData.netEarnings >= 0 ? 'green' : 'red',
-							}}
-							className='no-padding big-and-bold'>
-							{userData.turnIncome >= 0 ? '+' : '-'}$
-							{numberWithCommas(Math.abs(userData.turnIncome))}M
-						</h2>
-					</div>
+					<ProfileBox
+						avatar={userData.profile?.avatar!}
+						displayName={userData.profile?.displayName!}
+						netWorth={userData.game?.stats?.netWorth!}
+						turnIncome={userData.game?.stats?.turnIncome!}
+					/>
 					<br />
 					<p className='no-padding'>cards owned:</p>
 					<h2 className='no-padding huge-and-bold'>
-						{userData.cardIds.length}
+						{userData.game!.inventory!.cardInstances.length}
 					</h2>
 					<p className='no-padding'>total cash value:</p>
 					<h2 className='no-padding huge-and-bold'>
-						${userData.cash}M
-					</h2>
-					<p className='no-padding'>total asset value:</p>
-					<h2 className='no-padding huge-and-bold'>
-						${userData.assetValue}M
+						${numberWithCommas(userData.game!.stats!.cash)}M
 					</h2>
 					{ownProfile ? (
 						<>
+							<Button
+								className='mt-3 mx-3'
+								outline
+								onClick={() =>
+									navigate('/edit-profile', { replace: true })
+								}>
+								Edit Profile
+							</Button>
 							<Button
 								className='mt-3'
 								color='danger'

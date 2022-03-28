@@ -2,22 +2,25 @@ import { Button } from 'reactstrap';
 import {
 	ActionCard,
 	Card,
+	CardInstance,
 	CardRarity,
 	CardType,
 	HubCard,
-	Industry,
+	HubType,
 	Step,
 } from '../types/types';
 import { numberWithCommas } from '../utils/Misc';
 
-function IndustryToColor(industry: Industry) {
-	switch (industry) {
-		case Industry.FOOD:
+function HubTypeToColor(type: HubType) {
+	switch (type) {
+		case HubType.AIRPORT:
 			return '#ECC30B';
-		case Industry.TECH:
+		case HubType.SEAPORT:
 			return '#84BCDA';
-		case Industry.CLOTHES:
+		case HubType.WAREHOUSE:
 			return '#F37748';
+		case HubType.DISTRIBUTION:
+			return '#e84898';
 	}
 }
 
@@ -48,19 +51,19 @@ function RarityToBgColor(rarity: CardRarity) {
 }
 
 export default function CardComponent(props: {
-	card: Card;
-	onClick: () => void;
+	cardInstance: CardInstance;
+	onClick?: () => void;
 	selected?: boolean;
 }) {
-	return props.card.cardType == CardType.ACTION ? (
+	return props.cardInstance.card.cardType == CardType.ACTION ? (
 		<ActionCardComponent
-			card={props.card as ActionCard}
+			card={props.cardInstance.card as ActionCard}
 			onClick={props.onClick}
 			selected={props.selected}
 		/>
 	) : (
 		<HubCardComponent
-			card={props.card as HubCard}
+			cardInstance={props.cardInstance as CardInstance}
 			onClick={props.onClick}
 			selected={props.selected}
 		/>
@@ -69,15 +72,15 @@ export default function CardComponent(props: {
 
 function ActionCardComponent(props: {
 	card: ActionCard;
-	onClick: () => void;
+	onClick?: () => void;
 	selected?: boolean;
 }) {
 	return (
 		<div
 			className={`rounded-box shadow card ${
 				props.selected ? 'selected' : null
-			}`}
-			onClick={props.onClick}
+			} ${props.onClick != undefined ? 'clickable' : null}`}
+			onClick={props.onClick != undefined ? props.onClick : () => {}}
 			style={{
 				backgroundColor: RarityToBgColor(props.card.rarity),
 			}}>
@@ -105,49 +108,63 @@ function ActionCardComponent(props: {
 }
 
 function HubCardComponent(props: {
-	card: HubCard;
-	onClick: () => void;
+	cardInstance: CardInstance;
+	onClick?: () => void;
 	selected?: boolean;
 }) {
+	const card = props.cardInstance.card as HubCard;
+	const isRepurposed: boolean =
+		props.cardInstance.modifiers.hub.newHubType != undefined;
+	const hubType: HubType = (
+		isRepurposed
+			? props.cardInstance.modifiers.hub.newHubType
+			: card.hubType
+	)!;
 	return (
 		<div
 			className={`rounded-box shadow card ${
 				props.selected ? 'selected' : null
-			}`}
-			onClick={props.onClick}
+			} ${props.onClick != undefined ? 'clickable' : null}`}
+			onClick={props.onClick != undefined ? props.onClick : () => {}}
 			style={{
-				backgroundColor: RarityToBgColor(props.card.rarity),
+				backgroundColor: RarityToBgColor(card.rarity),
 			}}>
 			<div
 				className='top-color-area'
 				style={{
-					backgroundColor: IndustryToColor(props.card.industry),
+					padding: 10,
+					color: 'rgba(0,0,0,0.5)',
+					backgroundColor: HubTypeToColor(hubType),
 				}}>
-				<div className='step'>
-					{Industry[props.card.industry]} {Step[props.card.step]}
-				</div>
+				{isRepurposed ? <b>REPURPOSED</b> : null}
 			</div>
 			<h1
 				style={{
 					fontSize: 50,
 				}}>
-				{props.card.emoji}
+				{card.emoji}
 			</h1>
 			<p
 				style={{
-					color: RarityToColor(props.card.rarity),
+					color: RarityToColor(card.rarity),
 				}}
 				className='normal-and-bold no-padding'>
-				{props.card.displayName}
+				{card.displayName}
 			</p>
 			<p className='normal-and-bold no-padding mt-2'>
-				${numberWithCommas(props.card.value)}M
+				${numberWithCommas(card.value)}M
 			</p>
 			<p
-				style={{ color: props.card.baseIncome >= 0 ? 'green' : 'red' }}
+				style={{
+					color:
+						props.cardInstance.effectiveIncome >= 0
+							? 'green'
+							: 'red',
+				}}
 				className='normal-and-bold no-padding mt-2'>
-				{props.card.baseIncome >= 0 ? '+' : '-'}$
-				{numberWithCommas(Math.abs(props.card.baseIncome))}M
+				{props.cardInstance.effectiveIncome >= 0 ? '+' : '-'}$
+				{numberWithCommas(Math.abs(props.cardInstance.effectiveIncome))}
+				M
 			</p>
 		</div>
 	);

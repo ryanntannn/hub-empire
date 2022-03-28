@@ -2,6 +2,7 @@ const { generateAccessToken } = require('../utils/authentication');
 const bcrypt = require('bcrypt');
 const mongo = require('../utils/mongo');
 const queries = require('../queries/queries');
+const Player = require('../game/player');
 
 //will be moved to a db
 // const users = [
@@ -19,7 +20,7 @@ async function login(req, res) {
 	if (user == null) return res.status(400).send('User not found');
 
 	try {
-		if (!(await bcrypt.compare(req.body.password, user.password))) {
+		if (!(await bcrypt.compare(req.body.password, user.profile.password))) {
 			return res.status(400).send('Password is incorrect');
 		}
 		const userData = {
@@ -49,23 +50,28 @@ async function register(req, res) {
 		const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
 		const newUser = {
-			username: req.body.username,
-			password: hashedPassword,
-			displayName: req.body.displayName,
-			gameId: null,
-			cardIds: [],
-			cash: 0,
-			netWorth: 0,
-			netEarnings: 0,
-			turnIncome: 0,
-			numberOfCardsDrawn: 0,
+			profile: {
+				username: req.body.username,
+				password: hashedPassword,
+				displayName: req.body.displayName,
+			},
+			game: {
+				id: null,
+				stats: {
+					netWorth: 0,
+					netEarnings: 0,
+					cash: 0,
+					turnIncome: 0,
+					numberOfCardsDrawn: 0,
+				},
+				inventory: {
+					cardInstances: [],
+					newCards: [],
+					stolenCards: [],
+				},
+			},
 		};
 		mongo.client.db('HubEmpireDB').collection('Users').insertOne(newUser);
-		// const user = {
-		// 	name: req.body.name,
-		// 	password: hashedPassword,
-		// };
-		//users.push(user);
 
 		const accessToken = generateAccessToken({ name: newUser.username });
 		return res.status(200).json({ accessToken: accessToken });
@@ -78,4 +84,30 @@ async function register(req, res) {
 	}
 }
 
-module.exports = { login, register };
+async function editProfile(req, res) {
+	try {
+		if (req.query.displayName.length < 3)
+			return res
+				.status(400)
+				.json('display name contain at least 3 characters');
+		if (req.query.displayName.length > 17)
+			return res
+				.status(400)
+				.json('display name must be 16 characters or less');
+		if (/[^a-zA-Z0-9 ]/.test(req.query.displayName))
+			return res
+				.status(400)
+				.json('display name cannot contain special characters');
+		await queries.updateProfile(
+			req.user.id,
+			req.query.displayName,
+			req.query.avatar
+		);
+		return res.status(200).send();
+	} catch (err) {
+		console.log(err);
+		return res.status(400).json(err);
+	}
+}
+
+module.exports = { login, register, editProfile };

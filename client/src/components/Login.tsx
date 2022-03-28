@@ -40,7 +40,8 @@ export default function Login() {
 				auth.login(res.data, true);
 			})
 			.catch((error) => {
-				console.log(error.response.data);
+				console.log(error);
+				if (error.response) setErrorMessage(error.response.data);
 			});
 	});
 
@@ -63,7 +64,7 @@ export default function Login() {
 	}
 
 	React.useEffect(() => {
-		if (auth.user.userData.id != -1)
+		if (auth.user.userData._id != -1)
 			navigate(location.pathname, { replace: true });
 	}, [auth]);
 

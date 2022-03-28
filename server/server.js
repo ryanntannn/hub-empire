@@ -6,14 +6,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const { login, register } = require('./api/account');
+const { login, register, editProfile } = require('./api/account');
 const { useCard, getCards } = require('./api/cards');
 const queries = require('./queries/queries');
 const { authenticateToken, refreshToken } = require('./utils/authentication');
 
-const task = require('./utils/cronScheduler');
-//Start method is called to start the cron job
-task.start();
+const job = require('./clock');
+job.start();
 
 //Cors
 app.use((req, res, next) => {
@@ -35,14 +34,11 @@ app.get('/home', authenticateToken, async function (req, res) {
 		}
 		userData = await queries.getUserDataBasicById(req.user.id);
 		if (userData) {
-			console.log(userData);
-			const netWorth = userData.cash + getAssetValue(userData.cardIds);
-
 			var currentDate = new Date();
 			var nextTurnDate = new Date();
 			nextTurnDate.setDate(currentDate.getDate());
-			var currentHour = currentDate.getHours()
-			if(currentHour < 7) nextTurnDate.setHours(7, 0, 0, 0);
+			var currentHour = currentDate.getHours();
+			if (currentHour < 7) nextTurnDate.setHours(7, 0, 0, 0);
 			else if (currentHour < 11) nextTurnDate.setHours(11, 0, 0, 0);
 			else if (currentHour < 15) nextTurnDate.setHours(15, 0, 0, 0);
 			else {
@@ -53,7 +49,7 @@ app.get('/home', authenticateToken, async function (req, res) {
 
 			//Return UserDataBasic
 			res.status(200).json({
-				myData: { ...userData, netWorth },
+				myData: { ...userData },
 				timeToNextTurn: timeToNextTurn,
 			});
 		} else {
@@ -69,10 +65,15 @@ app.get('/my-cards', authenticateToken, async function (req, res) {
 		if (req.user.id.length != 24) {
 			return res.status(400).send('Invalid User ID');
 		}
-		userData = await queries.getUserCardsById(req.user.id);
-		if (userData) {
+		let userId = req.user.id;
+		if (req.query.id != undefined) userId = req.query.id;
+		userData = await queries.getUserCardsById(userId);
+		if (userData.game.inventory.cardInstances) {
+			console.log(userData);
 			//Return cards
-			return res.status(200).json({ cards: userData.cardIds });
+			return res
+				.status(200)
+				.json({ cards: userData.game.inventory.cardInstances });
 		} else {
 			return res.status(404).json('Page not found');
 		}
@@ -84,14 +85,15 @@ app.get('/my-cards', authenticateToken, async function (req, res) {
 app.get('/leaderboard', async function (req, res) {
 	try {
 		console.log(req.query.gameId);
-		var players = await queries.getLeaderboard(req.query.gameId).catch(console.dir);
+		var players = await queries
+			.getLeaderboard(req.query.gameId)
+			.catch(console.dir);
 		res.status(200).json({
 			players: players,
 		});
 	} catch (error) {
 		return res.status(404).json('Page not found');
 	}
-	
 });
 
 app.get('/users-min', authenticateToken, async function (req, res) {
@@ -154,20 +156,35 @@ app.get('/action-log', authenticateToken, async function (req, res) {
 			amount
 		);
 		actionLog.forEach((log) => {
-			res.status(200).json(log.log);
+			return res.status(200).json(log.log);
 		});
+		//return res.status(200).json([]);
 	} catch (error) {
 		console.log(error);
 		return res.status(400).json(error);
 	}
 });
 
-app.get('/auth', authenticateToken, (req, res) => {
-	res.json({ userData: req.user, accessToken: req.token });
+app.get('/auth', authenticateToken, async (req, res) => {
+	try {
+		const userData = await queries.getUserDataBasicById(req.user.id);
+		if (userData) {
+			console.log(userData);
+			//Return cards
+			return res.json({ userData: userData, accessToken: req.token });
+		} else {
+			return res.status(404).json('Page not found');
+		}
+	} catch (error) {
+		console.log(error);
+		return res.status(404).json('Page not found');
+	}
 });
 
 app.post('/login', login);
 
 app.post('/register', register);
+
+app.post('/edit-profile', authenticateToken, editProfile);
 
 app.listen(process.env.PORT || 42069);

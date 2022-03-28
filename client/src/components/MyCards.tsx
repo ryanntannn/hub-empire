@@ -19,18 +19,22 @@ import { GetMyCardsRes, PostUseCardParams } from '../types/api';
 import {
 	ActionCard,
 	CardInstance,
+	CardInstanceData,
 	CardRarity,
 	CardType,
 	HubCard,
-	Industry,
+	HubModifier,
+	HubType,
+	IncomeModifier,
 	Step,
-	UserDataMin,
+	UserData,
 } from '../types/types';
 import BackButton from './BackButton';
 import CardComponent from './Card';
 import useAuth from '../contexts/AuthenticationContext';
 import Loading from './Loading';
 import useCards from '../contexts/CardsContext';
+import { enumToArray } from '../utils/Misc';
 
 interface SortMethod {
 	name: string;
@@ -79,22 +83,11 @@ export default function MyCards() {
 			},
 		},
 		{
-			name: 'Sort by Industry',
+			name: 'Sort by Hub Type',
 			method: (a, b) => {
 				if (a.card.cardType == 1) return 1;
 				if (b.card.cardType == 1) return -1;
-				return (a.card as HubCard).industry >
-					(b.card as HubCard).industry
-					? 1
-					: -1;
-			},
-		},
-		{
-			name: 'Sort by Supply Chain Step',
-			method: (a, b) => {
-				if (a.card.cardType == 1) return 1;
-				if (b.card.cardType == 1) return -1;
-				return (a.card as HubCard).step > (b.card as HubCard).step
+				return (a.card as HubCard).hubType > (b.card as HubCard).hubType
 					? 1
 					: -1;
 			},
@@ -116,8 +109,8 @@ export default function MyCards() {
 		auth.authenticatedGet('/my-cards')
 			.then((res: any) => {
 				if (res == null) return;
-				const cardIds: { instanceId: number; cardId: number }[] =
-					res.data.cards;
+				console.log(res);
+				const cardIds: CardInstanceData[] = res.data.cards;
 				console.log(cardIds);
 				setCards(
 					cardIds.map((id) => {
@@ -148,8 +141,9 @@ export default function MyCards() {
 				color='secondary'>
 				<DropdownToggle caret>{activeSortMethod.name}</DropdownToggle>
 				<DropdownMenu container='body'>
-					{sortMethods.map((sortMethod) => (
+					{sortMethods.map((sortMethod, i) => (
 						<DropdownItem
+							key={i}
 							onClick={() => setActiveSortMethod(sortMethod)}>
 							{sortMethod.name}
 						</DropdownItem>
@@ -174,7 +168,8 @@ export default function MyCards() {
 								return (
 									<Col key={i}>
 										<CardComponent
-											card={x.card}
+											key={i}
+											cardInstance={x}
 											onClick={async () => {
 												try {
 													cardModal({
@@ -205,11 +200,13 @@ function ActiveCardModal(props: CardModalProps) {
 
 	const targetPlayerModal = create(ChooseTargetPlayer);
 	const targetCardModal = create(ChooseTargetCard);
+	const targetHubTypeModal = create(ChooseHubType);
 	const acknowledgementModal = create(AcknowledgementModal);
 
 	async function useCard() {
 		try {
 			const card = props.cardInstance.card as ActionCard;
+			console.log(card);
 			const data: PostUseCardParams = {
 				cardId: card.id,
 				instanceId: props.cardInstance.instanceId,
@@ -221,6 +218,8 @@ function ActiveCardModal(props: CardModalProps) {
 				});
 			if (card.isTargetSelfCard)
 				data.selfCardId = await targetCardModal({ playerId: 0 });
+			if (card.isTargetHubType)
+				data.cardType = await targetHubTypeModal();
 			const params = { ...data };
 			console.log(params);
 			const res: any = await auth.authenticatedPost(`/use-card`, {
@@ -257,9 +256,8 @@ function ActiveCardModal(props: CardModalProps) {
 		return (
 			<div>
 				<p>
-					Supply Chain Step: <b>{Step[currentCard.step]}</b>
 					<br />
-					Industry: <b>{Industry[currentCard.industry]}</b>
+					Industry: <b>{HubType[currentCard.hubType]}</b>
 					<br />
 					Value: <b>${currentCard.value}</b>
 					<br />
@@ -267,6 +265,38 @@ function ActiveCardModal(props: CardModalProps) {
 				</p>
 			</div>
 		);
+	}
+
+	function renderModifiers() {
+		console.log(props.cardInstance);
+		return (
+			<div>
+				<b>Active Effects:</b>
+				{renderHubModifiers(props.cardInstance.modifiers.hub)}
+				{renderIncomeModifiers(props.cardInstance.modifiers.income)}
+			</div>
+		);
+	}
+
+	function renderHubModifiers(hubMods: HubModifier) {
+		if (hubMods.newHubType == undefined) return null;
+		return (
+			<div className='rounded-box short shadow'>
+				Hub has been repurposed to{' '}
+				{HubType[hubMods.newHubType! as HubType]}
+			</div>
+		);
+	}
+
+	function renderIncomeModifiers(incomeMods: IncomeModifier[]) {
+		return incomeMods.map((mod, i) => (
+			<div className='rounded-box short shadow' key={i}>
+				Income is {mod.incomeBoost > 0 ? 'increased' : 'decreased'} by{' '}
+				{<b>{mod.incomeBoost}x</b>} (
+				{mod.isPermanent ? 'Permanent' : `Turns Left: ${mod.turnsLeft}`}
+				)
+			</div>
+		));
 	}
 
 	return (
@@ -278,12 +308,9 @@ function ActiveCardModal(props: CardModalProps) {
 			</ModalHeader>
 			<ModalBody>
 				<div className='card-details'>
-					<CardComponent
-						card={props.cardInstance.card}
-						onClick={() => {}}
-					/>
+					<CardComponent cardInstance={props.cardInstance} />
 					<div>
-						<p
+						{/* <p
 							style={{
 								fontSize: 10,
 								position: 'absolute',
@@ -291,7 +318,7 @@ function ActiveCardModal(props: CardModalProps) {
 							}}>
 							cardId: {props.cardInstance.card.id}, instanceId:{' '}
 							{props.cardInstance.instanceId}
-						</p>
+						</p> */}
 						<h2 className='big-and-bold'>
 							{props.cardInstance.card.emoji}{' '}
 							{props.cardInstance.card.displayName}
@@ -310,6 +337,9 @@ function ActiveCardModal(props: CardModalProps) {
 							? ActiveHubCardDetails(
 									props.cardInstance.card as HubCard
 							  )
+							: null}
+						{props.cardInstance.card.cardType == CardType.HUB
+							? renderModifiers()
 							: null}
 					</div>
 				</div>
@@ -337,9 +367,7 @@ function ActiveCardModal(props: CardModalProps) {
 interface TargetPlayerProps extends InstanceProps<number, null> {}
 
 function ChooseTargetPlayer(props: TargetPlayerProps) {
-	const [playerList, setPlayerList] = React.useState<UserDataMin[] | null>(
-		null
-	);
+	const [playerList, setPlayerList] = React.useState<UserData[] | null>(null);
 	const [selectedPlayerId, setSelectedPlayerId] = React.useState<
 		number | null
 	>(null);
@@ -350,13 +378,11 @@ function ChooseTargetPlayer(props: TargetPlayerProps) {
 		if (playerList != null) return;
 		auth.authenticatedGet('/users-min')
 			.then((res: any) => {
+				console.log(res);
 				setPlayerList(
-					res.data.user
-						.filter((x: any) => x._id != auth.user.userData.id)
-						.map((x: any) => ({
-							id: x._id,
-							displayName: x.displayName,
-						}))
+					res.data.user.filter(
+						(x: any) => x._id != auth.user.userData._id
+					)
 				);
 				console.log(res);
 			})
@@ -376,12 +402,12 @@ function ChooseTargetPlayer(props: TargetPlayerProps) {
 						<div key={i}>
 							<Input
 								onClick={() => {
-									setSelectedPlayerId(userData.id);
+									setSelectedPlayerId(userData._id);
 								}}
 								name={`radio-playerSelect`}
 								type='radio'
 							/>{' '}
-							{userData.displayName}
+							{userData.profile!.displayName}
 						</div>
 					))
 				) : (
@@ -410,9 +436,7 @@ interface TargetCardProps extends InstanceProps<number, null> {
 }
 
 function ChooseTargetCard(props: TargetCardProps) {
-	const [cardList, setCardList] = React.useState<
-		{ instanceId: number; cardId: number }[] | null
-	>(null);
+	const [cards, setCards] = React.useState<CardInstance[] | null>(null);
 	const [selectedCardId, setSelectedCardId] = React.useState<number | null>(
 		null
 	);
@@ -420,10 +444,23 @@ function ChooseTargetCard(props: TargetCardProps) {
 	const cardsData = useCards();
 
 	React.useEffect(() => {
-		if (cardList != null) return;
-		auth.authenticatedGet(`/user?id=${props.playerId}`)
+		if (cards != null) return;
+		let id = props.playerId;
+		if (id == 0) id = auth.user.userData._id;
+		auth.authenticatedGet(`/my-cards?id=${id}`)
 			.then((res: any) => {
-				setCardList(res.data.user.cardIds);
+				if (res == null) return;
+				console.log(res);
+				const cardIds: CardInstanceData[] = (
+					res.data.cards as CardInstanceData[]
+				).filter(
+					(x) => cardsData.getCard(x.cardId).cardType == CardType.HUB
+				);
+				setCards(
+					cardIds.map((id) => {
+						return cardsData.getCardInstance(id);
+					})
+				);
 				console.log(res);
 			})
 			.catch((err) => {
@@ -433,7 +470,7 @@ function ChooseTargetCard(props: TargetCardProps) {
 
 	return (
 		<Modal isOpen={props.isOpen} toggle={() => props.onReject()}>
-			<ModalHeader toggle={() => props.onReject()}>
+			<ModalHeader as='h2' toggle={() => props.onReject()}>
 				<h2 className='big-and-bold'>Choose a card</h2>
 			</ModalHeader>
 			<ModalBody style={{ textAlign: 'center' }}>
@@ -441,10 +478,11 @@ function ChooseTargetCard(props: TargetCardProps) {
 					<div
 						className='card-container small scroll-y'
 						style={{ maxHeight: 400, paddingRight: 30 }}>
-						{cardList != null ? (
-							cardList.map((card, i) => (
+						{cards != null ? (
+							cards.map((card, i) => (
 								<CardComponent
-									card={cardsData.getCard(card.cardId)}
+									key={i}
+									cardInstance={card}
 									onClick={() => {
 										setSelectedCardId(card.instanceId);
 									}}
@@ -464,6 +502,45 @@ function ChooseTargetCard(props: TargetCardProps) {
 					disabled={selectedCardId == null}
 					color='primary'
 					onClick={() => props.onResolve(selectedCardId!)}>
+					Confirm Selection
+				</Button>
+				<Button color='secondary' onClick={() => props.onReject()}>
+					Close
+				</Button>
+			</ModalFooter>
+		</Modal>
+	);
+}
+
+interface HubTypeProps extends InstanceProps<HubType, null> {}
+
+function ChooseHubType(props: HubTypeProps) {
+	const [selectedHubType, setSelectedHubType] =
+		React.useState<HubType | null>(null);
+	return (
+		<Modal isOpen={props.isOpen} toggle={() => props.onReject()}>
+			<ModalHeader toggle={() => props.onReject()}>
+				<h2 className='big-and-bold'>Choose a target player</h2>
+			</ModalHeader>
+			<ModalBody style={{ textAlign: 'center' }}>
+				{enumToArray(HubType).map((hubType, i) => (
+					<div key={i}>
+						<Input
+							onClick={() => {
+								setSelectedHubType(i as HubType);
+							}}
+							name={`radio-hubSelect`}
+							type='radio'
+						/>{' '}
+						{hubType}
+					</div>
+				))}
+			</ModalBody>
+			<ModalFooter>
+				<Button
+					disabled={selectedHubType == null}
+					color='primary'
+					onClick={() => props.onResolve(selectedHubType!)}>
 					Confirm Selection
 				</Button>
 				<Button color='secondary' onClick={() => props.onReject()}>

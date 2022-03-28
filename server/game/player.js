@@ -1,34 +1,48 @@
 class Player {
-    id = null;
-	username = null;
-	password = null;
-	displayName = null;
-	cash = null;
-    netWorth = null;
-    netEarnings = null;
-    gameId = null;
-    numberOfCardsDrawn = null;
-    cardIds = null;
-    turnIncome = null;
-    newCards = null;
+    profile = {
+        id: null,
+        username: null,
+        password: null,
+        displayName: null,
+    };
 
+    game = {
+        id: null,
+        stats: {
+            netWorth: null,
+            cash: null,
+            turnIncome: null,
+            numberOfCardsDrawn: null,
+        },
+        inventory: {
+            cardInstances: null,
+            newCards: null,
+            stolenCards: null,
+        }
+    };
+    
 	constructor(info) {
-        this.id = info._id.toString();
-        this.username = info.username;
-        this.password = info.password;
-        this.displayName = info.displayName;
+        this.profile = {
+            id: info._id.toString(),
+            username: info.profile.username,
+            password: info.profile.password,
+            displayName: info.profile.displayName,
+        }
 
-        this.cash = info.cash;
-        this.netWorth = info.netWorth;
-        this.netEarnings = info.netEarnings;
-        this.turnIncome = info.turnIncome;   
-
-        this.gameId = info.gameId;
-
-        this.numberOfCardsDrawn = info.numberOfCardsDrawn;
-        this.cardIds = info.cardIds;
-             
-        this.newCards = [];
+        this.game = {
+            id: info.game.id,
+            stats: {
+                netWorth: info.game.stats.netWorth,
+                cash: info.game.stats.cash,
+                turnIncome: info.game.stats.turnIncome,
+                numberOfCardsDrawn: info.game.stats.numberOfCardsDrawn,
+            },
+            inventory: {
+                cardInstances: info.game.inventory.cardInstances,
+                newCards: [],
+                stolenCards: info.game.inventory.stolenCards,
+            }
+        }
 	}
 }
 

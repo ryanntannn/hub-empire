@@ -1,15 +1,18 @@
 import React, { useEffect } from 'react';
-import { ActionCard, Card, CardInstance, HubCard } from '../types/types';
+import {
+	ActionCard,
+	Card,
+	CardInstance,
+	CardInstanceData,
+	HubCard,
+} from '../types/types';
 import AxiosBase from '../utils/AxiosBase';
 import useAuth from './AuthenticationContext';
 
 export interface UseCards {
 	init: () => void;
 	getCard: (id: number) => ActionCard | HubCard;
-	getCardInstance: (cardData: {
-		instanceId: number;
-		cardId: number;
-	}) => CardInstance;
+	getCardInstance: (cardData: CardInstanceData) => CardInstance;
 }
 
 const CardContext = React.createContext<UseCards>(null!);
@@ -32,10 +35,10 @@ function useCards() {
 	const getCard = (id: number) =>
 		cardDatabase[id] != undefined ? cardDatabase[id] : cardDatabase[0];
 
-	const getCardInstance = (cardData: {
-		instanceId: number;
-		cardId: number;
-	}) => ({ instanceId: cardData.instanceId, card: getCard(cardData.cardId) });
+	const getCardInstance = (cardData: CardInstanceData) => ({
+		...cardData,
+		card: getCard(cardData.cardId),
+	});
 
 	return { init, getCard, getCardInstance };
 }
@@ -46,8 +49,8 @@ const CardProvider: React.FC = ({ children }) => {
 	const [inited, setInited] = React.useState(false);
 
 	React.useEffect(() => {
-		if (auth.user.userData.id == -1 || inited) return;
-		console.log(auth.user.userData.id);
+		if (auth.user.userData._id == -1 || inited) return;
+		console.log(auth.user.userData._id);
 		setInited(true);
 		cards.init();
 	}, [auth, cards]);
