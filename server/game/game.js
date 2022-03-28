@@ -42,25 +42,6 @@ class Game {
 			this.calculateNetWorth(player);
 
 			queries.updateUserStatsAndInventory(player).catch(console.dir);
-
-			//FOR TESTING MODS
-			//var playerId = "622599dafe42733f560ee58f";
-			//queries.applyNewModToCard(playerId, 4, new Mods.IncomeMod(true, null, 10, true))
-			//queries.applyNewModToCard(playerId, 4, new Mods.IncomeMod(true, null, 1.1, false))
-
-			//queries.applyNewModToCard(playerId, 4, new Mods.OwnerMod(1234, false, 10));
-
-			//queries.applyNewModToCard(playerId, 4, new Mods.HubMod(false, 5, 2));
-
-			// deck.Cards[20].onUse(
-			// 	{ targetPlayerId: playerId, targetCardId: 101, targetCardInstanceId: 0 },
-			// 	{
-			// 		id: playerId,
-			// 	})
-			// .then(res => {
-			// 	console.log(res);
-			// })
-			// .catch(rej => console.log(rej))
 		}
 
 		console.log('Turn executed');

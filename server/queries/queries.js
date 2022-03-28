@@ -442,16 +442,21 @@ async function updateProfile(playerId, displayName, avatar) {
 	return;
 }
 
-async function addCardToDb(newCard) {
+async function addCard(newCard) {
 	await mongo.client
 		.db('HubEmpireDB')
 		.collection('Cards')
-		.
-
-		// .collection('Cards')
-		// .insertOne(newCard)
-		// .catch(console.dir);
+		.insertOne(newCard)
+		.catch(console.dir);
 	return;
+}
+
+async function getCardById(id) {
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Cards')
+		.findOne({ 'id': id })
+		.catch(console.dir);
 }
 
 const queries = {
@@ -477,7 +482,8 @@ const queries = {
 	updateEffectiveIncomeOfCard,
 	addStolenCardToPlayerInventory,
 	updateProfile,
-	addCardToDb,
+	addCard,
+	getCardById,
 };
 
 module.exports = queries;
