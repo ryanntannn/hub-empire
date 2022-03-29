@@ -25,6 +25,7 @@ async function login(req, res) {
 		}
 		const userData = {
 			username: user.username,
+			_id: user._id.toString(),
 			id: user._id.toString(),
 		};
 		const accessToken = generateAccessToken(userData);

@@ -13,6 +13,7 @@ import {
 import useAuth from '../contexts/AuthenticationContext';
 import AxiosBase from '../utils/AxiosBase';
 import cookies from '../utils/Cookies';
+import Loading from './Loading';
 
 export default function Login() {
 	const navigate = useNavigate();
@@ -72,33 +73,41 @@ export default function Login() {
 		<div className='page'>
 			<Container className='mt-5'>
 				<h1 className='title'>Login</h1>
-				<Form onSubmit={submitLogin}>
-					<FormGroup className='mb-2 me-sm-2 mb-sm-0'>
-						<Label className='me-sm-2' for='username'>
-							Username
-						</Label>
-						<Input
-							id='username'
-							name='username'
-							placeholder='username'
-							type='text'
-							onChange={(e) => setUsernameInput(e.target.value)}
-						/>
-					</FormGroup>
-					<FormGroup className='mb-2 me-sm-2 mb-sm-0 mt-2'>
-						<Label className='me-sm-2' for='password'>
-							Password
-						</Label>
-						<Input
-							id='password'
-							name='password'
-							placeholder='password'
-							type='password'
-							onChange={(e) => setPasswordInput(e.target.value)}
-						/>
-					</FormGroup>
-					<Button className='mt-3'>Submit</Button>
-				</Form>
+				{hasTriedAutoLogin ? (
+					<Form onSubmit={submitLogin}>
+						<FormGroup className='mb-2 me-sm-2 mb-sm-0'>
+							<Label className='me-sm-2' for='username'>
+								Username
+							</Label>
+							<Input
+								id='username'
+								name='username'
+								placeholder='username'
+								type='text'
+								onChange={(e) =>
+									setUsernameInput(e.target.value)
+								}
+							/>
+						</FormGroup>
+						<FormGroup className='mb-2 me-sm-2 mb-sm-0 mt-2'>
+							<Label className='me-sm-2' for='password'>
+								Password
+							</Label>
+							<Input
+								id='password'
+								name='password'
+								placeholder='password'
+								type='password'
+								onChange={(e) =>
+									setPasswordInput(e.target.value)
+								}
+							/>
+						</FormGroup>
+						<Button className='mt-3'>Submit</Button>
+					</Form>
+				) : (
+					<Loading flavour='Loggin in...' />
+				)}
 				{errorMessage != '' ? (
 					<Alert className='mt-3' color='danger' dismissible>
 						{errorMessage}
