@@ -37,8 +37,8 @@ class Game {
 
 			// TODO add function to remove invalid cards
 			// this.decrementTurnsLeftInCardModifiers(player);
-			await this.calculateTurnIncome(player);
-			this.drawCards(player, 5);
+			//await this.calculateTurnIncome(player);
+			//this.drawCards(player, 5);
 			this.calculateNetWorth(player);
 
 			queries.updateUserStatsAndInventory(player).catch(console.dir);
@@ -167,8 +167,8 @@ class Game {
 	}
 
 	drawOneCommonRarityCard(instanceId) {
-		const cardArray = cardUtils.convertDeckObjectToArray(deck.Cards)
-		const commonCards = cardUtils.filterCommonCardsInCardArray(cardArray)
+		const cardArray = cardUtils.convertDeckObjectToArray(deck.Cards);
+		const commonCards = cardUtils.filterCommonCardsInCardArray(cardArray);
 		var newCard = cardUtils.getRandomCardFromCardArray(commonCards);
 		// Card Type 0 is a Hub Card, 1 is an Action Card
 		if (newCard.cardType == 0) {
@@ -202,8 +202,8 @@ class Game {
 		return;
 	}
 
-	decrementModTurnNumbers(){
-		try{
+	decrementModTurnNumbers() {
+		try {
 			queries.decrementOwnerModTurnNumber();
 			queries.decrementHubModTurnNumber();
 			queries.decrementIncomeModTurnNumber();
@@ -213,8 +213,8 @@ class Game {
 		return;
 	}
 
-	deleteExpiredMods(){
-		try{
+	deleteExpiredMods() {
+		try {
 			queries.deleteExpiredOwnerMods();
 			queries.deleteExpiredHubMods();
 			queries.deleteExpiredIncomeMods();

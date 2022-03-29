@@ -38,50 +38,57 @@ export default function Profile() {
 
 	return (
 		<div className='page'>
-			{userData != null ? (
-				<Container className='mt-5'>
-					<BackButton />
-					<h1 className='title'>
-						👤 {userData.profile!.displayName}'s Profile
-					</h1>
-					<ProfileBox
-						avatar={userData.profile?.avatar!}
-						displayName={userData.profile?.displayName!}
-						netWorth={userData.game?.stats?.netWorth!}
-						turnIncome={userData.game?.stats?.turnIncome!}
-					/>
-					<br />
-					<p className='no-padding'>cards owned:</p>
-					<h2 className='no-padding huge-and-bold'>
-						{userData.game!.inventory!.cardInstances.length}
-					</h2>
-					<p className='no-padding'>total cash value:</p>
-					<h2 className='no-padding huge-and-bold'>
-						${numberWithCommas(userData.game!.stats!.cash)}M
-					</h2>
-					{ownProfile ? (
-						<>
-							<Button
-								className='mt-3 mx-3'
-								outline
-								onClick={() =>
-									navigate('/edit-profile', { replace: true })
-								}>
-								Edit Profile
-							</Button>
-							<Button
-								className='mt-3'
-								color='danger'
-								outline
-								onClick={auth.logout}>
-								Logout
-							</Button>
-						</>
-					) : null}
-				</Container>
-			) : (
-				<Loading />
-			)}
+			<Container className='mt-5'>
+				<BackButton />
+				<h1 className='title'>
+					👤{' '}
+					{userData != null ? userData.profile!.displayName : '...'}'s
+					Profile
+				</h1>
+
+				{userData != null ? (
+					<>
+						<ProfileBox
+							avatar={userData.profile?.avatar!}
+							displayName={userData.profile?.displayName!}
+							netWorth={userData.game?.stats?.netWorth!}
+							turnIncome={userData.game?.stats?.turnIncome!}
+						/>
+						<br />
+						<p className='no-padding'>cards owned:</p>
+						<h2 className='no-padding huge-and-bold'>
+							{userData.game!.inventory!.cardInstances.length}
+						</h2>
+						<p className='no-padding'>total cash value:</p>
+						<h2 className='no-padding huge-and-bold'>
+							${numberWithCommas(userData.game!.stats!.cash)}M
+						</h2>
+						{ownProfile ? (
+							<>
+								<Button
+									className='mt-3 mx-3'
+									outline
+									onClick={() =>
+										navigate('/edit-profile', {
+											replace: true,
+										})
+									}>
+									Edit Profile
+								</Button>
+								<Button
+									className='mt-3'
+									color='danger'
+									outline
+									onClick={auth.logout}>
+									Logout
+								</Button>
+							</>
+						) : null}
+					</>
+				) : (
+					<Loading />
+				)}
+			</Container>
 		</div>
 	);
 }

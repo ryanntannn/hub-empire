@@ -230,6 +230,11 @@ async function getActionLog(gameId, start, amount) {
 		joinCode: gameId,
 	};
 
+	const startInt = parseInt(start);
+	const amountInt = parseInt(amount);
+	const slice =
+		startInt > 0 ? ['$log', -startInt, amountInt] : ['$log', -amountInt];
+
 	return await mongo.client
 		.db('HubEmpireDB')
 		.collection('Games')
@@ -240,7 +245,7 @@ async function getActionLog(gameId, start, amount) {
 			{
 				$project: {
 					log: {
-						$slice: ['$log', parseInt(start), parseInt(amount)],
+						$slice: slice,
 					},
 				},
 			},
@@ -456,23 +461,23 @@ async function getCardById(id) {
 	return await mongo.client
 		.db('HubEmpireDB')
 		.collection('Cards')
-		.findOne({ 'id': id })
+		.findOne({ id: id })
 		.catch(console.dir);
 }
 
 async function decrementOwnerModTurnNumber() {
 	const query = {
-		'game.inventory.cardInstances':{
+		'game.inventory.cardInstances': {
 			$elemMatch: {
 				'modifiers.owner.isPermanent': false,
-			}
-		}
+			},
+		},
 	};
 
 	const valueToDecrement = {
 		$inc: {
 			'game.inventory.cardInstances.$.modifiers.owner.turnsLeft': -1,
-		}
+		},
 	};
 
 	await mongo.client
@@ -480,7 +485,7 @@ async function decrementOwnerModTurnNumber() {
 		.collection('Users')
 		//.updateMany(query, valueToDecrement)
 		.updateMany(query, valueToDecrement)
-		.catch(console.dir)
+		.catch(console.dir);
 
 	return;
 }
@@ -493,45 +498,45 @@ async function deleteExpiredOwnerMods() {
 			},
 			$elemMatch: {
 				'modifiers.owner.turnsLeft': { $lte: 0 },
-			}
-		}
+			},
+		},
 	};
 
 	const valueToReset = {
 		$set: {
 			'game.inventory.cardInstances.$.modifiers.owner': {},
-		}
+		},
 	};
 
 	await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
 		.updateMany(query, valueToReset)
-		.catch(console.dir)
+		.catch(console.dir);
 
 	return;
 }
 
 async function decrementHubModTurnNumber() {
 	const query = {
-		'game.inventory.cardInstances':{
+		'game.inventory.cardInstances': {
 			$elemMatch: {
 				'modifiers.hub.isPermanent': false,
-			}
-		}
+			},
+		},
 	};
 
 	const valueToDecrement = {
 		$inc: {
 			'game.inventory.cardInstances.$.modifiers.hub.turnsLeft': -1,
-		}
+		},
 	};
 
 	await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
 		.updateMany(query, valueToDecrement)
-		.catch(console.dir)
+		.catch(console.dir);
 
 	return;
 }
@@ -544,21 +549,21 @@ async function deleteExpiredHubMods() {
 			},
 			$elemMatch: {
 				'modifiers.hub.turnsLeft': { $lte: 0 },
-			}
-		}
+			},
+		},
 	};
 
 	const valueToReset = {
 		$set: {
 			'game.inventory.cardInstances.$.modifiers.hub': {},
-		}
+		},
 	};
 
 	await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
 		.updateMany(query, valueToReset)
-		.catch(console.dir)
+		.catch(console.dir);
 
 	return;
 }
@@ -566,17 +571,20 @@ async function deleteExpiredHubMods() {
 async function decrementIncomeModTurnNumber() {
 	const valueToDecrement = {
 		$inc: {
-			'game.inventory.cardInstances.$[i].modifiers.income.$[j].turnsLeft': -1,
-		}
+			'game.inventory.cardInstances.$[i].modifiers.income.$[j].turnsLeft':
+				-1,
+		},
 	};
 
 	const arrayFilter = {
-		arrayFilters: [{
-			'i.cardType': 0,
-		},
-		{
-			'j.isPermanent': false,
-		}]
+		arrayFilters: [
+			{
+				'i.cardType': 0,
+			},
+			{
+				'j.isPermanent': false,
+			},
+		],
 	};
 
 	await mongo.client
@@ -584,35 +592,36 @@ async function decrementIncomeModTurnNumber() {
 		.collection('Users')
 		//.updateMany(query, valueToDecrement)
 		.updateMany({}, valueToDecrement, arrayFilter)
-		.catch(console.dir)
+		.catch(console.dir);
 
 	return;
 }
 
 async function deleteExpiredIncomeMods() {
 	const valueToRemove = {
-		$pull:{
+		$pull: {
 			'game.inventory.cardInstances.$[i].modifiers.income': {
-				'isPermanent': false,
-				'turnsLeft': { $lte: 0 },
-			}
-		}
-		
+				isPermanent: false,
+				turnsLeft: { $lte: 0 },
+			},
+		},
 	};
 
 	const arrayFilter = {
-		arrayFilters: [{
-			'i.cardType': 0,
-		}],
+		arrayFilters: [
+			{
+				'i.cardType': 0,
+			},
+		],
 	};
 
 	var res = await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
 		.updateMany({}, valueToRemove, arrayFilter)
-		.catch(console.dir)
-	
-		console.log(res);
+		.catch(console.dir);
+
+	console.log(res);
 
 	return;
 }

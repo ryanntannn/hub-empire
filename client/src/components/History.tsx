@@ -138,44 +138,46 @@ export function History() {
 
 	return (
 		<div className='page'>
-			{(logs != null && playerList != null) || false ? (
-				<Container className='mt-5'>
-					<BackButton />
-					<h1 className='title'>📓 History</h1>
-					<p className='normal-and-bold'>Page: {page} (5 per page)</p>
-					<Button
-						disabled={page <= 1}
-						onClick={() => {
-							setPage((prev) => --prev);
-							setLogs(null);
-						}}
-						className='me-2'>
-						Previous
-					</Button>
-					<Button
-						onClick={() => {
-							setPage((prev) => ++prev);
-							setLogs(null);
-						}}>
-						Next
-					</Button>
-					<br /> <br />
-					{logs.length == 0 ? (
-						<p className='big-and-bold'>No items to show</p>
-					) : null}
-					{logs.map((log, i) => {
-						return (
-							<div
-								className='rounded-box shadow pt-3 pb-1 mb-3'
-								key={i}>
-								{logToString(log)}
-							</div>
-						);
-					})}
-				</Container>
-			) : (
-				<Loading />
-			)}
+			<Container className='mt-5'>
+				<BackButton />
+				<h1 className='title'>📓 History</h1>
+				<p className='normal-and-bold'>Page: {page} (5 per page)</p>
+				<Button
+					disabled={page <= 1}
+					onClick={() => {
+						setPage((prev) => --prev);
+						setLogs(null);
+					}}
+					className='me-2'>
+					Previous
+				</Button>
+				<Button
+					onClick={() => {
+						setPage((prev) => ++prev);
+						setLogs(null);
+					}}>
+					Next
+				</Button>
+				<br /> <br />
+				{(logs != null && playerList != null) || false ? (
+					<>
+						{logs.length == 0 ? (
+							<p className='big-and-bold'>No items to show</p>
+						) : null}
+						{logs.map((log, i) => {
+							return (
+								<div
+									className='rounded-box shadow pt-3 pb-1 mb-3'
+									key={i}>
+									{logToString(log)}
+								</div>
+							);
+						})}
+					</>
+				) : (
+					<Loading />
+				)}
+			</Container>
 		</div>
 	);
 }

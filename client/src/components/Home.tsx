@@ -40,11 +40,11 @@ function Home() {
 
 	return (
 		<div className='home page'>
-			{homeData != null ? (
-				<Container className='mt-5'>
-					<h1 className='title'>🏠 Hub Empire</h1>
-					<Row className='mb-3'>
-						<Col>
+			<Container className='mt-5'>
+				<h1 className='title'>🏠 Hub Empire</h1>
+				<Row className='mb-3'>
+					<Col>
+						{homeData != null ? (
 							<ProfileBox
 								avatar={homeData.myData.profile?.avatar!}
 								displayName={
@@ -57,50 +57,53 @@ function Home() {
 									homeData.myData.game?.stats?.turnIncome!
 								}
 							/>
-						</Col>
-					</Row>
-					<Row className='mb-3 gx-3'>
-						<Col>
-							<NavButton
-								title='My Cards'
-								emoji='🏢'
-								linkTo='/my-cards'
-								color='#6F42C1'
-							/>
-						</Col>
+						) : (
+							<div className='rounded-box shadow'>
+								<Loading />
+							</div>
+						)}
+					</Col>
+				</Row>
 
-						<Col>
-							<NavButton
-								title='My Profile'
-								emoji='👤'
-								linkTo='/profile'
-								color='#007BFF'
-							/>
-						</Col>
-					</Row>
-					<Row className='mb-3 gx-3'>
-						<Col>
-							<NavButton
-								title='Leaderboard'
-								emoji='🏆'
-								linkTo='/leaderboard'
-								color='#28A745'
-							/>
-						</Col>
+				<Row className='mb-3 gx-3'>
+					<Col>
+						<NavButton
+							title='My Cards'
+							emoji='🏢'
+							linkTo='/my-cards'
+							color='#6F42C1'
+						/>
+					</Col>
 
-						<Col>
-							<NavButton
-								title='History'
-								emoji='📓'
-								linkTo='/history'
-								color='#dd5050'
-							/>
-						</Col>
-					</Row>
-				</Container>
-			) : (
-				<Loading />
-			)}
+					<Col>
+						<NavButton
+							title='My Profile'
+							emoji='👤'
+							linkTo='/profile'
+							color='#007BFF'
+						/>
+					</Col>
+				</Row>
+				<Row className='mb-3 gx-3'>
+					<Col>
+						<NavButton
+							title='Leaderboard'
+							emoji='🏆'
+							linkTo='/leaderboard'
+							color='#28A745'
+						/>
+					</Col>
+
+					<Col>
+						<NavButton
+							title='History'
+							emoji='📓'
+							linkTo='/history'
+							color='#dd5050'
+						/>
+					</Col>
+				</Row>
+			</Container>
 		</div>
 	);
 }
