@@ -20,6 +20,7 @@ import ModalContainer from 'react-modal-promise';
 import { CardProvider } from './contexts/CardsContext';
 import { History } from './components/History';
 import EditProfile from './components/EditProfile';
+import NotFound from './components/NotFound';
 
 const rootElement = document.getElementById('root');
 
@@ -102,6 +103,7 @@ render(
 						}
 					/>
 					<Route path='login' element={<Login />} />
+					<Route path='*' element={<NotFound />} />
 				</Routes>
 			</BrowserRouter>
 			<ModalContainer />
