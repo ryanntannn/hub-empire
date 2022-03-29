@@ -193,4 +193,11 @@ app.get('/admin', authenticateToken, authenticateAdmin, (req, res) => {
 	res.status(200).send();
 });
 
+app.get(
+	'/admin/metrics',
+	authenticateToken,
+	authenticateAdmin,
+	admin.adminMetrics
+);
+
 app.listen(process.env.PORT || 42069);

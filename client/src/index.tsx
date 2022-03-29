@@ -22,6 +22,7 @@ import { History } from './components/History';
 import EditProfile from './components/EditProfile';
 import NotFound from './components/NotFound';
 import AdminHome from './components/admin/AdminHome';
+import MetricEditor from './components/admin/MetricEditor';
 
 const rootElement = document.getElementById('root');
 
@@ -108,6 +109,14 @@ render(
 						element={
 							<RequireAuth>
 								<AdminHome />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='admin/metrics'
+						element={
+							<RequireAuth>
+								<MetricEditor />
 							</RequireAuth>
 						}
 					/>

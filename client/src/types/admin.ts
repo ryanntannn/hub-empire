@@ -5,7 +5,7 @@ export type RewardTemplate = Map<CardRarity, number>;
 export interface Metric {
 	id: string;
 	displayName: string;
-	maxscore: number;
+	maxScore: number;
 	scoreBasedRewards: Map<number, RewardTemplate>;
 	positionBasedRewards: Map<number, RewardTemplate>;
 }
