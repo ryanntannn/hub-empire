@@ -33,18 +33,19 @@ export default function Leaderboard() {
 
 	return (
 		<div className='page'>
-			{leaderboardData != null ? (
-				<Container className='mt-5'>
-					<BackButton />
-					<h1 className='title'>🏆 Leaderboard</h1>
-					{leaderboardData!.map((item, i) => {
+			<Container className='mt-5'>
+				<BackButton />
+				<h1 className='title'>🏆 Leaderboard</h1>
+
+				{leaderboardData != null ? (
+					leaderboardData!.map((item, i) => {
 						const newProps = { ...item, position: i };
 						return <LeaderboardItem data={newProps} key={i} />;
-					})}
-				</Container>
-			) : (
-				<Loading />
-			)}
+					})
+				) : (
+					<Loading />
+				)}
+			</Container>
 		</div>
 	);
 }

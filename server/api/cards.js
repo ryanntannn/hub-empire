@@ -146,7 +146,7 @@ const Cards = {
 	},
 	14: {
 		id: 14,
-		emoji: '🚨',
+		emoji: '🤑',
 		displayName: 'Market Breakthrough',
 		description: "Increase a Hub's income by 50%.",
 		cardType: 1,
@@ -176,7 +176,7 @@ const Cards = {
 						selfCardId,
 						newEffectiveIncome
 					);
-					return res(`Hub's Income has been decreased by 50%.`);
+					return res(`Hub's Income has been increased by 50%.`);
 				} catch (err) {
 					rej(err);
 				}
@@ -184,7 +184,7 @@ const Cards = {
 	},
 	15: {
 		id: 15,
-		emoji: '🚨',
+		emoji: '🤑',
 		displayName: 'Market Breakthrough II',
 		description: "Increase a Hub's income by 100%.",
 		cardType: 1,
@@ -214,7 +214,7 @@ const Cards = {
 						selfCardId,
 						newEffectiveIncome
 					);
-					return res(`Hub's Income has been decreased by 100%.`);
+					return res(`Hub's Income has been increased by 100%.`);
 				} catch (err) {
 					rej(err);
 				}

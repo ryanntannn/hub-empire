@@ -104,8 +104,7 @@ export default function MyCards() {
 		sortMethods[0]
 	);
 
-	React.useEffect(() => {
-		if (cards != null) return;
+	function getCards() {
 		auth.authenticatedGet('/my-cards')
 			.then((res: any) => {
 				if (res == null) return;
@@ -119,6 +118,11 @@ export default function MyCards() {
 				);
 			})
 			.catch();
+	}
+
+	React.useEffect(() => {
+		if (cards != null) return;
+		getCards();
 	});
 
 	const getSpacers = () => {
@@ -155,11 +159,12 @@ export default function MyCards() {
 
 	return (
 		<div className='page'>
-			{cards != null || false ? (
-				<Container className='mt-5'>
-					<BackButton />
-					<h1 className='title'>🏢 My Cards</h1>
-					<SortDropdown />
+			<Container className='mt-5'>
+				<BackButton />
+				<h1 className='title'>🏢 My Cards</h1>
+				<SortDropdown />
+
+				{cards != null || false ? (
 					<div className='mt-3 card-container'>
 						{cards
 							.sort(activeSortMethod.method)
@@ -174,6 +179,7 @@ export default function MyCards() {
 												try {
 													cardModal({
 														cardInstance: x,
+														getCards,
 													});
 												} catch (err) {}
 											}}
@@ -183,16 +189,17 @@ export default function MyCards() {
 							})}
 						{getSpacers()}
 					</div>
-				</Container>
-			) : (
-				<Loading />
-			)}
+				) : (
+					<Loading />
+				)}
+			</Container>
 		</div>
 	);
 }
 
 interface CardModalProps extends InstanceProps<null, null> {
 	cardInstance: CardInstance;
+	getCards: () => void;
 }
 
 function ActiveCardModal(props: CardModalProps) {
@@ -229,6 +236,7 @@ function ActiveCardModal(props: CardModalProps) {
 				msg: res.data.toString(),
 				success: true,
 			});
+			props.getCards();
 			return;
 		} catch (err: any) {
 			await acknowledgementModal({ msg: err.toString(), success: false });
@@ -477,7 +485,7 @@ function ChooseTargetCard(props: TargetCardProps) {
 				<div style={{ display: 'inline-block' }}>
 					<div
 						className='card-container small scroll-y'
-						style={{ maxHeight: 400, paddingRight: 30 }}>
+						style={{ maxHeight: 400 }}>
 						{cards != null ? (
 							cards.map((card, i) => (
 								<CardComponent

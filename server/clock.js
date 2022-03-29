@@ -16,8 +16,8 @@ function printCurrentDateAndTime(){
 }
 
 //Cron values can be changed for testing
-//Revert back to '0 07,11,15 * * *' when done
-var job = cron.schedule('* * * * *', () => {
+//Revert back to '0 08,17 * * *' when done
+var job = cron.schedule('0 08,17 * * *', () => {
     printCurrentDateAndTime();
     worker.runScheduledTask();
 }, 

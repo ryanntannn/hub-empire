@@ -230,6 +230,11 @@ async function getActionLog(gameId, start, amount) {
 		joinCode: gameId,
 	};
 
+	const startInt = parseInt(start);
+	const amountInt = parseInt(amount);
+	const slice =
+		startInt > 0 ? ['$log', -startInt, amountInt] : ['$log', -amountInt];
+
 	return await mongo.client
 		.db('HubEmpireDB')
 		.collection('Games')
@@ -240,7 +245,7 @@ async function getActionLog(gameId, start, amount) {
 			{
 				$project: {
 					log: {
-						$slice: ['$log', parseInt(start), parseInt(amount)],
+						$slice: slice,
 					},
 				},
 			},
@@ -263,6 +268,7 @@ async function updateUserStatsAndInventory(player) {
 			'game.inventory': {
 				cardInstances: player.game.inventory.cardInstances,
 				newCards: player.game.inventory.newCards,
+				stolenCards: player.game.inventory.stolenCards,
 			},
 		},
 	};
@@ -442,15 +448,181 @@ async function updateProfile(playerId, displayName, avatar) {
 	return;
 }
 
-async function addCardToDb(newCard) {
+async function addCard(newCard) {
 	await mongo.client
 		.db('HubEmpireDB')
 		.collection('Cards')
-		.
+		.insertOne(newCard)
+		.catch(console.dir);
+	return;
+}
 
-		// .collection('Cards')
-		// .insertOne(newCard)
-		// .catch(console.dir);
+async function getCardById(id) {
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Cards')
+		.findOne({ id: id })
+		.catch(console.dir);
+}
+
+async function decrementOwnerModTurnNumber() {
+	const query = {
+		'game.inventory.cardInstances': {
+			$elemMatch: {
+				'modifiers.owner.isPermanent': false,
+			},
+		},
+	};
+
+	const valueToDecrement = {
+		$inc: {
+			'game.inventory.cardInstances.$.modifiers.owner.turnsLeft': -1,
+		},
+	};
+
+	await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		//.updateMany(query, valueToDecrement)
+		.updateMany(query, valueToDecrement)
+		.catch(console.dir);
+
+	return;
+}
+
+async function deleteExpiredOwnerMods() {
+	const query = {
+		'game.inventory.cardInstances': {
+			$elemMatch: {
+				'modifiers.owner.isPermanent': false,
+			},
+			$elemMatch: {
+				'modifiers.owner.turnsLeft': { $lte: 0 },
+			},
+		},
+	};
+
+	const valueToReset = {
+		$set: {
+			'game.inventory.cardInstances.$.modifiers.owner': {},
+		},
+	};
+
+	await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateMany(query, valueToReset)
+		.catch(console.dir);
+
+	return;
+}
+
+async function decrementHubModTurnNumber() {
+	const query = {
+		'game.inventory.cardInstances': {
+			$elemMatch: {
+				'modifiers.hub.isPermanent': false,
+			},
+		},
+	};
+
+	const valueToDecrement = {
+		$inc: {
+			'game.inventory.cardInstances.$.modifiers.hub.turnsLeft': -1,
+		},
+	};
+
+	await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateMany(query, valueToDecrement)
+		.catch(console.dir);
+
+	return;
+}
+
+async function deleteExpiredHubMods() {
+	const query = {
+		'game.inventory.cardInstances': {
+			$elemMatch: {
+				'modifiers.hub.isPermanent': false,
+			},
+			$elemMatch: {
+				'modifiers.hub.turnsLeft': { $lte: 0 },
+			},
+		},
+	};
+
+	const valueToReset = {
+		$set: {
+			'game.inventory.cardInstances.$.modifiers.hub': {},
+		},
+	};
+
+	await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateMany(query, valueToReset)
+		.catch(console.dir);
+
+	return;
+}
+
+async function decrementIncomeModTurnNumber() {
+	const valueToDecrement = {
+		$inc: {
+			'game.inventory.cardInstances.$[i].modifiers.income.$[j].turnsLeft':
+				-1,
+		},
+	};
+
+	const arrayFilter = {
+		arrayFilters: [
+			{
+				'i.cardType': 0,
+			},
+			{
+				'j.isPermanent': false,
+			},
+		],
+	};
+
+	await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		//.updateMany(query, valueToDecrement)
+		.updateMany({}, valueToDecrement, arrayFilter)
+		.catch(console.dir);
+
+	return;
+}
+
+async function deleteExpiredIncomeMods() {
+	const valueToRemove = {
+		$pull: {
+			'game.inventory.cardInstances.$[i].modifiers.income': {
+				isPermanent: false,
+				turnsLeft: { $lte: 0 },
+			},
+		},
+	};
+
+	const arrayFilter = {
+		arrayFilters: [
+			{
+				'i.cardType': 0,
+			},
+		],
+	};
+
+	var res = await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateMany({}, valueToRemove, arrayFilter)
+		.catch(console.dir);
+
+	console.log(res);
+
 	return;
 }
 
@@ -477,7 +649,14 @@ const queries = {
 	updateEffectiveIncomeOfCard,
 	addStolenCardToPlayerInventory,
 	updateProfile,
-	addCardToDb,
+	addCard,
+	getCardById,
+	decrementOwnerModTurnNumber,
+	deleteExpiredOwnerMods,
+	decrementHubModTurnNumber,
+	deleteExpiredHubMods,
+	decrementIncomeModTurnNumber,
+	deleteExpiredIncomeMods,
 };
 
 module.exports = queries;

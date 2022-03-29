@@ -37,36 +37,20 @@ class Game {
 
 			// TODO add function to remove invalid cards
 			// this.decrementTurnsLeftInCardModifiers(player);
-			await this.calculateTurnIncome(player);
-			this.drawCards(player, 1);
+			//await this.calculateTurnIncome(player);
+			//this.drawCards(player, 5);
 			this.calculateNetWorth(player);
 
 			queries.updateUserStatsAndInventory(player).catch(console.dir);
-
-			//FOR TESTING MODS
-			//var playerId = "622599dafe42733f560ee58f";
-			//queries.applyNewModToCard(playerId, 4, new Mods.IncomeMod(true, null, 10, true))
-			//queries.applyNewModToCard(playerId, 4, new Mods.IncomeMod(true, null, 1.1, false))
-
-			//queries.applyNewModToCard(playerId, 4, new Mods.OwnerMod(1234, false, 10));
-
-			//queries.applyNewModToCard(playerId, 4, new Mods.HubMod(false, 5, 2));
-
-			// deck.Cards[20].onUse(
-			// 	{ targetPlayerId: playerId, targetCardId: 101, targetCardInstanceId: 0 },
-			// 	{
-			// 		id: playerId,
-			// 	})
-			// .then(res => {
-			// 	console.log(res);
-			// })
-			// .catch(rej => console.log(rej))
 		}
 
-		console.log('Turn executed');
+		this.decrementModTurnNumbers();
+		this.deleteExpiredMods();
+
 		this.turnNumber += 1;
 		queries.incrementGameTurnNumber(this.joinCode);
 
+		console.log('Turn executed');
 		return;
 	}
 
@@ -167,7 +151,11 @@ class Game {
 
 			player.game.stats.numberOfCardsDrawn += 1;
 			player.game.inventory.cardInstances.push(newCard);
-			player.game.inventory.newCards.push(newCard);
+			player.game.inventory.newCards.push({
+				instanceId: newCard.instanceId,
+				cardId: newCard.id,
+				cardType: newCard.cardType,
+			});
 
 			const logData = {
 				userId: player.profile.id,
@@ -179,8 +167,8 @@ class Game {
 	}
 
 	drawOneCommonRarityCard(instanceId) {
-		const cardArray = cardUtils.convertDeckObjectToArray(deck.Cards)
-		const commonCards = cardUtils.filterCommonCardsInCardArray(cardArray)
+		const cardArray = cardUtils.convertDeckObjectToArray(deck.Cards);
+		const commonCards = cardUtils.filterCommonCardsInCardArray(cardArray);
 		var newCard = cardUtils.getRandomCardFromCardArray(commonCards);
 		// Card Type 0 is a Hub Card, 1 is an Action Card
 		if (newCard.cardType == 0) {
@@ -188,6 +176,7 @@ class Game {
 				effectiveIncome: newCard.baseIncome,
 				instanceId: instanceId,
 				cardId: newCard.id,
+				cardType: newCard.cardType,
 				modifiers: {
 					owner: {},
 					hub: {},
@@ -198,6 +187,7 @@ class Game {
 			return {
 				instanceId: instanceId,
 				cardId: newCard.id,
+				cardType: newCard.cardType,
 			};
 		}
 	}
@@ -209,6 +199,28 @@ class Game {
 		player.game.stats.netWorth = userUtils.truncateValueToTwoDp(
 			player.game.stats.cash + assetValue
 		);
+		return;
+	}
+
+	decrementModTurnNumbers() {
+		try {
+			queries.decrementOwnerModTurnNumber();
+			queries.decrementHubModTurnNumber();
+			queries.decrementIncomeModTurnNumber();
+		} catch (err) {
+			console.dir(err);
+		}
+		return;
+	}
+
+	deleteExpiredMods() {
+		try {
+			queries.deleteExpiredOwnerMods();
+			queries.deleteExpiredHubMods();
+			queries.deleteExpiredIncomeMods();
+		} catch (err) {
+			console.dir(err);
+		}
 		return;
 	}
 }
