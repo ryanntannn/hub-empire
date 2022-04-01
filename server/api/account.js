@@ -27,6 +27,8 @@ async function login(req, res) {
 			username: user.username,
 			_id: user._id.toString(),
 			id: user._id.toString(),
+			isAdmin: user.profile.isAdmin,
+			gameId: user.game.id,
 		};
 		const accessToken = generateAccessToken(userData);
 		return res.json({

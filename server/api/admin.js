@@ -1,20 +1,19 @@
 const queries = require('./../queries/queries');
+const jwt = require('jsonwebtoken');
 
 // middleware to authenticate if user is an admin
 async function authenticateAdmin(req, res, next) {
-	try {
-		console.log(req.user);
-		const userData = await queries.getUserDataBasicById(req.user.id);
-		if (!userData) return res.status(404).json('Player Not Found');
-		console.log(userData);
-		req.user.gameId = userData.game.id;
-		if (!userData.profile.isAdmin)
-			return res.status(400).json('Player Not Admin');
+	const authHeader = req.headers['authorization'];
+	const token = authHeader && authHeader.split(' ')[1];
+	if (token == null) return res.sendStatus(401);
+
+	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+		if (err) return res.sendStatus(403);
+		if (!user.isAdmin) return res.sendStatus(403);
+		req.user = user;
+		req.token = token;
 		next();
-	} catch (err) {
-		console.log(err);
-		return res.status(400).json(err);
-	}
+	});
 }
 
 async function adminMetrics(req, res) {
