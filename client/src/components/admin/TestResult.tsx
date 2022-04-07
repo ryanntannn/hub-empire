@@ -54,7 +54,7 @@ export default function TestResult() {
 				id: metric.displayName,
 				data: metric,
 			}))}
-			setActive={setActiveMetric}
+			setSelected={setActiveMetric}
 		/>
 	);
 

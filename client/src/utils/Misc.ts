@@ -24,3 +24,9 @@ export function enumToArray(enumme: any) {
 		.filter(StringIsNumber)
 		.map((key) => enumme[key]);
 }
+
+export function enumToDropdownSelection(enumme: any) {
+	return Object.keys(enumme)
+		.filter(StringIsNumber)
+		.map((key) => ({ id: enumme[key], data: key }));
+}

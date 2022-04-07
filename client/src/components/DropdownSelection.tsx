@@ -8,12 +8,13 @@ import {
 
 interface DropdownSelectionProps {
 	items: { id: string; data: any }[];
-	setActive: React.Dispatch<React.SetStateAction<any>>;
+	setSelected: (data: any) => void;
+	default?: string;
 }
 
 export function DropdownSelection(props: DropdownSelectionProps) {
 	const [activeKey, setActiveKey] = React.useState<string | null>(
-		props.items[0].id
+		props.default != undefined ? props.default : props.items[0].id
 	);
 	const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
@@ -30,7 +31,7 @@ export function DropdownSelection(props: DropdownSelectionProps) {
 							key={i}
 							onClick={() => {
 								setActiveKey(item.id);
-								props.setActive(item.data);
+								props.setSelected(item.data);
 							}}>
 							{item.id}
 						</DropdownItem>

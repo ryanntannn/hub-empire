@@ -15,6 +15,7 @@ import useAuth from '../../contexts/AuthenticationContext';
 import { Metric, RewardTemplate } from '../../types/admin';
 import Loading from '../Loading';
 import { CardRarity } from '../../types/types';
+import { RewardTableEditable } from './RewardTable';
 
 export default function MetricEditor() {
 	const auth = useAuth();
@@ -31,32 +32,7 @@ export default function MetricEditor() {
 		auth.authenticatedGet(`/admin/metrics`)
 			.then((res: any) => {
 				const metrics = res.data;
-				const copy = [...res.data] as any;
-				// metric.scoreBasedRewards = new Map(
-				// 	Object.entries(res.data.positionBasedRewards)
-				// );
-				copy.map((metric: any) => {
-					metric.positionBasedRewards = new Map(
-						Object.entries(metric.positionBasedRewards)
-					);
-				});
-				copy.map((metric: any) => {
-					metric.scoreBasedRewards = new Map(
-						Object.entries(metric.scoreBasedRewards)
-					);
-
-					console.log(metric.scoreBasedRewards);
-					metric.scoreBasedRewards.forEach((value: any, key: any) => {
-						console.log(value);
-						metric.scoreBasedRewards.set(
-							key,
-							new Map(Object.entries(value))
-						);
-					});
-				});
-				console.log(copy);
-				console.log('test');
-				setMetrics(copy);
+				setMetrics(metrics);
 			})
 			.catch((err) => {});
 	};
@@ -117,7 +93,7 @@ export default function MetricEditor() {
 						</tbody>
 					) : null}
 				</Table>
-				{/* {activeMetric != null ? (
+				{activeMetric != null ? (
 					<>
 						<b>Editing "{activeMetric.displayName}" Metric : </b>
 						<br />
@@ -162,19 +138,85 @@ export default function MetricEditor() {
 									<th>rewards</th>
 								</tr>
 							</thead>
-							{Array.from(
-								activeMetric.positionBasedRewards as Map<
-									any,
-									any
-								>
-							).map(([key, value], i) => {
-								return (
-									<tr key={i}>
-										<td>{key}</td>
-									</tr>
-								);
-								// Array.from(rtemplate!.keys()).map((rarity, j) => {}
-							})}
+							<tbody>
+								{console.log(activeMetric)}
+								{activeMetric.positionBasedRewards.map(
+									(metric, i) => {
+										return (
+											<tr key={i}>
+												<td>{metric.position}</td>
+												<td>
+													<Table>
+														<RewardTableEditable
+															rewardData={
+																metric.rewards
+															}
+															setData={(data) =>
+																setActiveMetric(
+																	({
+																		...prevState
+																	}) => {
+																		prevState.positionBasedRewards[
+																			i
+																		].rewards =
+																			data;
+																		return prevState;
+																	}
+																)
+															}
+														/>
+													</Table>
+												</td>
+												<td>
+													<Button
+														color='danger'
+														onClick={() => {
+															setActiveMetric(
+																({
+																	...prevState
+																}) => {
+																	prevState.positionBasedRewards.splice(
+																		i,
+																		1
+																	);
+																	return prevState;
+																}
+															);
+														}}>
+														-
+													</Button>
+												</td>
+											</tr>
+										);
+										// Array.from(rtemplate!.keys()).map((rarity, j) => {}
+									}
+								)}
+								<tr>
+									<td>
+										<Button
+											color='success'
+											onClick={() => {
+												setActiveMetric(
+													({ ...prevState }) => {
+														prevState.positionBasedRewards.push(
+															{
+																position:
+																	prevState
+																		.positionBasedRewards
+																		.length +
+																	1,
+																rewards: [],
+															}
+														);
+														return prevState;
+													}
+												);
+											}}>
+											+ Add row
+										</Button>
+									</td>
+								</tr>
+							</tbody>
 						</Table>
 
 						<b>Score Based Rewards</b>
@@ -186,220 +228,108 @@ export default function MetricEditor() {
 								</tr>
 							</thead>
 							<tbody>
-								{Array.from(
-									activeMetric.scoreBasedRewards as Map<
-										any,
-										any
-									>
-								).map(([key, value], i) => {
-									return (
-										<tr key={i}>
-											<td>{key}</td>
-											<td>
-												<Table>
-													<thead>
-														<tr>
-															<th>rarity</th>
-															<th>amount</th>
-														</tr>
-													</thead>
-													<tbody>
-														{Array.from(
-															value as Map<
-																any,
-																any
-															>
-														).map(
-															(
-																[key2, value2],
-																i
-															) => {
-																return (
-																	<tr key={i}>
-																		<td>
-																			{
-																				CardRarity[
-																					key2 as CardRarity
-																				]
-																			}
-																		</td>
-																		<td>
-																			{
-																				value2
-																			}
-																		</td>
-																		<td>
-																			<Button
-																				color='danger'
-																				onClick={() => {
-																					setActiveMetric(
-																						({
-																							...prevState
-																						}) => {
-																							prevState.scoreBasedRewards
-																								.get(
-																									key
-																								)
-																								?.delete(
-																									key2
-																								);
-																							return prevState;
-																						}
-																					);
-																				}}>
-																				-
-																			</Button>
-																		</td>
-																	</tr>
-																);
-																// Array.from(rtemplate!.keys()).map((rarity, j) => {}
+								{console.log(activeMetric)}
+								{activeMetric.scoreBasedRewards.map(
+									(metric, i) => {
+										return (
+											<tr key={i}>
+												<td>
+													<Input
+														type='number'
+														value={metric.score}
+														onChange={(x) => {
+															setActiveMetric(
+																({
+																	...prevState
+																}) => {
+																	prevState.scoreBasedRewards[
+																		i
+																	].score = parseInt(
+																		x.target
+																			.value
+																	);
+																	return prevState;
+																}
+															);
+														}}
+													/>
+												</td>
+												<td>
+													<Table>
+														<RewardTableEditable
+															rewardData={
+																metric.rewards
 															}
-														)}
-														<tr>
-															<td>
-																<Dropdown
-																	isOpen={
-																		dropDownToggle
+															setData={(data) =>
+																setActiveMetric(
+																	({
+																		...prevState
+																	}) => {
+																		prevState.scoreBasedRewards[
+																			i
+																		].rewards =
+																			data;
+																		return prevState;
 																	}
-																	toggle={() =>
-																		setDropDownToggle(
-																			(
-																				prev
-																			) =>
-																				!prev
-																		)
-																	}>
-																	<DropdownToggle
-																		caret>
-																		Dropdown
-																	</DropdownToggle>
-																	<DropdownMenu>
-																		<DropdownItem>
-																			Another
-																			COMMON
-																		</DropdownItem>
-																	</DropdownMenu>
-																</Dropdown>
-															</td>
-															<td>
-																<Input
-																	value={
-																		scoreRewardsInput.amount
-																	}
-																	onChange={(
-																		x
-																	) =>
-																		setScoreRewardsInput(
-																			({
-																				...prev
-																			}) => {
-																				const intvalue =
-																					parseInt(
-																						x
-																							.target
-																							.value
-																					);
-																				prev.amount =
-																					isNaN(
-																						intvalue
-																					)
-																						? 0
-																						: intvalue;
-																				return prev;
-																			}
-																		)
-																	}
-																/>
-															</td>
-															<td>
-																<Button
-																	color='success'
-																	onClick={() => {
-																		setActiveMetric(
-																			({
-																				...prevState
-																			}) => {
-																				prevState.scoreBasedRewards
-																					.get(
-																						key
-																					)!
-																					.set(
-																						scoreRewardsInput.rarity,
-																						scoreRewardsInput.amount
-																					);
-																				return prevState;
-																			}
-																		);
-																	}}>
-																	+
-																</Button>
-															</td>
-														</tr>
-													</tbody>
-												</Table>
-											</td>
-											<td>
-												<Button
-													color='danger'
-													onClick={() => {
-														setActiveMetric(
-															({
-																...prevState
-															}) => {
-																prevState.scoreBasedRewards.delete(
-																	key
-																);
-																return prevState;
+																)
 															}
-														);
-													}}>
-													-
-												</Button>
-											</td>
-										</tr>
-									);
-									// Array.from(rtemplate!.keys()).map((rarity, j) => {}
-								})}
+														/>
+													</Table>
+												</td>
+												<td>
+													<Button
+														color='danger'
+														onClick={() => {
+															setActiveMetric(
+																({
+																	...prevState
+																}) => {
+																	prevState.scoreBasedRewards.splice(
+																		i,
+																		1
+																	);
+																	return prevState;
+																}
+															);
+														}}>
+														-
+													</Button>
+												</td>
+											</tr>
+										);
+										// Array.from(rtemplate!.keys()).map((rarity, j) => {}
+									}
+								)}
 								<tr>
-									<Input
-										value={scoreKeyInput}
-										onChange={(x) =>
-											setScoreKeyInput((prev) => {
-												const intvalue = parseInt(
-													x.target.value
-												);
-												return isNaN(intvalue)
-													? 0
-													: intvalue;
-											})
-										}
-									/>
 									<td>
 										<Button
 											color='success'
 											onClick={() => {
 												setActiveMetric(
 													({ ...prevState }) => {
-														prevState.scoreBasedRewards.set(
-															scoreKeyInput,
-															new Map<
-																CardRarity,
-																number
-															>()
+														prevState.scoreBasedRewards.push(
+															{
+																score: 0,
+																rewards: [],
+															}
 														);
 														return prevState;
 													}
 												);
 											}}>
-											+
+											+ Add row
 										</Button>
 									</td>
 								</tr>
 							</tbody>
 						</Table>
-						<Button color='success'>Submit</Button>
+						<Button
+							color='success'
+							onClick={() => console.log(activeMetric)}>
+							Submit
+						</Button>
 					</>
-				) : null} */}
+				) : null}
 				{metrics != null ? null : <Loading />}
 			</Container>
 		</div>
