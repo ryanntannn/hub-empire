@@ -54,6 +54,7 @@ async function getUserDataBasicById(id) {
 	};
 	const projection = {
 		//_id is returned by default
+		'profile.username': 1,
 		'profile.displayName': 1,
 		'profile.avatar': 1,
 		'profile.isAdmin': 1,
