@@ -23,6 +23,7 @@ import EditProfile from './components/EditProfile';
 import NotFound from './components/NotFound';
 import AdminHome from './components/admin/AdminHome';
 import MetricEditor from './components/admin/MetricEditor';
+import TestResult from './components/admin/TestResult';
 
 const rootElement = document.getElementById('root');
 
@@ -117,6 +118,14 @@ render(
 						element={
 							<RequireAuth>
 								<MetricEditor />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='admin/test-results'
+						element={
+							<RequireAuth>
+								<TestResult />
 							</RequireAuth>
 						}
 					/>

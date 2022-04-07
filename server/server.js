@@ -206,4 +206,11 @@ app.get(
 	admin.adminMetrics
 );
 
+app.get(
+	'/admin/testresultsdata',
+	authenticateToken,
+	authenticateAdmin,
+	admin.testResultData
+);
+
 app.listen(process.env.PORT || 42069);
