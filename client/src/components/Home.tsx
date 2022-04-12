@@ -9,6 +9,7 @@ import { GetHomeDataRes } from '../types/api';
 import Loading from './Loading';
 import { numberWithCommas } from '../utils/Misc';
 import ProfileBox from './ProfileBox';
+import { CountdownTimer } from './CountdownTimer';
 
 function Home() {
 	let navigate = useNavigate();
@@ -62,6 +63,13 @@ function Home() {
 								<Loading />
 							</div>
 						)}
+					</Col>
+				</Row>
+				<Row className='mb-3 gx-3'>
+					<Col>
+						{homeData != null ? (
+							<CountdownTimer epoch={homeData!.nextTurn} />
+						) : null}
 					</Col>
 				</Row>
 
