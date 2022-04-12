@@ -39,19 +39,18 @@ app.get('/home', authenticateToken, async function (req, res) {
 			var nextTurnDate = new Date();
 			nextTurnDate.setDate(currentDate.getDate());
 			var currentHour = currentDate.getHours();
-			if (currentHour < 7) nextTurnDate.setHours(7, 0, 0, 0);
-			else if (currentHour < 11) nextTurnDate.setHours(11, 0, 0, 0);
-			else if (currentHour < 15) nextTurnDate.setHours(15, 0, 0, 0);
+			if (currentHour < 8) nextTurnDate.setHours(8, 0, 0, 0);
+			else if (currentHour < 17) nextTurnDate.setHours(17, 0, 0, 0);
 			else {
 				nextTurnDate.setDate(currentDate.getDate() + 1);
-				nextTurnDate.setHours(7, 0, 0, 0);
+				nextTurnDate.setHours(8, 0, 0, 0);
 			}
-			var timeToNextTurn = Date.parse(nextTurnDate);
+			var nextTurn = Date.parse(nextTurnDate);
 
 			//Return UserDataBasic
 			res.status(200).json({
 				myData: { ...userData },
-				timeToNextTurn: timeToNextTurn,
+				nextTurn,
 			});
 		} else {
 			res.status(404).json('Page not found');

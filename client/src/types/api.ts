@@ -3,6 +3,7 @@ import { ActionLog, CardType, UserData } from './types';
 // GET /home
 export interface GetHomeDataRes {
 	myData: UserData;
+	nextTurn: number;
 }
 
 //GET /my-cards
