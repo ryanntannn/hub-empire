@@ -1,21 +1,11 @@
 import React from 'react';
-import {
-	Button,
-	Card,
-	Container,
-	Dropdown,
-	DropdownItem,
-	DropdownMenu,
-	DropdownToggle,
-	Input,
-	Table,
-} from 'reactstrap';
-import BackButton from '../BackButton';
+import { Button, Container, Input, Table } from 'reactstrap';
 import useAuth from '../../contexts/AuthenticationContext';
-import { Metric, RewardTemplate, ScoreData } from '../../types/admin';
-import Loading from '../Loading';
-import { CardRarity, UserData } from '../../types/types';
+import { Metric, ScoreData } from '../../types/admin';
+import { UserData } from '../../types/types';
+import BackButton from '../BackButton';
 import { DropdownSelection } from '../DropdownSelection';
+import Loading from '../Loading';
 import { RewardTable } from './RewardTable';
 
 export default function TestResult() {

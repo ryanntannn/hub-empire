@@ -1,9 +1,9 @@
-import { Alert, Button, Col, Container, Row } from 'reactstrap';
-import Loading from '../Loading';
-import useAuth from '../../contexts/AuthenticationContext';
 import React from 'react';
-import NavButton from '../NavButton';
 import { useNavigate } from 'react-router-dom';
+import { Alert, Button, Col, Container, Row } from 'reactstrap';
+import useAuth from '../../contexts/AuthenticationContext';
+import Loading from '../Loading';
+import NavButton from '../NavButton';
 
 export default function AdminHome() {
 	const auth = useAuth();
