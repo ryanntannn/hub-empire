@@ -43,6 +43,17 @@ export default function TestResult() {
 			.catch();
 	};
 
+	const checkRewards = () => {
+		auth.authenticatedGet(`/admin/checkrewarddata`, {
+			data: { scoreData, metricId: activeMetric?.id },
+		})
+			.then((res: any) => {
+				console.log(res.data);
+				setScoreData(res.data);
+			})
+			.catch();
+	};
+
 	React.useEffect(() => {
 		if (users != null || metrics != null) return;
 		getTestResultData();
@@ -102,6 +113,7 @@ export default function TestResult() {
 			<Container className='mt-5'>
 				<h1 className='title'>Enter Test Results</h1>
 				<BackButton />
+				<b>Active Metric: </b>
 				{activeMetric != null ? activeMetric.displayName : null}
 				{metrics != null && users != null && scoreData.length > 0 ? (
 					<>
@@ -154,13 +166,9 @@ export default function TestResult() {
 						</Table>
 						<Button
 							className='me-2'
-							onClick={() =>
-								setScoreData(
-									getRewards({ ...activeMetric! }, [
-										...scoreData,
-									])
-								)
-							}>
+							onClick={() => {
+								checkRewards();
+							}}>
 							Check Rewards
 						</Button>
 						<Button

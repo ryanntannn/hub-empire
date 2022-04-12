@@ -628,6 +628,29 @@ async function deleteExpiredIncomeMods() {
 	return;
 }
 
+async function getMetric(joinCode, metricId) {
+	return await (
+		await mongo.client
+			.db('HubEmpireDB')
+			.collection('Games')
+			.aggregate([
+				{ $unwind: '$metrics' },
+				{
+					$match: {
+						joinCode: joinCode,
+						'metrics.id': metricId,
+					},
+				},
+				{
+					$project: {
+						metrics: 1,
+					},
+				},
+			])
+			.toArray()
+	)[0].metrics;
+}
+
 async function updateMetric(joinCode, data) {
 	const query = {
 		joinCode: joinCode,
@@ -679,6 +702,7 @@ const queries = {
 	deleteExpiredHubMods,
 	decrementIncomeModTurnNumber,
 	deleteExpiredIncomeMods,
+	getMetric,
 	updateMetric,
 };
 

@@ -38,6 +38,7 @@ export default function MetricEditor() {
 			.then((res: any) => {
 				console.log(res.data);
 				getMetricData();
+				setActiveMetric(null);
 			})
 			.catch();
 	}

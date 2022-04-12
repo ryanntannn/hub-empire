@@ -214,6 +214,20 @@ app.get(
 	admin.testResultData
 );
 
+app.get(
+	'/admin/checkrewarddata',
+	authenticateToken,
+	authenticateAdmin,
+	admin.checkRewardData
+);
+
+app.post(
+	'/admin/giverewards',
+	authenticateToken,
+	authenticateAdmin,
+	admin.giveRewards
+);
+
 app.post(
 	'/admin/updatemetric',
 	authenticateToken,

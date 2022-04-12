@@ -1,6 +1,7 @@
 const queries = require('./../queries/queries');
 const jwt = require('jsonwebtoken');
 const express = require('express');
+const { getMetric } = require('./../queries/queries');
 const router = express.Router();
 
 // middleware to authenticate if user is an admin
@@ -54,6 +55,32 @@ async function updateMetric(req, res) {
 	}
 }
 
+async function checkRewardData(req, res) {
+	try {
+		const data = JSON.parse(req.query.data);
+		const metric = await getMetric(req.user.gameId, data.metricId);
+		return res.status(200).json(getRewards(metric, data.scoreData));
+	} catch (err) {
+		console.log(err);
+		return res.status(400).json(err);
+	}
+}
+
+async function giveRewards(req, res) {
+	try {
+		const data = JSON.parse(req.query.data);
+		const metric = await getMetric(req.user.gameId, data.metricId);
+		const rewardData = getRewards(metric, data.scoreData);
+		console.log(rewardData);
+		//TODO: assign cards based on rewardData
+
+		return res.status(200).json(rewardData);
+	} catch (err) {
+		console.log(err);
+		return res.status(400).json(err);
+	}
+}
+
 function getRewards(metric, scoreData) {
 	rewardData = [...scoreData];
 	rewardData.sort((a, b) => b.score - a.score);
@@ -67,13 +94,6 @@ function getRewards(metric, scoreData) {
 			playerIndex < rewardData.length &&
 			rewardData[playerIndex].score == thisScore
 		) {
-			console.log(
-				playerIndex,
-				rewardData[playerIndex].score,
-				thisScore,
-				rewardIndex,
-				thisRewardIndex
-			);
 			rewardData[playerIndex].rewards =
 				metric?.positionBasedRewards[thisRewardIndex].rewards;
 			playerIndex++;
@@ -90,7 +110,6 @@ function getRewards(metric, scoreData) {
 			break;
 		}
 	}
-	console.log(rewardData);
 	return rewardData;
 }
 
@@ -99,6 +118,8 @@ const admin = {
 	testResultData,
 	adminMetrics,
 	updateMetric,
+	checkRewardData,
+	giveRewards,
 };
 
 module.exports = admin;
