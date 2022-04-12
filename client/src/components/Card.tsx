@@ -14,13 +14,13 @@ import { numberWithCommas } from '../utils/Misc';
 function HubTypeToColor(type: HubType) {
 	switch (type) {
 		case HubType.AIRPORT:
-			return '#ECC30B';
+			return '#FFD93D';
 		case HubType.SEAPORT:
-			return '#84BCDA';
+			return '#4D96FF';
 		case HubType.WAREHOUSE:
-			return '#F37748';
+			return '#FFD93D';
 		case HubType.DISTRIBUTION:
-			return '#e84898';
+			return '#FF6B6B';
 	}
 }
 

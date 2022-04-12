@@ -79,7 +79,7 @@ function Home() {
 							title='My Cards'
 							emoji='🏢'
 							linkTo='/my-cards'
-							color='#6F42C1'
+							color='#FF6B6B'
 						/>
 					</Col>
 
@@ -88,7 +88,7 @@ function Home() {
 							title='My Profile'
 							emoji='👤'
 							linkTo='/profile'
-							color='#007BFF'
+							color='#FFD93D'
 						/>
 					</Col>
 				</Row>
@@ -98,7 +98,7 @@ function Home() {
 							title='Leaderboard'
 							emoji='🏆'
 							linkTo='/leaderboard'
-							color='#28A745'
+							color='#6BCB77'
 						/>
 					</Col>
 
@@ -107,7 +107,7 @@ function Home() {
 							title='History'
 							emoji='📓'
 							linkTo='/history'
-							color='#dd5050'
+							color='#4D96FF'
 						/>
 					</Col>
 				</Row>
