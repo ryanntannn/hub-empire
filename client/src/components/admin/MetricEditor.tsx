@@ -73,9 +73,9 @@ export default function MetricEditor() {
 						}}>
 						Edit
 					</Button>
-					<Button size='sm' color='danger'>
+					{/* <Button size='sm' color='danger'>
 						Delete
-					</Button>
+					</Button> */}
 				</td>
 			</tr>
 		);
@@ -187,13 +187,13 @@ export default function MetricEditor() {
 					{metrics != null ? (
 						<tbody>
 							{metrics.map(metricList)}
-							<tr key={-1}>
+							{/* <tr key={-1}>
 								<th>
 									<Button size='sm' color='success'>
 										+ Add New Metric
 									</Button>
 								</th>
-							</tr>
+							</tr> */}
 						</tbody>
 					) : null}
 				</Table>
