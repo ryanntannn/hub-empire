@@ -48,10 +48,41 @@ function filterInvalidCardInCardArray(cardArray){
 	}
 }
 
+function filterCardArrayByRarity(cardArray, rarity){
+	if(cardArray) {
+		return cardArray.filter(card => {
+			return card.rarity == rarity;
+		});
+	} else {
+		return null;
+	}
+}
+
 function getRandomCardFromCardArray(cardArray) {
 	const filteredCardArray = this.filterInvalidCardInCardArray(cardArray);
 	var number = Math.floor(Math.random() * filteredCardArray.length);
 	return filteredCardArray[number];
+}
+
+function getRandomCommonCardFromCardArray(cardArray) {
+	const filteredCardArray = this.filterInvalidCardInCardArray(cardArray);
+	const commonCards = this.filterCardArrayByRarity(filteredCardArray, 0)
+	var number = Math.floor(Math.random() * commonCards.length);
+	return commonCards[number];
+}
+
+function getRandomRareCardFromCardArray(cardArray) {
+	const filteredCardArray = this.filterInvalidCardInCardArray(cardArray);
+	const rareCards = this.filterCardArrayByRarity(filteredCardArray, 1)
+	var number = Math.floor(Math.random() * rareCards.length);
+	return rareCards[number];
+}
+
+function getRandomEpicCardFromCardArray(cardArray) {
+	const filteredCardArray = this.filterInvalidCardInCardArray(cardArray);
+	const epicCards = this.filterCardArrayByRarity(filteredCardArray, 2)
+	var number = Math.floor(Math.random() * epicCards.length);
+	return epicCards[number];
 }
 
 module.exports = {
@@ -60,5 +91,9 @@ module.exports = {
 	convertDeckObjectToArray,
 	filterCommonCardsInCardArray,
 	filterInvalidCardInCardArray,
+	filterCardArrayByRarity,
 	getRandomCardFromCardArray,
+	getRandomCommonCardFromCardArray,
+	getRandomRareCardFromCardArray,
+	getRandomEpicCardFromCardArray,
 };
