@@ -214,4 +214,11 @@ app.get(
 	admin.testResultData
 );
 
+app.post(
+	'/admin/updatemetric',
+	authenticateToken,
+	authenticateAdmin,
+	admin.updateMetric
+);
+
 app.listen(process.env.PORT || 42069);

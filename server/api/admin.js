@@ -40,6 +40,20 @@ async function testResultData(req, res) {
 	}
 }
 
+async function updateMetric(req, res) {
+	try {
+		const newMetricData = JSON.parse(req.query.data);
+		const query = await queries.updateMetric(
+			req.user.gameId,
+			newMetricData
+		);
+		if (!query || query.matchedCount < 1) return res.status(404).json(err);
+		return res.status(200).json(query);
+	} catch (err) {
+		return res.status(400).json(err);
+	}
+}
+
 function getRewards(metric, scoreData) {
 	rewardData = [...scoreData];
 	rewardData.sort((a, b) => b.score - a.score);
@@ -84,6 +98,7 @@ const admin = {
 	authenticateAdmin,
 	testResultData,
 	adminMetrics,
+	updateMetric,
 };
 
 module.exports = admin;

@@ -12,7 +12,7 @@ import {
 } from 'reactstrap';
 import BackButton from '../BackButton';
 import useAuth from '../../contexts/AuthenticationContext';
-import { Metric } from '../../types/admin';
+import { Metric, RewardData } from '../../types/admin';
 import Loading from '../Loading';
 import { RewardTableEditable } from './RewardTable';
 
@@ -20,6 +20,8 @@ export default function MetricEditor() {
 	const auth = useAuth();
 	const [metrics, setMetrics] = React.useState<Metric[] | null>(null);
 	const [activeMetric, setActiveMetric] = React.useState<Metric | null>(null);
+	const [activeMetricOriginal, setActiveMetricOriginal] =
+		React.useState<Metric | null>(null);
 
 	const getMetricData = () => {
 		auth.authenticatedGet(`/admin/metrics`)
@@ -30,10 +32,143 @@ export default function MetricEditor() {
 			.catch((err) => {});
 	};
 
+	async function updateMetric() {
+		console.log(activeMetric);
+		auth.authenticatedPost(`/admin/updatemetric`, { data: activeMetric })
+			.then((res: any) => {
+				console.log(res.data);
+				getMetricData();
+			})
+			.catch();
+	}
+
 	React.useEffect(() => {
 		if (metrics != null) return;
 		getMetricData();
 	});
+
+	function activeMetricHasChanged() {
+		return (
+			JSON.stringify(activeMetric) !==
+			JSON.stringify(activeMetricOriginal)
+		);
+	}
+
+	const metricList = (metric: Metric, i: number) => {
+		return (
+			<tr key={i}>
+				<th scope='row'>{i}</th>
+				<td>{metric.id}</td>
+				<td>{metric.displayName}</td>
+				<td>
+					<Button
+						size='sm'
+						color='primary'
+						className='me-1'
+						onClick={() => {
+							setActiveMetricOriginal(
+								JSON.parse(JSON.stringify(metric))
+							);
+							setActiveMetric(JSON.parse(JSON.stringify(metric)));
+						}}>
+						Edit
+					</Button>
+					<Button size='sm' color='danger'>
+						Delete
+					</Button>
+				</td>
+			</tr>
+		);
+	};
+
+	const positionsBasedRewardsList = (
+		metric: { position: number; rewards: RewardData[] },
+		i: number
+	) => {
+		return (
+			<tr key={i}>
+				<td>{metric.position}</td>
+				<td>
+					<Table>
+						<RewardTableEditable
+							rewardData={metric.rewards}
+							setData={(data) =>
+								setActiveMetric(({ ...prevState }) => {
+									prevState.positionBasedRewards[i].rewards =
+										data;
+									return prevState;
+								})
+							}
+						/>
+					</Table>
+				</td>
+				<td>
+					<Button
+						color='danger'
+						onClick={() => {
+							setActiveMetric(({ ...prevState }) => {
+								prevState.positionBasedRewards.splice(i, 1);
+								return prevState;
+							});
+						}}>
+						-
+					</Button>
+				</td>
+			</tr>
+		);
+		// Array.from(rtemplate!.keys()).map((rarity, j) => {}
+	};
+
+	const scoreBasedRewardsList = (
+		metric: { score: number; rewards: RewardData[] },
+		i: number
+	) => {
+		return (
+			<tr key={i}>
+				<td>
+					<Input
+						type='number'
+						value={metric.score}
+						onChange={(x) => {
+							setActiveMetric(({ ...prevState }) => {
+								prevState.scoreBasedRewards[i].score = parseInt(
+									x.target.value
+								);
+								return prevState;
+							});
+						}}
+					/>
+				</td>
+				<td>
+					<Table>
+						<RewardTableEditable
+							rewardData={metric.rewards}
+							setData={(data) =>
+								setActiveMetric(({ ...prevState }) => {
+									prevState.scoreBasedRewards[i].rewards =
+										data;
+									return prevState;
+								})
+							}
+						/>
+					</Table>
+				</td>
+				<td>
+					<Button
+						color='danger'
+						onClick={() => {
+							setActiveMetric(({ ...prevState }) => {
+								prevState.scoreBasedRewards.splice(i, 1);
+								return prevState;
+							});
+						}}>
+						-
+					</Button>
+				</td>
+			</tr>
+		);
+		// Array.from(rtemplate!.keys()).map((rarity, j) => {}
+	};
 
 	return (
 		<div className='page'>
@@ -51,31 +186,7 @@ export default function MetricEditor() {
 					</thead>
 					{metrics != null ? (
 						<tbody>
-							{metrics.map((metric, i) => {
-								return (
-									<tr key={i}>
-										<th scope='row'>{i}</th>
-										<td>{metric.id}</td>
-										<td>{metric.displayName}</td>
-										<td>
-											<Button
-												size='sm'
-												color='primary'
-												className='me-1'
-												onClick={() =>
-													setActiveMetric({
-														...metric,
-													})
-												}>
-												Edit
-											</Button>
-											<Button size='sm' color='danger'>
-												Delete
-											</Button>
-										</td>
-									</tr>
-								);
-							})}
+							{metrics.map(metricList)}
 							<tr key={-1}>
 								<th>
 									<Button size='sm' color='success'>
@@ -134,55 +245,7 @@ export default function MetricEditor() {
 							<tbody>
 								{console.log(activeMetric)}
 								{activeMetric.positionBasedRewards.map(
-									(metric, i) => {
-										return (
-											<tr key={i}>
-												<td>{metric.position}</td>
-												<td>
-													<Table>
-														<RewardTableEditable
-															rewardData={
-																metric.rewards
-															}
-															setData={(data) =>
-																setActiveMetric(
-																	({
-																		...prevState
-																	}) => {
-																		prevState.positionBasedRewards[
-																			i
-																		].rewards =
-																			data;
-																		return prevState;
-																	}
-																)
-															}
-														/>
-													</Table>
-												</td>
-												<td>
-													<Button
-														color='danger'
-														onClick={() => {
-															setActiveMetric(
-																({
-																	...prevState
-																}) => {
-																	prevState.positionBasedRewards.splice(
-																		i,
-																		1
-																	);
-																	return prevState;
-																}
-															);
-														}}>
-														-
-													</Button>
-												</td>
-											</tr>
-										);
-										// Array.from(rtemplate!.keys()).map((rarity, j) => {}
-									}
+									positionsBasedRewardsList
 								)}
 								<tr>
 									<td>
@@ -223,75 +286,7 @@ export default function MetricEditor() {
 							<tbody>
 								{console.log(activeMetric)}
 								{activeMetric.scoreBasedRewards.map(
-									(metric, i) => {
-										return (
-											<tr key={i}>
-												<td>
-													<Input
-														type='number'
-														value={metric.score}
-														onChange={(x) => {
-															setActiveMetric(
-																({
-																	...prevState
-																}) => {
-																	prevState.scoreBasedRewards[
-																		i
-																	].score = parseInt(
-																		x.target
-																			.value
-																	);
-																	return prevState;
-																}
-															);
-														}}
-													/>
-												</td>
-												<td>
-													<Table>
-														<RewardTableEditable
-															rewardData={
-																metric.rewards
-															}
-															setData={(data) =>
-																setActiveMetric(
-																	({
-																		...prevState
-																	}) => {
-																		prevState.scoreBasedRewards[
-																			i
-																		].rewards =
-																			data;
-																		return prevState;
-																	}
-																)
-															}
-														/>
-													</Table>
-												</td>
-												<td>
-													<Button
-														color='danger'
-														onClick={() => {
-															setActiveMetric(
-																({
-																	...prevState
-																}) => {
-																	prevState.scoreBasedRewards.splice(
-																		i,
-																		1
-																	);
-																	return prevState;
-																}
-															);
-														}}>
-														-
-													</Button>
-												</td>
-											</tr>
-										);
-										// Array.from(rtemplate!.keys()).map((rarity, j) => {}
-									}
+									scoreBasedRewardsList
 								)}
 								<tr>
 									<td>
@@ -318,7 +313,8 @@ export default function MetricEditor() {
 						</Table>
 						<Button
 							color='success'
-							onClick={() => console.log(activeMetric)}>
+							onClick={updateMetric}
+							disabled={!activeMetricHasChanged()}>
 							Submit
 						</Button>
 					</>
