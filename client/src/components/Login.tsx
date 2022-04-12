@@ -38,9 +38,12 @@ export default function Login() {
 		};
 		AxiosBase.get('/auth', config)
 			.then((res) => {
+				if (res.data.userData.isAdmin) navigate('/admin');
+				setTryAutoLogin(true);
 				auth.login(res.data, true);
 			})
 			.catch((error) => {
+				setTryAutoLogin(true);
 				console.log(error);
 				if (error.response) setErrorMessage(error.response.data);
 			});
@@ -54,6 +57,7 @@ export default function Login() {
 				password: passwordInput,
 			})
 				.then(async (res) => {
+					if (res.data.userData.isAdmin) navigate('/admin');
 					await auth.login(res.data, true);
 					setErrorMessage('');
 					console.log(res);
@@ -66,7 +70,9 @@ export default function Login() {
 
 	React.useEffect(() => {
 		if (auth.user.userData._id != -1)
-			navigate(location.pathname, { replace: true });
+			navigate(location.pathname != '/login' ? location.pathname : '/', {
+				replace: true,
+			});
 	}, [auth]);
 
 	return (

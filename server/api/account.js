@@ -23,12 +23,15 @@ async function login(req, res) {
 		if (!(await bcrypt.compare(req.body.password, user.profile.password))) {
 			return res.status(400).send('Password is incorrect');
 		}
+		const gameId = user.profile.isAdmin
+			? user.profile.adminGameId
+			: user.game.id;
 		const userData = {
 			username: user.username,
 			_id: user._id.toString(),
 			id: user._id.toString(),
 			isAdmin: user.profile.isAdmin,
-			gameId: user.game.id,
+			gameId,
 		};
 		const accessToken = generateAccessToken(userData);
 		return res.json({

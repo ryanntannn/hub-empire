@@ -32,28 +32,10 @@ export default function AdminHome() {
 						<Row className='mb-3 gx-3'>
 							<Col>
 								<NavButton
-									title='History'
-									emoji='📓'
-									linkTo='/history'
-									color='#dd5050'
-								/>
-							</Col>
-							<Col>
-								<NavButton
-									title='Leaderboard'
-									emoji='🏆'
-									linkTo='/leaderboard'
-									color='#28A745'
-								/>
-							</Col>
-						</Row>
-						<Row className='mb-3 gx-3'>
-							<Col>
-								<NavButton
 									title='Edit Scoring Metrics'
 									emoji='⚙️'
 									linkTo='/admin/metrics'
-									color='#3333DD'
+									color='#4D96FF'
 								/>
 							</Col>
 							<Col>
@@ -61,7 +43,7 @@ export default function AdminHome() {
 									title='Enter Test Results'
 									emoji='🖊️'
 									linkTo='/admin/test-results'
-									color='#DDA330'
+									color='#FFD93D'
 								/>
 							</Col>
 						</Row>
@@ -71,7 +53,16 @@ export default function AdminHome() {
 									title='Edit Cards'
 									emoji='⚙️'
 									linkTo='/admin/edit-cards'
-									color='#DD33DD'
+									color='#6BCB77'
+								/>
+							</Col>
+							<Col>
+								<NavButton
+									title='Log Out'
+									emoji='🚪'
+									linkTo='/login'
+									color='#FF6B6B'
+									onClick={auth.logout}
 								/>
 							</Col>
 						</Row>

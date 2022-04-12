@@ -171,15 +171,17 @@ app.get('/auth', authenticateToken, async (req, res) => {
 	try {
 		const user = await queries.getUserDataBasicById(req.user.id);
 		if (user) {
-			console.log(user);
+			const gameId = user.profile.isAdmin
+				? user.profile.adminGameId
+				: user.game.id;
 			const userData = {
-				username: user.profile.username,
+				username: user.username,
 				_id: user._id.toString(),
 				id: user._id.toString(),
 				isAdmin: user.profile.isAdmin,
-				gameId: user.game.id,
+				gameId,
 			};
-			return res.json({ userData: userData, accessToken: req.token });
+			return res.json({ userData, accessToken: req.token });
 		} else {
 			return res.status(404).json('Page not found');
 		}
