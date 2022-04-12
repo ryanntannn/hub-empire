@@ -1,11 +1,13 @@
-import { Alert, Col, Container, Row } from 'reactstrap';
+import { Alert, Button, Col, Container, Row } from 'reactstrap';
 import Loading from '../Loading';
 import useAuth from '../../contexts/AuthenticationContext';
 import React from 'react';
 import NavButton from '../NavButton';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminHome() {
 	const auth = useAuth();
+	const navigate = useNavigate();
 	const [isAdmin, setIsAdmin] = React.useState<boolean | null>(null);
 
 	const getAdminHomeData = () => {
@@ -71,7 +73,13 @@ export default function AdminHome() {
 					<Loading />
 				) : (
 					<Alert className='mt-3' color='danger' dismissible>
-						Not Admin User
+						Not Admin User{' '}
+						<Button color='danger' onClick={auth.logout}>
+							Logout
+						</Button>{' '}
+						<Button color='primary' onClick={() => navigate('/')}>
+							Home
+						</Button>
 					</Alert>
 				)}
 			</Container>
