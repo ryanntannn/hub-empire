@@ -60,13 +60,11 @@ p {
 	text-align: center;
 	overflow: hidden;
 	padding: 70px 10px 10px 10px;
-	/* width: 100vw; */
+	width: 100%;
 	height: 260px;
 	max-width: 190px;
 	margin: 0;
 	display: inline-block;
-
-	white-space: normal;
 }
 
 .card .step {
@@ -100,10 +98,9 @@ p {
 }
 
 .card-container.small {
-	max-width: 420px;
+	max-width: 430px;
 	grid-template-columns: 1fr 1fr;
 	text-align: center;
-	padding: 0;
 }
 
 .card-details {
