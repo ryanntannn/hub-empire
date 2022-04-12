@@ -12,21 +12,14 @@ import {
 } from 'reactstrap';
 import BackButton from '../BackButton';
 import useAuth from '../../contexts/AuthenticationContext';
-import { Metric, RewardTemplate } from '../../types/admin';
+import { Metric } from '../../types/admin';
 import Loading from '../Loading';
-import { CardRarity } from '../../types/types';
 import { RewardTableEditable } from './RewardTable';
 
 export default function MetricEditor() {
 	const auth = useAuth();
 	const [metrics, setMetrics] = React.useState<Metric[] | null>(null);
 	const [activeMetric, setActiveMetric] = React.useState<Metric | null>(null);
-	const [scoreKeyInput, setScoreKeyInput] = React.useState<number>(0);
-	const [scoreRewardsInput, setScoreRewardsInput] = React.useState<{
-		rarity: CardRarity;
-		amount: number;
-	}>({ rarity: CardRarity.COMMON, amount: 1 });
-	const [dropDownToggle, setDropDownToggle] = React.useState<boolean>(false);
 
 	const getMetricData = () => {
 		auth.authenticatedGet(`/admin/metrics`)
