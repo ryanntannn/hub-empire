@@ -605,4 +605,4 @@ function stringifyCardData(parsedCardData) {
 	return stringified;
 }
 
-module.exports = { Cards, useCard, getCards };
+module.exports = { Cards, useCard, getCards, getCardBaseData };

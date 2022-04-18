@@ -235,4 +235,18 @@ app.post(
 	admin.updateMetric
 );
 
+app.get(
+	'/admin/cardbasedata',
+	authenticateToken,
+	authenticateAdmin,
+	admin.getCardsBaseData
+);
+
+app.post(
+	'/admin/updatecard',
+	authenticateToken,
+	authenticateAdmin,
+	admin.updateCard
+);
+
 app.listen(process.env.PORT || 42069);

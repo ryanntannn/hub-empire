@@ -24,6 +24,7 @@ import NotFound from './components/NotFound';
 import AdminHome from './components/admin/AdminHome';
 import MetricEditor from './components/admin/MetricEditor';
 import TestResult from './components/admin/TestResult';
+import CardEditor from './components/admin/CardEditor';
 
 const rootElement = document.getElementById('root');
 
@@ -126,6 +127,14 @@ render(
 						element={
 							<RequireAuth>
 								<TestResult />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='admin/edit-cards'
+						element={
+							<RequireAuth>
+								<CardEditor />
 							</RequireAuth>
 						}
 					/>

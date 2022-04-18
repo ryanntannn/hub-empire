@@ -689,6 +689,17 @@ async function insertCards(cards) {
 		.insertMany(cards);
 }
 
+async function updateCard(card) {
+	const query = {
+		id: card.id,
+	};
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Cards')
+		.replaceOne(query, card)
+		.catch(console.dir);
+}
+
 const queries = {
 	getUserDataByUsername,
 	getUserDataMinById,
@@ -725,6 +736,7 @@ const queries = {
 	getCardsByIds,
 	getCards,
 	insertCards,
+	updateCard,
 };
 
 module.exports = queries;

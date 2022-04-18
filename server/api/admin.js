@@ -113,6 +113,34 @@ function getRewards(metric, scoreData) {
 	return rewardData;
 }
 
+async function getCardsBaseData(req, res) {
+	try {
+		const cardData = await (await queries.getCards()).toArray();
+		if (cardData == undefined || cardData.length < 0)
+			return res.status(400).json('Error Getting Card Data');
+		return res.status(200).json(cardData);
+	} catch (err) {
+		console.log(err);
+		return res.status(400).json(err);
+	}
+}
+
+async function updateCard(req, res) {
+	try {
+		const cardData = JSON.parse(req.query.data);
+		console.log(cardData);
+		if (cardData.id == undefined)
+			return res.status(400).json('Error Getting Card Data');
+		delete cardData._id;
+		const update = await queries.updateCard(cardData);
+		console.log(update);
+		return res.status(200).json(cardData);
+	} catch (err) {
+		console.log(err);
+		return res.status(400).json(err);
+	}
+}
+
 const admin = {
 	authenticateAdmin,
 	testResultData,
@@ -120,6 +148,8 @@ const admin = {
 	updateMetric,
 	checkRewardData,
 	giveRewards,
+	getCardsBaseData,
+	updateCard,
 };
 
 module.exports = admin;
