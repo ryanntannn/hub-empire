@@ -671,6 +671,24 @@ async function updateMetric(joinCode, data) {
 		.catch(console.dir);
 }
 
+async function getCardsByIds(ids) {
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Cards')
+		.find({ id: { $in: ids } });
+}
+
+async function getCards() {
+	return await mongo.client.db('HubEmpireDB').collection('Cards').find();
+}
+
+async function insertCards(cards) {
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Cards')
+		.insertMany(cards);
+}
+
 const queries = {
 	getUserDataByUsername,
 	getUserDataMinById,
@@ -704,6 +722,9 @@ const queries = {
 	deleteExpiredIncomeMods,
 	getMetric,
 	updateMetric,
+	getCardsByIds,
+	getCards,
+	insertCards,
 };
 
 module.exports = queries;

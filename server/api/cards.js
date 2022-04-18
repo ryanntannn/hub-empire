@@ -1,4 +1,4 @@
-const { userHasCard } = require('../queries/queries');
+const { userHasCard, getUserCardsById } = require('../queries/queries');
 const queries = require('../queries/queries');
 
 const cardUtils = require('../utils/cardUtils');
@@ -546,7 +546,12 @@ async function useCard(req, res) {
 			selfCardId: parseInt(req.query.selfCardId),
 			cardType: parseInt(req.query.cardType),
 		};
-		const r = await Cards[req.query.cardId].onUse(parsedQuery, req.user);
+		const cardData = (
+			await getCardBaseData([parseInt(req.query.cardId)])
+		)[0];
+		if (cardData == undefined) res.status(404).json('Card Not Found');
+		console.log(cardData);
+		const r = await cardData.onUse(parsedQuery, req.user);
 		const del = await queries.destroyCard(
 			req.user.id,
 			parseInt(req.query.cardId),
@@ -565,11 +570,39 @@ async function useCard(req, res) {
 }
 
 async function getCards(req, res) {
+	// const newCards = Object.keys(Cards).map((key) =>
+	// 	stringifyCardData({ ...Cards[key] })
+	// );
+	// console.log(queries.insertCards(newCards));
+	// res.status(200);
+	const cardData = await (await queries.getCards()).toArray();
+	if (cardData == undefined || cardData.length < 0)
+		res.status(400).json('Error Getting Card Data');
+	//console.log(await getCardBaseData([10]));
+	cardData.forEach(parseCardData);
 	const unwrapped = {};
-	Object.keys(Cards).forEach((key) => {
-		unwrapped[key] = unwrapCard(Cards[key]);
+	cardData.forEach((card) => {
+		unwrapped[card.id] = unwrapCard(card);
 	});
 	res.json(unwrapped);
+}
+
+async function getCardBaseData(cardIds) {
+	const cardData = await (await queries.getCardsByIds(cardIds)).toArray();
+	cardData.forEach(parseCardData);
+	return cardData;
+}
+
+function parseCardData(rawCardData) {
+	if (rawCardData.cardType != 1) return;
+	rawCardData.onUse = eval(rawCardData.onUse);
+}
+
+function stringifyCardData(parsedCardData) {
+	const stringified = { ...parsedCardData };
+	if (parsedCardData.cardType != 1) return stringified;
+	stringified.onUse = parsedCardData.onUse.toString();
+	return stringified;
 }
 
 module.exports = { Cards, useCard, getCards };
