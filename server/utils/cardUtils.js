@@ -19,7 +19,7 @@ function calculateEffectiveIncomeOfCard(card, deck){
 			effectiveCardIncome *= mod.incomeBoost;
 		}
 	})
-	console.log("Income of ID " + card.cardId + ": " + effectiveCardIncome)
+	//console.log("Income of ID " + card.cardId + ": " + effectiveCardIncome)
 
 	return effectiveCardIncome;
 }

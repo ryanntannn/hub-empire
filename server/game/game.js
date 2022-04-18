@@ -36,17 +36,27 @@ class Game {
 			var player = new Player(playerInfo);
 
 			// TODO add function to remove invalid cards
-			// this.decrementTurnsLeftInCardModifiers(player);
-			//await this.calculateTurnIncome(player);
-			//this.drawCards(player, 5);
+			await this.calculateTurnIncome(player);
+			this.drawCards(player, 5);
 			this.calculateNetWorth(player);
 
 			queries.updateUserStatsAndInventory(player).catch(console.dir);
 		}
 
+		console.log("Reducing & Removing Mod Timers...")
 		this.decrementModTurnNumbers();
 		this.deleteExpiredMods();
 
+		console.log("Recalculating Effective Income...")
+		for (var playerId of this.playerIds) {
+			var playerInfo = await queries.getUserDataById(playerId);
+			var player = new Player(playerInfo);
+
+			this.calculateNewEffectiveIncomeOfCards(player);
+			queries.updateUserStatsAndInventory(player).catch(console.dir);
+		}
+
+		console.log("Updating Turn Number...")
 		this.turnNumber += 1;
 		queries.incrementGameTurnNumber(this.joinCode);
 
@@ -126,24 +136,27 @@ class Game {
 		return Promise.resolve(stolenCardIncome);
 	}
 
-	//Unused
-	decrementTurnsLeftInCardModifiers(player) {
-		player.game.inventory.cardInstances.forEach((card) => {
-			if (card.modifiers.owner.isStolen)
-				card.modifiers.owner.turnsLeft -= 1;
+	calculateNewEffectiveIncomeOfCards(player){
+        if (player.game.inventory.cardInstances == null) return null;
+        var cards = player.game.inventory.cardInstances;
 
-			if (!card.modifiers.type.isPermanent)
-				card.modifiers.type.turnsLeft -= 1;
-
-			card.modifiers.incomeBoost.forEach((boost) => {
-				if (!boost.isPermanent) {
-					boost.turnsLeft -= 1;
-				}
-			});
+        cards.forEach((card) => {
+			var key = parseInt(card.cardId);
+			if (
+				key in deck.Cards &&
+				deck.Cards[key].cardType == 0
+			) {
+				card.effectiveIncome = cardUtils.calculateEffectiveIncomeOfCard(card, deck.Cards);
+			}
 		});
-	}
+
+		player.game.inventory.cardInstances = cards;
+
+		return;
+    }
 
 	drawCards(player, numberOfCardsToDraw) {
+		console.log("Drawing Cards...")
 		for (var i = 0; i < numberOfCardsToDraw; i++) {
 			var newCard = this.drawOneCommonRarityCard(
 				player.game.stats.numberOfCardsDrawn

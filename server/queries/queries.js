@@ -204,7 +204,7 @@ async function destroyCard(playerId, cid, iid) {
 }
 
 async function updateActionLog(gameId, data, logType) {
-	console.log(gameId, data, logType);
+	//console.log(gameId, data, logType);
 	const query = {
 		joinCode: gameId,
 	};
@@ -468,6 +468,7 @@ async function getCardById(id) {
 async function decrementOwnerModTurnNumber() {
 	const query = {
 		'game.inventory.cardInstances': {
+			$exists: true,
 			$elemMatch: {
 				'modifiers.owner.isPermanent': false,
 			},
@@ -483,7 +484,6 @@ async function decrementOwnerModTurnNumber() {
 	await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
-		//.updateMany(query, valueToDecrement)
 		.updateMany(query, valueToDecrement)
 		.catch(console.dir);
 
@@ -493,6 +493,7 @@ async function decrementOwnerModTurnNumber() {
 async function deleteExpiredOwnerMods() {
 	const query = {
 		'game.inventory.cardInstances': {
+			$exists: true,
 			$elemMatch: {
 				'modifiers.owner.isPermanent': false,
 			},
@@ -520,6 +521,7 @@ async function deleteExpiredOwnerMods() {
 async function decrementHubModTurnNumber() {
 	const query = {
 		'game.inventory.cardInstances': {
+			$exists: true,
 			$elemMatch: {
 				'modifiers.hub.isPermanent': false,
 			},
@@ -544,6 +546,7 @@ async function decrementHubModTurnNumber() {
 async function deleteExpiredHubMods() {
 	const query = {
 		'game.inventory.cardInstances': {
+			$exists: true,
 			$elemMatch: {
 				'modifiers.hub.isPermanent': false,
 			},
@@ -569,6 +572,11 @@ async function deleteExpiredHubMods() {
 }
 
 async function decrementIncomeModTurnNumber() {
+	const query = {
+		'game.inventory.cardInstances': {
+			$exists: true,
+		}
+	};
 	const valueToDecrement = {
 		$inc: {
 			'game.inventory.cardInstances.$[i].modifiers.income.$[j].turnsLeft':
@@ -590,14 +598,19 @@ async function decrementIncomeModTurnNumber() {
 	await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
-		//.updateMany(query, valueToDecrement)
-		.updateMany({}, valueToDecrement, arrayFilter)
-		.catch(console.dir);
+		.updateMany(query, valueToDecrement, arrayFilter)
+		.catch(console.dir)
 
 	return;
 }
 
 async function deleteExpiredIncomeMods() {
+	const query = {
+		'game.inventory.cardInstances': {
+			$exists: true,
+		}
+	};
+
 	const valueToRemove = {
 		$pull: {
 			'game.inventory.cardInstances.$[i].modifiers.income': {
@@ -615,13 +628,11 @@ async function deleteExpiredIncomeMods() {
 		],
 	};
 
-	var res = await mongo.client
+	await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
-		.updateMany({}, valueToRemove, arrayFilter)
+		.updateMany(query, valueToRemove, arrayFilter)
 		.catch(console.dir);
-
-	console.log(res);
 
 	return;
 }
