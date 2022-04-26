@@ -21,6 +21,12 @@ import { CardProvider } from './contexts/CardsContext';
 import { History } from './components/History';
 import EditProfile from './components/EditProfile';
 import NotFound from './components/NotFound';
+import AdminHome from './components/admin/AdminHome';
+import MetricEditor from './components/admin/MetricEditor';
+import TestResult from './components/admin/TestResult';
+import CardEditor from './components/admin/CardEditor';
+import AccountEditor from './components/admin/AccountEditor';
+import RegisterUser from './components/admin/RegisterUser';
 
 const rootElement = document.getElementById('root');
 
@@ -99,6 +105,54 @@ render(
 						element={
 							<RequireAuth>
 								<History />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='admin'
+						element={
+							<RequireAuth>
+								<AdminHome />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='admin/metrics'
+						element={
+							<RequireAuth>
+								<MetricEditor />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='admin/test-results'
+						element={
+							<RequireAuth>
+								<TestResult />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='admin/edit-cards'
+						element={
+							<RequireAuth>
+								<CardEditor />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='admin/account-editor'
+						element={
+							<RequireAuth>
+								<AccountEditor />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='admin/register-user'
+						element={
+							<RequireAuth>
+								<RegisterUser />
 							</RequireAuth>
 						}
 					/>

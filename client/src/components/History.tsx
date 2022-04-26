@@ -22,7 +22,7 @@ export function History() {
 	React.useEffect(() => {
 		if (logs != null) return;
 		auth.authenticatedGet('/action-log', {
-			gameId: auth.user.userData.game!.id!,
+			gameId: auth.user.userData.gameId,
 			showAmount: 5,
 			page: page,
 		})

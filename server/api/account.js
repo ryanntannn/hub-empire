@@ -23,10 +23,15 @@ async function login(req, res) {
 		if (!(await bcrypt.compare(req.body.password, user.profile.password))) {
 			return res.status(400).send('Password is incorrect');
 		}
+		const gameId = user.profile.isAdmin
+			? user.profile.adminGameId
+			: user.game.id;
 		const userData = {
 			username: user.username,
 			_id: user._id.toString(),
 			id: user._id.toString(),
+			isAdmin: user.profile.isAdmin,
+			gameId,
 		};
 		const accessToken = generateAccessToken(userData);
 		return res.json({
@@ -43,21 +48,22 @@ async function login(req, res) {
 
 async function register(req, res) {
 	//Return 403 if username already exists
-	const user = await queries.getUserDataByUsername(req.body.username);
+	const user = await queries.getUserDataByUsername(req.query.username);
 	if (user) return res.status(403).send('User already exists');
 
 	try {
 		const salt = await bcrypt.genSalt();
-		const hashedPassword = await bcrypt.hash(req.body.password, salt);
+		console.log(req, salt);
+		const hashedPassword = await bcrypt.hash(req.query.password, salt);
 
 		const newUser = {
 			profile: {
-				username: req.body.username,
+				username: req.query.username,
 				password: hashedPassword,
-				displayName: req.body.displayName,
+				displayName: req.query.displayName,
 			},
 			game: {
-				id: null,
+				id: req.user.gameId,
 				stats: {
 					netWorth: 0,
 					netEarnings: 0,
@@ -76,12 +82,9 @@ async function register(req, res) {
 
 		const accessToken = generateAccessToken({ name: newUser.username });
 		return res.status(200).json({ accessToken: accessToken });
-	} catch {
-		return res.status(500).json({
-			username: req.body.username,
-			password: req.body.password,
-			displayName: req.body.displayName,
-		});
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json(err);
 	}
 }
 
