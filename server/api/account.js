@@ -78,7 +78,14 @@ async function register(req, res) {
 				},
 			},
 		};
-		mongo.client.db('HubEmpireDB').collection('Users').insertOne(newUser);
+		const newAccount = await mongo.client
+			.db('HubEmpireDB')
+			.collection('Users')
+			.insertOne(newUser);
+		queries.addPlayerToGame(
+			req.user.gameId,
+			newAccount.insertedId.toString()
+		);
 
 		const accessToken = generateAccessToken({ name: newUser.username });
 		return res.status(200).json({ accessToken: accessToken });
