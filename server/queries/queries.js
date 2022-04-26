@@ -577,7 +577,7 @@ async function decrementIncomeModTurnNumber() {
 	const query = {
 		'game.inventory.cardInstances': {
 			$exists: true,
-		}
+		},
 	};
 	const valueToDecrement = {
 		$inc: {
@@ -601,7 +601,7 @@ async function decrementIncomeModTurnNumber() {
 		.db('HubEmpireDB')
 		.collection('Users')
 		.updateMany(query, valueToDecrement, arrayFilter)
-		.catch(console.dir)
+		.catch(console.dir);
 
 	return;
 }
@@ -610,7 +610,7 @@ async function deleteExpiredIncomeMods() {
 	const query = {
 		'game.inventory.cardInstances': {
 			$exists: true,
-		}
+		},
 	};
 
 	const valueToRemove = {
@@ -711,6 +711,13 @@ async function updateCard(card) {
 		.catch(console.dir);
 }
 
+async function getAccounts(gameId) {
+	const query = {
+		'game.id': gameId,
+	};
+	return await mongo.client.db('HubEmpireDB').collection('Users').find(query);
+}
+
 const queries = {
 	getUserDataByUsername,
 	getUserDataMinById,
@@ -748,6 +755,7 @@ const queries = {
 	getCards,
 	insertCards,
 	updateCard,
+	getAccounts,
 };
 
 module.exports = queries;

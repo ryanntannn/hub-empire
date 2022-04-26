@@ -249,4 +249,11 @@ app.post(
 	admin.updateCard
 );
 
+app.get(
+	'/admin/accountdata',
+	authenticateToken,
+	authenticateAdmin,
+	admin.getAccountData
+);
+
 app.listen(process.env.PORT || 42069);

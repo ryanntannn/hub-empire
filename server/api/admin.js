@@ -141,6 +141,20 @@ async function updateCard(req, res) {
 	}
 }
 
+async function getAccountData(req, res) {
+	try {
+		const accountData = await (
+			await queries.getAccounts(req.user.gameId)
+		).toArray();
+		if (accountData == undefined || accountData.length < 0)
+			return res.status(400).json('Error Getting Account Data');
+		return res.status(200).json(accountData);
+	} catch (err) {
+		console.log(err);
+		return res.status(400).json(err);
+	}
+}
+
 const admin = {
 	authenticateAdmin,
 	testResultData,
@@ -150,6 +164,7 @@ const admin = {
 	giveRewards,
 	getCardsBaseData,
 	updateCard,
+	getAccountData,
 };
 
 module.exports = admin;

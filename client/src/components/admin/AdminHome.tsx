@@ -68,6 +68,16 @@ export default function AdminHome() {
 								/>
 							</Col>
 						</Row>
+						<Row className='mb-3 gx-3'>
+							<Col>
+								<NavButton
+									title='Account Editor'
+									emoji='⚙️'
+									linkTo='/admin/account-editor'
+									color='#6BCB77'
+								/>
+							</Col>
+						</Row>
 					</div>
 				) : isAdmin == null ? (
 					<Loading />
