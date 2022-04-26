@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken');
 const express = require('express');
 const { getMetric } = require('./../queries/queries');
 const router = express.Router();
+const cardUtils = require('../utils/cardUtils');
+const deck = require('../api/cards');
+const Player = require('../game/player');
 
 // middleware to authenticate if user is an admin
 async function authenticateAdmin(req, res, next) {
@@ -72,7 +75,61 @@ async function giveRewards(req, res) {
 		const metric = await getMetric(req.user.gameId, data.metricId);
 		const rewardData = getRewards(metric, data.scoreData);
 		console.log(rewardData);
+
 		//TODO: assign cards based on rewardData
+		rewardData.forEach(async (data) => {
+			const playerInfo = await queries.getUserDataById(data._id);
+			const player = new Player(playerInfo);
+
+			console.log(player.game.inventory.cardInstances.length);
+			data.rewards.forEach(async (reward) => {
+				console.log(data._id, reward);
+				for (let i = 0; i < reward.amount; i++) {
+					const cardArray = cardUtils.convertDeckObjectToArray(
+						deck.Cards
+					);
+					const cardList = cardUtils.filterCardArrayByRarity(
+						cardArray,
+						reward.rarity
+					);
+					let newCard =
+						cardUtils.getRandomCardFromCardArray(cardList);
+					let newCardInstance = {};
+					player.game.stats.numberOfCardsDrawn += 1;
+					// Card Type 0 is a Hub Card, 1 is an Action Card
+					if (newCard.cardType == 0) {
+						newCardInstance = {
+							effectiveIncome: newCard.baseIncome,
+							instanceId: player.game.stats.numberOfCardsDrawn,
+							cardId: newCard.id,
+							cardType: newCard.cardType,
+							modifiers: {
+								owner: {},
+								hub: {},
+								income: [],
+							},
+						};
+					} else {
+						newCardInstance = {
+							instanceId: player.game.stats.numberOfCardsDrawn,
+							cardId: newCard.id,
+							cardType: newCard.cardType,
+						};
+					}
+					player.game.inventory.cardInstances.push(newCardInstance);
+					const logData = {
+						userId: player.profile.id,
+						...newCardInstance,
+					};
+					queries.updateActionLog(player.game.id, logData, 1);
+				}
+			});
+			console.log(
+				player.game.inventory.cardInstances.length,
+				player.game.stats.numberOfCardsDrawn
+			);
+			queries.updateUserStatsAndInventory(player).catch(console.log);
+		});
 
 		return res.status(200).json(rewardData);
 	} catch (err) {

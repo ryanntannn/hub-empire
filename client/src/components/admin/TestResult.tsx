@@ -44,6 +44,16 @@ export default function TestResult() {
 			.catch();
 	};
 
+	const sendRewards = () => {
+		auth.authenticatedPost(`/admin/giverewards`, {
+			data: { scoreData, metricId: activeMetric?.id },
+		})
+			.then((res: any) => {
+				console.log(res.data);
+			})
+			.catch();
+	};
+
 	React.useEffect(() => {
 		if (users != null || metrics != null) return;
 		getTestResultData();
@@ -161,13 +171,7 @@ export default function TestResult() {
 							}}>
 							Check Rewards
 						</Button>
-						<Button
-							color='success'
-							onClick={() =>
-								setScoreData(
-									getRewards(activeMetric!, [...scoreData])
-								)
-							}>
+						<Button color='success' onClick={sendRewards}>
 							Submit
 						</Button>
 					</>
