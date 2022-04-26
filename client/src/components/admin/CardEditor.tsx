@@ -1,5 +1,5 @@
 import React, { MutableRefObject, useRef } from 'react';
-import { Button, Container } from 'reactstrap';
+import { Alert, Button, Container } from 'reactstrap';
 import BackButton from '../BackButton';
 import useAuth from '../../contexts/AuthenticationContext';
 import { Card } from '../../types/types';
@@ -13,13 +13,15 @@ export default function CardEditor() {
 	const [cards, setCards] = React.useState<any[] | null>(null);
 	const [activeCard, setActiveCard] = React.useState<any | null>(null);
 	let [editor, setEditor] = React.useState<JSONEditor | null>(null);
+	const [errorMessage, setErrorMessage] = React.useState<string>('');
+	const [currentIndex, setCurrentIndex] = React.useState<number>(0);
 
 	const getCardBaseData = () => {
 		auth.authenticatedGet(`/admin/cardbasedata`)
 			.then((res: any) => {
 				const cardBaseData = res.data;
 				setCards(cardBaseData);
-				setCard(cardBaseData[0]);
+				setCard(cardBaseData[currentIndex]);
 				console.log(cardBaseData);
 			})
 			.catch((err) => {});
@@ -43,11 +45,11 @@ export default function CardEditor() {
 		console.log(cardData);
 		if (cardData.id == undefined) return;
 		auth.authenticatedPost(`/admin/updatecard`, { data: { ...cardData } })
-			.then((res) => {
+			.then((res: any) => {
 				console.log('Card Updated!');
 				getCardBaseData();
 			})
-			.catch((err) => console.error(err));
+			.catch((err) => setErrorMessage(err));
 	}
 
 	React.useEffect(() => {
@@ -69,6 +71,7 @@ export default function CardEditor() {
 								data: card,
 							}))}
 							setSelected={setCard}
+							setIndex={setCurrentIndex}
 						/>
 					</>
 				) : (
@@ -84,6 +87,11 @@ export default function CardEditor() {
 					onClick={() => submitCard(editor!.get())}>
 					Submit
 				</Button>
+				{errorMessage != '' ? (
+					<Alert className='mt-3' color='danger' dismissible>
+						{errorMessage}
+					</Alert>
+				) : null}
 			</Container>
 		</div>
 	);

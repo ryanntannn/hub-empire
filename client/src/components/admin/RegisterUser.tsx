@@ -9,16 +9,22 @@ export default function RegisterUser() {
 	const [displayName, setDisplayName] = React.useState<string>('');
 	const [password, setPassword] = React.useState<string>('');
 	const [errorMessage, setErrorMessage] = React.useState<string>('');
+	const [successMessage, setSuccessMessage] = React.useState<string>('');
 
 	function onSubmit() {
 		auth.authenticatedPost(`/register`, {
-			data: { username, displayName, password },
+			username,
+			displayName,
+			password,
 		})
 			.then((res: any) => {
 				console.log('Account Added');
-				setErrorMessage(res.data);
+				console.log(res.data);
+				if (res.data.accessToken == undefined)
+					setErrorMessage('An error has occured');
+				else setSuccessMessage('Account has been created');
 			})
-			.catch((err) => setErrorMessage(err));
+			.catch((err) => setErrorMessage(err.toString()));
 	}
 
 	return (
@@ -52,6 +58,11 @@ export default function RegisterUser() {
 				{errorMessage != '' ? (
 					<Alert className='mt-3' color='danger' dismissible>
 						{errorMessage}
+					</Alert>
+				) : null}
+				{successMessage != '' ? (
+					<Alert className='mt-3' color='success' dismissible>
+						{successMessage}
 					</Alert>
 				) : null}
 			</Container>

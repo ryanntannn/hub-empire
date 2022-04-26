@@ -146,7 +146,7 @@ app.get('/get-cards', authenticateToken, getCards);
 
 app.get('/action-log', authenticateToken, async function (req, res) {
 	try {
-		const start = req.query.showAmount * (req.query.page - 1);
+		const start = req.query.showAmount * req.query.page;
 		const amount = req.query.showAmount;
 		console.log(start, amount);
 		if (start < 0 || amount <= 0)
@@ -192,7 +192,7 @@ app.get('/auth', authenticateToken, async (req, res) => {
 
 app.post('/login', login);
 
-app.post('/register', register);
+app.post('/register', authenticateToken, authenticateAdmin, register);
 
 app.post('/edit-profile', authenticateToken, editProfile);
 

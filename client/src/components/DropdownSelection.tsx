@@ -9,6 +9,7 @@ import {
 interface DropdownSelectionProps {
 	items: { id: string; data: any }[];
 	setSelected: (data: any) => void;
+	setIndex?: (index: number) => void;
 	default?: string;
 }
 
@@ -32,6 +33,7 @@ export function DropdownSelection(props: DropdownSelectionProps) {
 							onClick={() => {
 								setActiveKey(item.id);
 								props.setSelected(item.data);
+								props.setIndex?.call(null, i);
 							}}>
 							{item.id}
 						</DropdownItem>
