@@ -1,4 +1,4 @@
-const { AuthMechanism } = require('mongodb');
+const { AuthMechanism, ObjectID } = require('mongodb');
 const mongo = require('../utils/mongo');
 const ObjectId = require('mongodb').ObjectId;
 
@@ -718,6 +718,18 @@ async function getAccounts(gameId) {
 	return await mongo.client.db('HubEmpireDB').collection('Users').find(query);
 }
 
+async function updateAccount(account) {
+	const query = {
+		_id: ObjectId(account._id),
+	};
+	delete account._id;
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.replaceOne(query, account)
+		.catch(console.dir);
+}
+
 const queries = {
 	getUserDataByUsername,
 	getUserDataMinById,
@@ -756,6 +768,7 @@ const queries = {
 	insertCards,
 	updateCard,
 	getAccounts,
+	updateAccount,
 };
 
 module.exports = queries;

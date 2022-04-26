@@ -256,4 +256,11 @@ app.get(
 	admin.getAccountData
 );
 
+app.post(
+	'/admin/updateaccount',
+	authenticateToken,
+	authenticateAdmin,
+	admin.updateAccount
+);
+
 app.listen(process.env.PORT || 42069);

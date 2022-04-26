@@ -155,6 +155,21 @@ async function getAccountData(req, res) {
 	}
 }
 
+async function updateAccount(req, res) {
+	try {
+		const accountData = JSON.parse(req.query.data);
+		console.log(accountData);
+		if (accountData._id == undefined)
+			return res.status(400).json('Error Getting Card Data');
+		const update = await queries.updateAccount(accountData);
+		console.log(update);
+		return res.status(200).json(accountData);
+	} catch (err) {
+		console.log(err);
+		return res.status(400).json(err);
+	}
+}
+
 const admin = {
 	authenticateAdmin,
 	testResultData,
@@ -165,6 +180,7 @@ const admin = {
 	getCardsBaseData,
 	updateCard,
 	getAccountData,
+	updateAccount,
 };
 
 module.exports = admin;

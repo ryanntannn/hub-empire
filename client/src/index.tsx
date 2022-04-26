@@ -26,6 +26,7 @@ import MetricEditor from './components/admin/MetricEditor';
 import TestResult from './components/admin/TestResult';
 import CardEditor from './components/admin/CardEditor';
 import AccountEditor from './components/admin/AccountEditor';
+import RegisterUser from './components/admin/RegisterUser';
 
 const rootElement = document.getElementById('root');
 
@@ -144,6 +145,14 @@ render(
 						element={
 							<RequireAuth>
 								<AccountEditor />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='admin/register-user'
+						element={
+							<RequireAuth>
+								<RegisterUser />
 							</RequireAuth>
 						}
 					/>

@@ -60,7 +60,7 @@ export default function AccountEditor() {
 	return (
 		<div className='page'>
 			<Container className='mt-5'>
-				<h1 className='title'>Card Editor</h1>
+				<h1 className='title'>Account Editor</h1>
 				<BackButton />
 				{accounts != undefined ? (
 					<>

@@ -72,9 +72,17 @@ export default function AdminHome() {
 							<Col>
 								<NavButton
 									title='Account Editor'
-									emoji='⚙️'
+									emoji='🧑‍🤝‍🧑'
 									linkTo='/admin/account-editor'
-									color='#6BCB77'
+									color='#FFD93D'
+								/>
+							</Col>
+							<Col>
+								<NavButton
+									title='Register User'
+									emoji='👨‍🎓'
+									linkTo='/admin/register-user'
+									color='#4D96FF'
 								/>
 							</Col>
 						</Row>
