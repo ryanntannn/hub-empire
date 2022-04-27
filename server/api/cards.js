@@ -40,7 +40,9 @@ const Cards = {
 			new Promise(async (res, rej) => {
 				try {
 					await queries.addMoney(targetId, -30);
+					await queries.increaseNetWorth(targetId, -30);
 					await queries.addMoney(user.id, 30);
+					await queries.increaseNetWorth(user.id, 30);
 					return res(`$30M was stolen from ${targetId}`);
 				} catch (err) {
 					rej(err);
@@ -62,8 +64,9 @@ const Cards = {
 			new Promise(async (res, rej) => {
 				try {
 					await queries.addMoney(targetId, -50);
+					await queries.increaseNetWorth(targetId, -50);
 					await queries.addMoney(user.id, 50);
-					//recalculate player stats
+					await queries.increaseNetWorth(user.id, 50);
 					return res(`$50M was stolen from ${targetId}`);
 				} catch (err) {
 					rej(err);

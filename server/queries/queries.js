@@ -637,6 +637,19 @@ async function deleteExpiredIncomeMods() {
 	return;
 }
 
+async function increaseNetWorth(playerId, amount) {
+	const query = { _id: ObjectId(playerId) };
+	const valueToChange = {
+		$inc: { 'game.stats.netWorth': amount },
+	};
+
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateOne(query, valueToChange)
+		.catch(console.dir);
+}
+
 const queries = {
 	getUserDataByUsername,
 	getUserDataMinById,
@@ -668,6 +681,7 @@ const queries = {
 	deleteExpiredHubMods,
 	decrementIncomeModTurnNumber,
 	deleteExpiredIncomeMods,
+	increaseNetWorth,
 };
 
 module.exports = queries;
