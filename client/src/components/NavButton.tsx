@@ -5,6 +5,7 @@ interface NavButtonProps {
 	emoji: string;
 	title: string;
 	color: string;
+	onClick?: () => void;
 }
 
 export default function NavButton(props: NavButtonProps) {
@@ -13,7 +14,8 @@ export default function NavButton(props: NavButtonProps) {
 			to={props.linkTo}
 			style={{
 				textDecoration: 'none',
-			}}>
+			}}
+			onClick={props.onClick}>
 			<div
 				style={{
 					backgroundColor: props.color,
