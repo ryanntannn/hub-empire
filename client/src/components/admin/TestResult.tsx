@@ -50,8 +50,12 @@ export default function TestResult() {
 		})
 			.then((res: any) => {
 				console.log(res.data);
+				alert('rewards added');
+				getTestResultData();
 			})
-			.catch();
+			.catch((err: any) => {
+				alert('there was an error');
+			});
 	};
 
 	React.useEffect(() => {
