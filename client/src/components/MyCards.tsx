@@ -55,6 +55,12 @@ export default function MyCards() {
 		method: (a: CardInstance, b: CardInstance) => number;
 	}[] = [
 		{
+			name: 'Recent',
+			method: (a, b) => {
+				return a.instanceId! < b.instanceId! ? 1 : -1;
+			},
+		},
+		{
 			name: 'Sort A to Z',
 			method: (a, b) => {
 				return a.card.displayName > b.card.displayName ? 1 : -1;
