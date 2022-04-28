@@ -58,6 +58,7 @@ async function register(req, res) {
 
 		const newUser = {
 			profile: {
+				avatar: '1',
 				username: req.query.username,
 				password: hashedPassword,
 				displayName: req.query.displayName,
