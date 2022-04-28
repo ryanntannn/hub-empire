@@ -1,5 +1,13 @@
+body {
+	background-color: #fffffa;
+}
+
 p {
 	line-height: 1;
+}
+
+.page {
+	padding-bottom: 20vh;
 }
 
 .no-padding {

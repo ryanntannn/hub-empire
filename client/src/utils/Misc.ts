@@ -1,3 +1,5 @@
+import React from 'react';
+import { Dropdown, DropdownItem } from 'reactstrap';
 import { EnumType } from 'typescript';
 
 export function numberWithCommas(x: number) {
@@ -21,4 +23,10 @@ export function enumToArray(enumme: any) {
 	return Object.keys(enumme)
 		.filter(StringIsNumber)
 		.map((key) => enumme[key]);
+}
+
+export function enumToDropdownSelection(enumme: any) {
+	return Object.keys(enumme)
+		.filter(StringIsNumber)
+		.map((key) => ({ id: enumme[key], data: key }));
 }

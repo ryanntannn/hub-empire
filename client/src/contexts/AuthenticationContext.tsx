@@ -11,7 +11,13 @@ const defaultUserState: LocalUserData = {
 };
 
 interface LocalUserData {
-	userData: UserData;
+	userData: {
+		username?: string;
+		_id: number;
+		id?: string;
+		isAdmin?: string;
+		gameId?: string;
+	};
 	accessToken: string;
 }
 

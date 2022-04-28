@@ -1,4 +1,4 @@
-const { AuthMechanism } = require('mongodb');
+const { AuthMechanism, ObjectID } = require('mongodb');
 const mongo = require('../utils/mongo');
 const ObjectId = require('mongodb').ObjectId;
 
@@ -54,8 +54,10 @@ async function getUserDataBasicById(id) {
 	};
 	const projection = {
 		//_id is returned by default
+		'profile.username': 1,
 		'profile.displayName': 1,
 		'profile.avatar': 1,
+		'profile.isAdmin': 1,
 		game: {
 			id: 1,
 			stats: {
@@ -204,7 +206,7 @@ async function destroyCard(playerId, cid, iid) {
 }
 
 async function updateActionLog(gameId, data, logType) {
-	console.log(gameId, data, logType);
+	//console.log(gameId, data, logType);
 	const query = {
 		joinCode: gameId,
 	};
@@ -468,6 +470,7 @@ async function getCardById(id) {
 async function decrementOwnerModTurnNumber() {
 	const query = {
 		'game.inventory.cardInstances': {
+			$exists: true,
 			$elemMatch: {
 				'modifiers.owner.isPermanent': false,
 			},
@@ -483,7 +486,6 @@ async function decrementOwnerModTurnNumber() {
 	await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
-		//.updateMany(query, valueToDecrement)
 		.updateMany(query, valueToDecrement)
 		.catch(console.dir);
 
@@ -493,6 +495,7 @@ async function decrementOwnerModTurnNumber() {
 async function deleteExpiredOwnerMods() {
 	const query = {
 		'game.inventory.cardInstances': {
+			$exists: true,
 			$elemMatch: {
 				'modifiers.owner.isPermanent': false,
 			},
@@ -520,6 +523,7 @@ async function deleteExpiredOwnerMods() {
 async function decrementHubModTurnNumber() {
 	const query = {
 		'game.inventory.cardInstances': {
+			$exists: true,
 			$elemMatch: {
 				'modifiers.hub.isPermanent': false,
 			},
@@ -544,6 +548,7 @@ async function decrementHubModTurnNumber() {
 async function deleteExpiredHubMods() {
 	const query = {
 		'game.inventory.cardInstances': {
+			$exists: true,
 			$elemMatch: {
 				'modifiers.hub.isPermanent': false,
 			},
@@ -569,6 +574,11 @@ async function deleteExpiredHubMods() {
 }
 
 async function decrementIncomeModTurnNumber() {
+	const query = {
+		'game.inventory.cardInstances': {
+			$exists: true,
+		},
+	};
 	const valueToDecrement = {
 		$inc: {
 			'game.inventory.cardInstances.$[i].modifiers.income.$[j].turnsLeft':
@@ -590,14 +600,19 @@ async function decrementIncomeModTurnNumber() {
 	await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
-		//.updateMany(query, valueToDecrement)
-		.updateMany({}, valueToDecrement, arrayFilter)
+		.updateMany(query, valueToDecrement, arrayFilter)
 		.catch(console.dir);
 
 	return;
 }
 
 async function deleteExpiredIncomeMods() {
+	const query = {
+		'game.inventory.cardInstances': {
+			$exists: true,
+		},
+	};
+
 	const valueToRemove = {
 		$pull: {
 			'game.inventory.cardInstances.$[i].modifiers.income': {
@@ -615,15 +630,116 @@ async function deleteExpiredIncomeMods() {
 		],
 	};
 
-	var res = await mongo.client
+	await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
-		.updateMany({}, valueToRemove, arrayFilter)
+		.updateMany(query, valueToRemove, arrayFilter)
 		.catch(console.dir);
 
-	console.log(res);
-
 	return;
+}
+
+async function increaseNetWorth(playerId, amount) {
+	const query = { _id: ObjectId(playerId) };
+	const valueToChange = {
+		$inc: { 'game.stats.netWorth': amount },
+	};
+
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateOne(query, valueToChange);
+}
+
+async function getMetric(joinCode, metricId) {
+	return await (
+		await mongo.client
+			.db('HubEmpireDB')
+			.collection('Games')
+			.aggregate([
+				{ $unwind: '$metrics' },
+				{
+					$match: {
+						joinCode: joinCode,
+						'metrics.id': metricId,
+					},
+				},
+				{
+					$project: {
+						metrics: 1,
+					},
+				},
+			])
+			.toArray()
+	)[0].metrics;
+}
+
+async function updateMetric(joinCode, data) {
+	const query = {
+		joinCode: joinCode,
+		metrics: {
+			$elemMatch: {
+				id: data.id,
+			},
+		},
+	};
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Games')
+		.updateOne(query, {
+			$set: {
+				'metrics.$': data,
+			},
+		})
+		.catch(console.dir);
+}
+
+async function getCardsByIds(ids) {
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Cards')
+		.find({ id: { $in: ids } });
+}
+
+async function getCards() {
+	return await mongo.client.db('HubEmpireDB').collection('Cards').find();
+}
+
+async function insertCards(cards) {
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Cards')
+		.insertMany(cards);
+}
+
+async function updateCard(card) {
+	const query = {
+		id: card.id,
+	};
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Cards')
+		.replaceOne(query, card)
+		.catch(console.dir);
+}
+
+async function getAccounts(gameId) {
+	const query = {
+		'game.id': gameId,
+	};
+	return await mongo.client.db('HubEmpireDB').collection('Users').find(query);
+}
+
+async function updateAccount(account) {
+	const query = {
+		_id: ObjectId(account._id),
+	};
+	delete account._id;
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.replaceOne(query, account)
+		.catch(console.dir);
 }
 
 const queries = {
@@ -657,6 +773,15 @@ const queries = {
 	deleteExpiredHubMods,
 	decrementIncomeModTurnNumber,
 	deleteExpiredIncomeMods,
+	increaseNetWorth,
+	getMetric,
+	updateMetric,
+	getCardsByIds,
+	getCards,
+	insertCards,
+	updateCard,
+	getAccounts,
+	updateAccount,
 };
 
 module.exports = queries;

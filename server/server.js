@@ -9,6 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 const { login, register, editProfile } = require('./api/account');
 const { useCard, getCards } = require('./api/cards');
 const queries = require('./queries/queries');
+const admin = require('./api/admin');
 const { authenticateToken, refreshToken } = require('./utils/authentication');
 
 const job = require('./clock');
@@ -38,19 +39,18 @@ app.get('/home', authenticateToken, async function (req, res) {
 			var nextTurnDate = new Date();
 			nextTurnDate.setDate(currentDate.getDate());
 			var currentHour = currentDate.getHours();
-			if (currentHour < 7) nextTurnDate.setHours(7, 0, 0, 0);
-			else if (currentHour < 11) nextTurnDate.setHours(11, 0, 0, 0);
-			else if (currentHour < 15) nextTurnDate.setHours(15, 0, 0, 0);
+			if (currentHour < 8) nextTurnDate.setHours(8, 0, 0, 0);
+			else if (currentHour < 17) nextTurnDate.setHours(17, 0, 0, 0);
 			else {
 				nextTurnDate.setDate(currentDate.getDate() + 1);
-				nextTurnDate.setHours(7, 0, 0, 0);
+				nextTurnDate.setHours(8, 0, 0, 0);
 			}
-			var timeToNextTurn = Date.parse(nextTurnDate);
+			var nextTurn = Date.parse(nextTurnDate);
 
 			//Return UserDataBasic
 			res.status(200).json({
 				myData: { ...userData },
-				timeToNextTurn: timeToNextTurn,
+				nextTurn,
 			});
 		} else {
 			res.status(404).json('Page not found');
@@ -137,6 +137,7 @@ app.use('/trade', tradeRouter);
 
 const gameRouter = require('./routes/game.js');
 const { getAssetValue } = require('./utils/userUtils');
+const { authenticateAdmin } = require('./api/admin');
 app.use('/game', gameRouter);
 
 app.post('/use-card', authenticateToken, useCard);
@@ -145,7 +146,7 @@ app.get('/get-cards', authenticateToken, getCards);
 
 app.get('/action-log', authenticateToken, async function (req, res) {
 	try {
-		const start = req.query.showAmount * (req.query.page - 1);
+		const start = req.query.showAmount * req.query.page;
 		const amount = req.query.showAmount;
 		console.log(start, amount);
 		if (start < 0 || amount <= 0)
@@ -167,11 +168,19 @@ app.get('/action-log', authenticateToken, async function (req, res) {
 
 app.get('/auth', authenticateToken, async (req, res) => {
 	try {
-		const userData = await queries.getUserDataBasicById(req.user.id);
-		if (userData) {
-			console.log(userData);
-			//Return cards
-			return res.json({ userData: userData, accessToken: req.token });
+		const user = await queries.getUserDataBasicById(req.user.id);
+		if (user) {
+			const gameId = user.profile.isAdmin
+				? user.profile.adminGameId
+				: user.game.id;
+			const userData = {
+				username: user.username,
+				_id: user._id.toString(),
+				id: user._id.toString(),
+				isAdmin: user.profile.isAdmin,
+				gameId,
+			};
+			return res.json({ userData, accessToken: req.token });
 		} else {
 			return res.status(404).json('Page not found');
 		}
@@ -183,8 +192,75 @@ app.get('/auth', authenticateToken, async (req, res) => {
 
 app.post('/login', login);
 
-app.post('/register', register);
+app.post('/register', authenticateToken, authenticateAdmin, register);
 
 app.post('/edit-profile', authenticateToken, editProfile);
+
+app.get('/admin', authenticateToken, authenticateAdmin, (req, res) => {
+	res.status(200).send();
+});
+
+app.get(
+	'/admin/metrics',
+	authenticateToken,
+	authenticateAdmin,
+	admin.adminMetrics
+);
+
+app.get(
+	'/admin/testresultsdata',
+	authenticateToken,
+	authenticateAdmin,
+	admin.testResultData
+);
+
+app.get(
+	'/admin/checkrewarddata',
+	authenticateToken,
+	authenticateAdmin,
+	admin.checkRewardData
+);
+
+app.post(
+	'/admin/giverewards',
+	authenticateToken,
+	authenticateAdmin,
+	admin.giveRewards
+);
+
+app.post(
+	'/admin/updatemetric',
+	authenticateToken,
+	authenticateAdmin,
+	admin.updateMetric
+);
+
+app.get(
+	'/admin/cardbasedata',
+	authenticateToken,
+	authenticateAdmin,
+	admin.getCardsBaseData
+);
+
+app.post(
+	'/admin/updatecard',
+	authenticateToken,
+	authenticateAdmin,
+	admin.updateCard
+);
+
+app.get(
+	'/admin/accountdata',
+	authenticateToken,
+	authenticateAdmin,
+	admin.getAccountData
+);
+
+app.post(
+	'/admin/updateaccount',
+	authenticateToken,
+	authenticateAdmin,
+	admin.updateAccount
+);
 
 app.listen(process.env.PORT || 42069);

@@ -18,7 +18,7 @@ export default function Leaderboard() {
 		console.log(auth.user);
 		if (leaderboardData != null) return;
 		auth.authenticatedGet('/leaderboard', {
-			gameId: auth.user.userData.game!.id!,
+			gameId: auth.user.userData.gameId,
 		})
 			.then((res: any) => {
 				console.log(res);
