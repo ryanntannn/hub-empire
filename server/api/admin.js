@@ -6,6 +6,7 @@ const router = express.Router();
 const cardUtils = require('../utils/cardUtils');
 const deck = require('../api/cards');
 const Player = require('../game/player');
+const bcrypt = require('bcrypt');
 
 // middleware to authenticate if user is an admin
 async function authenticateAdmin(req, res, next) {
@@ -227,6 +228,43 @@ async function updateAccount(req, res) {
 	}
 }
 
+async function deleteAccount(req, res) {
+	try {
+		const accountData = JSON.parse(req.query.data);
+		console.log(accountData);
+		if (accountData._id == undefined)
+			return res.status(400).json('Error Getting Card Data');
+		const update2 = await queries.removePlayerFromGame(
+			accountData.game.id,
+			accountData._id
+		);
+		const update = await queries.deleteAccount(accountData);
+		console.log(update2);
+		return res.status(200).json(accountData);
+	} catch (err) {
+		console.log(err);
+		return res.status(400).json(err);
+	}
+}
+
+async function changePassword(req, res) {
+	try {
+		const data = JSON.parse(req.query.data);
+		const id = data.id;
+		const password = data.password;
+		if (id == undefined || password == undefined)
+			return res.status(400).json('Error changing password');
+		const salt = await bcrypt.genSalt();
+		const hashedPassword = await bcrypt.hash(password, salt);
+		const update = queries.changePassword(id, hashedPassword);
+		console.log(update);
+		return res.status(200).json('password changed');
+	} catch (err) {
+		console.log(err);
+		return res.status(400).json(err);
+	}
+}
+
 const admin = {
 	authenticateAdmin,
 	testResultData,
@@ -238,6 +276,8 @@ const admin = {
 	updateCard,
 	getAccountData,
 	updateAccount,
+	deleteAccount,
+	changePassword,
 };
 
 module.exports = admin;

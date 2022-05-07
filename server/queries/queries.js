@@ -742,6 +742,44 @@ async function updateAccount(account) {
 		.catch(console.dir);
 }
 
+async function deleteAccount(account) {
+	const query = {
+		_id: ObjectId(account._id),
+	};
+	delete account._id;
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.deleteOne(query)
+		.catch(console.dir);
+}
+
+async function removePlayerFromGame(joinCode, playerId) {
+	//Check if player is already in a game
+
+	console.log(joinCode, playerId);
+
+	const query = { joinCode: joinCode };
+	const valueToPull = { $pull: { playerIds: playerId } };
+
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Games')
+		.updateOne(query, valueToPull)
+		.catch(console.dir);
+}
+
+async function changePassword(id, password) {
+	const query = {
+		_id: ObjectId(id),
+	};
+	return await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateOne(query, { $set: { 'profile.password': password } })
+		.catch(console.dir);
+}
+
 const queries = {
 	getUserDataByUsername,
 	getUserDataMinById,
@@ -782,6 +820,9 @@ const queries = {
 	updateCard,
 	getAccounts,
 	updateAccount,
+	deleteAccount,
+	changePassword,
+	removePlayerFromGame,
 };
 
 module.exports = queries;

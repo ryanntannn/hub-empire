@@ -16,6 +16,7 @@ import { DropdownSelection } from '../DropdownSelection';
 import JSONEditor from 'jsoneditor';
 import 'jsoneditor/dist/jsoneditor.min.css';
 import { create, InstanceProps } from 'react-modal-promise';
+import { ConfirmModal } from '../ConfirmModal';
 
 interface ChangePasswordProps extends InstanceProps<null, null> {
 	activeAccount: any;
@@ -65,6 +66,7 @@ export default function AccountEditor() {
 	const [accounts, setAccounts] = React.useState<any[] | null>(null);
 	const [activeAccount, setActiveAccount] = React.useState<any | null>(null);
 	const changePasswordModal = create(ChangePasswordModal);
+	const confirmActionModal = create(ConfirmModal);
 	const getAccountData = () => {
 		auth.authenticatedGet(`/admin/accountdata`)
 			.then((res: any) => {
@@ -94,14 +96,19 @@ export default function AccountEditor() {
 	}
 
 	function removeAccount(accountData: any) {
-		auth.authenticatedPost(`/admin/remove`, {
-			data: { ...accountData },
+		confirmActionModal({
+			body: <div>Confirm delete {accountData.profile.displayName}?</div>,
 		})
+			.then(() => {
+				return auth.authenticatedPost(`/admin/deleteaccount`, {
+					data: { ...accountData },
+				});
+			})
 			.then((res) => {
 				console.log('Account Removed!');
 				getAccountData();
 			})
-			.catch((err) => console.error(err));
+			.catch((err) => {});
 	}
 
 	async function changePassword(accountData: any) {

@@ -263,4 +263,18 @@ app.post(
 	admin.updateAccount
 );
 
+app.post(
+	'/admin/deleteaccount',
+	authenticateToken,
+	authenticateAdmin,
+	admin.deleteAccount
+);
+
+app.post(
+	'/admin/changepassword',
+	authenticateToken,
+	authenticateAdmin,
+	admin.changePassword
+);
+
 app.listen(process.env.PORT || 42069);
