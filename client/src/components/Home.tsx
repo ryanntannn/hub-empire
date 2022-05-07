@@ -10,6 +10,7 @@ import Loading from './Loading';
 import { numberWithCommas } from '../utils/Misc';
 import ProfileBox from './ProfileBox';
 import { CountdownTimer } from './CountdownTimer';
+import { BiArrowBack, BiLogOut } from 'react-icons/bi';
 
 function Home() {
 	let navigate = useNavigate();
@@ -41,6 +42,12 @@ function Home() {
 
 	return (
 		<div className='home page'>
+			<Button
+				className='back-button'
+				outline
+				onClick={() => auth.logout()}>
+				<BiLogOut /> Logout
+			</Button>
 			<Container className='mt-5'>
 				<h1 className='title'>🏠 Hub Empire</h1>
 				<Row className='mb-3'>
