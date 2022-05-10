@@ -1,4 +1,5 @@
 import React from 'react';
+import { BiLogOut } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import { Alert, Button, Col, Container, Row } from 'reactstrap';
 import useAuth from '../../contexts/AuthenticationContext';
@@ -9,6 +10,7 @@ export default function AdminHome() {
 	const auth = useAuth();
 	const navigate = useNavigate();
 	const [isAdmin, setIsAdmin] = React.useState<boolean | null>(null);
+	const [isAdvancedUser, setIsAdvancedUser] = React.useState<boolean>(false);
 
 	const getAdminHomeData = () => {
 		auth.authenticatedGet(`/admin`)
@@ -27,19 +29,17 @@ export default function AdminHome() {
 
 	return (
 		<div className='page'>
+			<Button
+				className='back-button'
+				outline
+				onClick={() => auth.logout()}>
+				<BiLogOut /> Logout
+			</Button>
 			<Container className='mt-5'>
 				<h1 className='title'>📔 Admin Page</h1>
 				{isAdmin ? (
 					<div>
 						<Row className='mb-3 gx-3'>
-							<Col>
-								<NavButton
-									title='Edit Scoring Metrics'
-									emoji='⚙️'
-									linkTo='/admin/metrics'
-									color='#4D96FF'
-								/>
-							</Col>
 							<Col>
 								<NavButton
 									title='Enter Test Results'
@@ -67,23 +67,41 @@ export default function AdminHome() {
 								/>
 							</Col>
 						</Row>
-						<Row className='mb-3 gx-3'>
+						{isAdvancedUser ? (
+							<Row className='mb-3 gx-3'>
+								<Col>
+									<NavButton
+										title='Edit Cards'
+										emoji='⚙️'
+										linkTo='/admin/edit-cards'
+										color='#6BCB77'
+									/>
+								</Col>
+
+								<Col>
+									<NavButton
+										title='Edit Scoring Metrics'
+										emoji='⚙️'
+										linkTo='/admin/metrics'
+										color='#4D96FF'
+									/>
+								</Col>
+							</Row>
+						) : null}
+						<Row>
 							<Col>
-								<NavButton
-									title='Edit Cards'
-									emoji='⚙️'
-									linkTo='/admin/edit-cards'
-									color='#6BCB77'
-								/>
-							</Col>
-							<Col>
-								<NavButton
-									title='Log Out'
-									emoji='🚪'
-									linkTo='/login'
-									color='#FF6B6B'
-									onClick={auth.logout}
-								/>
+								<Button
+									outline
+									size='sm'
+									color='danger'
+									onClick={() =>
+										setIsAdvancedUser(
+											(prevState) => !prevState
+										)
+									}>
+									{isAdvancedUser ? 'Hide' : 'Show'} Advanced
+									Settings
+								</Button>
 							</Col>
 						</Row>
 					</div>
