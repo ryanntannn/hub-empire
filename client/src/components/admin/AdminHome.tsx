@@ -45,7 +45,25 @@ export default function AdminHome() {
 									title='Enter Test Results'
 									emoji='🖊️'
 									linkTo='/admin/test-results'
+									color='#6BCB77'
+								/>
+							</Col>
+						</Row>
+						<Row className='mb-3 gx-3'>
+							<Col>
+								<NavButton
+									title='Account Editor'
+									emoji='🧑‍🤝‍🧑'
+									linkTo='/admin/account-editor'
 									color='#FFD93D'
+								/>
+							</Col>
+							<Col>
+								<NavButton
+									title='Register User'
+									emoji='👨‍🎓'
+									linkTo='/admin/register-user'
+									color='#4D96FF'
 								/>
 							</Col>
 						</Row>
@@ -65,24 +83,6 @@ export default function AdminHome() {
 									linkTo='/login'
 									color='#FF6B6B'
 									onClick={auth.logout}
-								/>
-							</Col>
-						</Row>
-						<Row className='mb-3 gx-3'>
-							<Col>
-								<NavButton
-									title='Account Editor'
-									emoji='🧑‍🤝‍🧑'
-									linkTo='/admin/account-editor'
-									color='#FFD93D'
-								/>
-							</Col>
-							<Col>
-								<NavButton
-									title='Register User'
-									emoji='👨‍🎓'
-									linkTo='/admin/register-user'
-									color='#4D96FF'
 								/>
 							</Col>
 						</Row>

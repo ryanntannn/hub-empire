@@ -39,8 +39,8 @@ app.get('/home', authenticateToken, async function (req, res) {
 			var nextTurnDate = new Date();
 			nextTurnDate.setDate(currentDate.getDate());
 			var currentHour = currentDate.getHours();
-			if (currentHour < 1) nextTurnDate.setHours(1, 0, 0, 0);
-			else if (currentHour < 16) nextTurnDate.setHours(16, 0, 0, 0);
+			if (currentHour < 8) nextTurnDate.setHours(8, 0, 0, 0);
+			else if (currentHour < 17) nextTurnDate.setHours(17, 0, 0, 0);
 			else {
 				nextTurnDate.setDate(currentDate.getDate() + 1);
 				nextTurnDate.setHours(8, 0, 0, 0);
