@@ -6,7 +6,12 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const { login, register, editProfile } = require('./api/account');
+const {
+	login,
+	register,
+	editProfile,
+	registerAdmin,
+} = require('./api/account');
 const { useCard, getCards } = require('./api/cards');
 const queries = require('./queries/queries');
 const admin = require('./api/admin');
@@ -275,6 +280,13 @@ app.post(
 	authenticateToken,
 	authenticateAdmin,
 	admin.changePassword
+);
+
+app.post(
+	'/admin/new-game',
+	authenticateToken,
+	authenticateAdmin,
+	registerAdmin
 );
 
 app.listen(process.env.PORT || 42069);

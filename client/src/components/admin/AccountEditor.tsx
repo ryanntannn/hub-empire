@@ -71,6 +71,10 @@ export default function AccountEditor() {
 		auth.authenticatedGet(`/admin/accountdata`)
 			.then((res: any) => {
 				const accountData = res.data;
+				if (accountData.length <= 0)
+					confirmActionModal({
+						body: <div>No accounts in game!</div>,
+					});
 				setAccounts(accountData);
 				setActiveAccount(accountData[0]);
 				console.log(accountData);
@@ -127,7 +131,7 @@ export default function AccountEditor() {
 			<Container className='mt-5'>
 				<h1 className='title'>Account Editor</h1>
 				<BackButton />
-				{accounts != undefined ? (
+				{accounts != undefined && accounts.length > 0 ? (
 					<>
 						<DropdownSelection
 							items={accounts.map((account) => ({

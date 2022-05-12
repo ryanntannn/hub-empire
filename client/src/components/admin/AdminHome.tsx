@@ -86,6 +86,15 @@ export default function AdminHome() {
 										color='#4D96FF'
 									/>
 								</Col>
+
+								<Col>
+									<NavButton
+										title='New Game'
+										emoji='🎮'
+										linkTo='/admin/new-game'
+										color='#a070a0'
+									/>
+								</Col>
 							</Row>
 						) : null}
 						<Row>

@@ -96,6 +96,171 @@ async function register(req, res) {
 	}
 }
 
+async function registerAdmin(req, res) {
+	//Return 403 if username already exists
+	const user = await queries.getUserDataByUsername(req.query.username);
+	if (user) return res.status(403).send('User already exists');
+
+	try {
+		const salt = await bcrypt.genSalt();
+		console.log(req, salt);
+		const hashedPassword = await bcrypt.hash(req.query.password, salt);
+
+		const newUser = {
+			profile: {
+				username: req.query.username,
+				password: hashedPassword,
+				displayName: req.query.displayName,
+				isAdmin: true,
+				adminGameId: req.query.gameId,
+			},
+		};
+		const newAccount = await mongo.client
+			.db('HubEmpireDB')
+			.collection('Users')
+			.insertOne(newUser);
+
+		const newGame = {
+			joinCode: req.query.gameId,
+			turnNumber: 0,
+			playerIds: [],
+			status: 'Not Started',
+			log: [],
+			metrics: [
+				{
+					id: 'quiz',
+					displayName: 'Quiz',
+					maxScore: '100',
+					scoreBasedRewards: [
+						{
+							score: 50,
+							rewards: [
+								{
+									rarity: 0,
+									amount: 1,
+								},
+							],
+						},
+					],
+					positionBasedRewards: [
+						{
+							position: 1,
+							rewards: [
+								{
+									rarity: 2,
+									amount: 1,
+								},
+								{
+									rarity: 0,
+									amount: 2,
+								},
+							],
+						},
+						{
+							position: 2,
+							rewards: [
+								{
+									rarity: 1,
+									amount: 1,
+								},
+							],
+						},
+					],
+				},
+				{
+					id: 'exam',
+					displayName: 'Exam',
+					maxScore: '100',
+					scoreBasedRewards: [
+						{
+							score: 50,
+							rewards: [
+								{
+									rarity: '0',
+									amount: 1,
+								},
+							],
+						},
+					],
+					positionBasedRewards: [
+						{
+							position: 1,
+							rewards: [
+								{
+									rarity: 2,
+									amount: 1,
+								},
+								{
+									rarity: 1,
+									amount: 1,
+								},
+							],
+						},
+						{
+							position: 2,
+							rewards: [
+								{
+									rarity: 1,
+									amount: 1,
+								},
+								{
+									rarity: 0,
+									amount: 2,
+								},
+							],
+						},
+					],
+				},
+				{
+					id: 'ippt',
+					displayName: 'IPPT',
+					maxScore: '100',
+					scoreBasedRewards: [
+						{
+							score: 50,
+							rewards: [
+								{
+									rarity: 0,
+									amount: 1,
+								},
+							],
+						},
+						{
+							score: 75,
+							rewards: [
+								{
+									rarity: 1,
+									amount: 1,
+								},
+							],
+						},
+						{
+							score: 85,
+							rewards: [
+								{
+									rarity: 2,
+									amount: 1,
+								},
+							],
+						},
+					],
+					positionBasedRewards: [],
+				},
+			],
+		};
+		const newGameReq = await mongo.client
+			.db('HubEmpireDB')
+			.collection('Games')
+			.insertOne(newGame);
+
+		const accessToken = generateAccessToken({ name: newUser.username });
+		return res.status(200).json({ accessToken: accessToken });
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json(err);
+	}
+}
+
 async function editProfile(req, res) {
 	try {
 		if (req.query.displayName.length < 3)
@@ -122,4 +287,4 @@ async function editProfile(req, res) {
 	}
 }
 
-module.exports = { login, register, editProfile };
+module.exports = { login, register, editProfile, registerAdmin };

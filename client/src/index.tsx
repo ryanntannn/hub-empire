@@ -27,6 +27,7 @@ import TestResult from './components/admin/TestResult';
 import CardEditor from './components/admin/CardEditor';
 import AccountEditor from './components/admin/AccountEditor';
 import RegisterUser from './components/admin/RegisterUser';
+import NewGame from './components/admin/NewGame';
 
 const rootElement = document.getElementById('root');
 
@@ -153,6 +154,14 @@ render(
 						element={
 							<RequireAuth>
 								<RegisterUser />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='admin/new-game'
+						element={
+							<RequireAuth>
+								<NewGame />
 							</RequireAuth>
 						}
 					/>
