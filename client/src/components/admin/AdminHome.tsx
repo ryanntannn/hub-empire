@@ -48,6 +48,14 @@ export default function AdminHome() {
 									color='#6BCB77'
 								/>
 							</Col>
+							<Col>
+								<NavButton
+									title='Admin Leaderboard'
+									emoji='🎮'
+									linkTo='/admin/leaderboard'
+									color='#a070a0'
+								/>
+							</Col>
 						</Row>
 						<Row className='mb-3 gx-3'>
 							<Col>

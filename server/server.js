@@ -142,7 +142,7 @@ app.use('/trade', tradeRouter);
 
 const gameRouter = require('./routes/game.js');
 const { getAssetValue } = require('./utils/userUtils');
-const { authenticateAdmin } = require('./api/admin');
+const { authenticateAdmin, getAdminLeaderboard } = require('./api/admin');
 app.use('/game', gameRouter);
 
 app.post('/use-card', authenticateToken, useCard);
@@ -287,6 +287,13 @@ app.post(
 	authenticateToken,
 	authenticateAdmin,
 	registerAdmin
+);
+
+app.get(
+	'/admin/leaderboard',
+	authenticateToken,
+	authenticateAdmin,
+	getAdminLeaderboard
 );
 
 app.listen(process.env.PORT || 42069);

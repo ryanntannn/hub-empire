@@ -28,6 +28,7 @@ import CardEditor from './components/admin/CardEditor';
 import AccountEditor from './components/admin/AccountEditor';
 import RegisterUser from './components/admin/RegisterUser';
 import NewGame from './components/admin/NewGame';
+import AdminLeaderboard from './components/admin/AdminLeaderboard';
 
 const rootElement = document.getElementById('root');
 
@@ -162,6 +163,14 @@ render(
 						element={
 							<RequireAuth>
 								<NewGame />
+							</RequireAuth>
+						}
+					/>
+					<Route
+						path='admin/leaderboard'
+						element={
+							<RequireAuth>
+								<AdminLeaderboard />
 							</RequireAuth>
 						}
 					/>

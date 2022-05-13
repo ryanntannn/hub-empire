@@ -265,6 +265,21 @@ async function changePassword(req, res) {
 	}
 }
 
+async function getAdminLeaderboard(req, res) {
+	try {
+		console.log(req.user.gameId);
+		var players = await queries
+			.getLeaderboard(req.user.gameId)
+			.catch(console.dir);
+		res.status(200).json({
+			players: players,
+		});
+	} catch (err) {
+		console.log(err);
+		return res.status(400).json(err);
+	}
+}
+
 const admin = {
 	authenticateAdmin,
 	testResultData,
@@ -278,6 +293,7 @@ const admin = {
 	updateAccount,
 	deleteAccount,
 	changePassword,
+	getAdminLeaderboard,
 };
 
 module.exports = admin;
