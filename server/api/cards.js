@@ -264,16 +264,22 @@ const Cards = {
 			new Promise(async (res, rej) => {
 				const targetCardIdInt = parseInt(targetCardId);
 				try {
+					if(targetPlayerId == user.id) rej("Target and User ID cannot be the same!");
+
+					const isPermanent = false;
+					const turnsLeft = 2;
 					await queries.applyNewModToCard(
 						targetPlayerId,
 						targetCardInstanceId,
-						new Mods.OwnerMod(user.id, false, 2)
+						new Mods.OwnerMod(user.id, isPermanent, turnsLeft)
 					);
 					await queries.addStolenCardToPlayerInventory(
 						user.id,
 						targetPlayerId,
 						targetCardId,
-						targetCardInstanceId
+						targetCardInstanceId,
+						isPermanent,
+						turnsLeft,
 					);
 					return res('Hub Stolen.');
 				} catch (err) {

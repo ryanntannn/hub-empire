@@ -35,16 +35,17 @@ class Game {
 			var playerInfo = await queries.getUserDataById(playerId);
 			var player = new Player(playerInfo);
 
-			// TODO add function to remove invalid cards
 			await this.calculateTurnIncome(player);
 			this.drawCards(player, 5);
 			this.calculateNetWorth(player);
 
 			queries.updateUserStatsAndInventory(player).catch(console.dir);
-		}
 
-		console.log("Reducing & Removing Mod Timers...")
-		this.decrementModTurnNumbers();
+			console.log("Reducing & Removing Mod Timers...")
+			this.decrementModTurnNumbers(player.profile.id);
+			
+		}
+		
 		this.deleteExpiredMods();
 
 		console.log("Recalculating Effective Income...")
@@ -215,11 +216,12 @@ class Game {
 		return;
 	}
 
-	decrementModTurnNumbers() {
+	decrementModTurnNumbers(id) {
 		try {
-			queries.decrementOwnerModTurnNumber();
-			queries.decrementHubModTurnNumber();
-			queries.decrementIncomeModTurnNumber();
+			queries.decrementOwnerModTurnNumber(id);
+			queries.decrementOwnerModTurnNumberForStolenCardsInInventory(id);
+			queries.decrementHubModTurnNumber(id);
+			queries.decrementIncomeModTurnNumber(id);
 		} catch (err) {
 			console.dir(err);
 		}
@@ -229,6 +231,7 @@ class Game {
 	deleteExpiredMods() {
 		try {
 			queries.deleteExpiredOwnerMods();
+			queries.deleteExpiredOwnerModsForStolenCardsInInventory();
 			queries.deleteExpiredHubMods();
 			queries.deleteExpiredIncomeMods();
 		} catch (err) {

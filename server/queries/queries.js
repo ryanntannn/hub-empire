@@ -406,7 +406,9 @@ async function addStolenCardToPlayerInventory(
 	playerId,
 	targetPlayerId,
 	targetCardId,
-	targetCardInstanceId
+	targetCardInstanceId,
+	isPermanent,
+	turnsLeft,
 ) {
 	const query = {
 		_id: ObjectId(playerId),
@@ -418,6 +420,8 @@ async function addStolenCardToPlayerInventory(
 				playerId: targetPlayerId,
 				cardId: targetCardId,
 				instanceId: targetCardInstanceId,
+				isPermanent: isPermanent,
+				turnsLeft: turnsLeft,
 			},
 		},
 	};
@@ -467,8 +471,9 @@ async function getCardById(id) {
 		.catch(console.dir);
 }
 
-async function decrementOwnerModTurnNumber() {
+async function decrementOwnerModTurnNumber(id) {
 	const query = {
+		_id: ObjectId(id),
 		'game.inventory.cardInstances': {
 			$exists: true,
 			$elemMatch: {
@@ -479,11 +484,37 @@ async function decrementOwnerModTurnNumber() {
 
 	const valueToDecrement = {
 		$inc: {
-			'game.inventory.cardInstances.$.modifiers.owner.turnsLeft': -1,
+			'game.inventory.cardInstances.$[].modifiers.owner.turnsLeft': -1,
 		},
 	};
 
-	await mongo.client
+	const res = await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateMany(query, valueToDecrement)
+		.catch(console.dir);
+
+	return;
+}
+
+async function decrementOwnerModTurnNumberForStolenCardsInInventory(id) {
+	const query = {
+		_id: ObjectId(id),
+		'game.inventory.stolenCards': {
+			$exists: true,
+			$elemMatch: {
+				'isPermanent': false,
+			},
+		},
+	};
+
+	const valueToDecrement = {
+		$inc: {
+			'game.inventory.stolenCards.$.turnsLeft': -1,
+		},
+	};
+
+	const res = await mongo.client
 		.db('HubEmpireDB')
 		.collection('Users')
 		.updateMany(query, valueToDecrement)
@@ -507,7 +538,7 @@ async function deleteExpiredOwnerMods() {
 
 	const valueToReset = {
 		$set: {
-			'game.inventory.cardInstances.$.modifiers.owner': {},
+			'game.inventory.cardInstances.$[].modifiers.owner': {},
 		},
 	};
 
@@ -520,8 +551,28 @@ async function deleteExpiredOwnerMods() {
 	return;
 }
 
-async function decrementHubModTurnNumber() {
+async function deleteExpiredOwnerModsForStolenCardsInInventory() {
+	const valueToRemove = {
+		$pull: {
+			'game.inventory.stolenCards': {
+				'isPermanent': false,
+				'turnsLeft': { $lte: 0 }
+			}
+		},
+	};
+
+	await mongo.client
+		.db('HubEmpireDB')
+		.collection('Users')
+		.updateMany({}, valueToRemove)
+		.catch(console.dir);
+
+	return;
+}
+
+async function decrementHubModTurnNumber(id) {
 	const query = {
+		_id: ObjectId(id),
 		'game.inventory.cardInstances': {
 			$exists: true,
 			$elemMatch: {
@@ -573,8 +624,9 @@ async function deleteExpiredHubMods() {
 	return;
 }
 
-async function decrementIncomeModTurnNumber() {
+async function decrementIncomeModTurnNumber(id) {
 	const query = {
+		_id: ObjectId(id),
 		'game.inventory.cardInstances': {
 			$exists: true,
 		},
@@ -806,7 +858,9 @@ const queries = {
 	addCard,
 	getCardById,
 	decrementOwnerModTurnNumber,
+	decrementOwnerModTurnNumberForStolenCardsInInventory,
 	deleteExpiredOwnerMods,
+	deleteExpiredOwnerModsForStolenCardsInInventory,
 	decrementHubModTurnNumber,
 	deleteExpiredHubMods,
 	decrementIncomeModTurnNumber,
