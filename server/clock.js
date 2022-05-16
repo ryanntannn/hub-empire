@@ -15,9 +15,11 @@ function printCurrentDateAndTime(){
     console.log('Starting Turn Calculation...');
 }
 
+//Turns occur at 8am and 5pm SGT
 //Cron values can be changed for testing
-//Revert back to '0 08,17 * * *' when done
-var job = cron.schedule('0 08,17 * * *', () => {
+//Heroku runs on UTC +0:00, Singapore is UTC+8:00
+//Revert back to '0 0,9 * * *' when done
+var job = cron.schedule('0 0,9 * * *', () => {
     printCurrentDateAndTime();
     worker.runScheduledTask();
 }, 
