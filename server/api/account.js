@@ -173,7 +173,7 @@ async function registerAdmin(req, res) {
 					maxScore: '100',
 					scoreBasedRewards: [
 						{
-							score: 50,
+							score: 75,
 							rewards: [
 								{
 									rarity: '0',
@@ -217,7 +217,7 @@ async function registerAdmin(req, res) {
 					maxScore: '100',
 					scoreBasedRewards: [
 						{
-							score: 50,
+							score: 61,
 							rewards: [
 								{
 									rarity: 0,

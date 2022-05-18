@@ -273,9 +273,9 @@ function ActiveCardModal(props: CardModalProps) {
 					<br />
 					Industry: <b>{HubType[currentCard.hubType]}</b>
 					<br />
-					Value: <b>${currentCard.value}</b>
+					Value: <b>${currentCard.value}M</b>
 					<br />
-					Income: <b>${currentCard.baseIncome}</b>
+					Income: <b>${currentCard.baseIncome}M</b>
 				</p>
 			</div>
 		);
@@ -283,11 +283,20 @@ function ActiveCardModal(props: CardModalProps) {
 
 	function renderModifiers() {
 		console.log(props.cardInstance);
+		const mods = props.cardInstance.modifiers;
 		return (
 			<div>
 				<b>Active Effects:</b>
-				{renderHubModifiers(props.cardInstance.modifiers.hub)}
-				{renderIncomeModifiers(props.cardInstance.modifiers.income)}
+				{mods.hub.newHubType == undefined && mods.income.length <= 0 ? (
+					<>
+						<br />
+						No Active Effects
+					</>
+				) : (
+					''
+				)}
+				{renderHubModifiers(mods.hub)}
+				{renderIncomeModifiers(mods.income)}
 			</div>
 		);
 	}
@@ -362,12 +371,6 @@ function ActiveCardModal(props: CardModalProps) {
 				{props.cardInstance.card.cardType == CardType.ACTION ? (
 					<Button color='primary' onClick={useCard}>
 						Use card
-					</Button>
-				) : null}
-				{props.cardInstance.card.cardType == CardType.HUB ? (
-					<Button disabled color='primary'>
-						Sell card for $
-						{(props.cardInstance.card as HubCard).value}
 					</Button>
 				) : null}
 				<Button color='secondary' onClick={() => props.onReject()}>
