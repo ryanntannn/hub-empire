@@ -122,6 +122,7 @@ async function giveRewards(req, res) {
 						userId: player.profile.id,
 						...newCardInstance,
 					};
+					player.calculateNetWorth();
 					queries.updateActionLog(player.game.id, logData, 1);
 				}
 			});

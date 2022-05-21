@@ -1,3 +1,5 @@
+const userUtils = require('../utils/userUtils');
+
 class Player {
     profile = {
         id: null,
@@ -44,6 +46,15 @@ class Player {
             }
         }
 	}
+
+    calculateNetWorth() {
+        var totalAssetValue = userUtils.getAssetValue(this.game.inventory.cardInstances);
+        var totalCash = this.game.stats.cash;
+
+        this.game.stats.netWorth = totalCash + totalAssetValue;
+
+        return;
+    }
 }
 
 module.exports = Player;

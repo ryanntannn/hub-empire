@@ -36,8 +36,10 @@ class Game {
 			var player = new Player(playerInfo);
 
 			await this.calculateTurnIncome(player);
-			this.drawCards(player, 5);
-			this.calculateNetWorth(player);
+			this.drawCards(player, 1);
+
+
+			player.calculateNetWorth();
 
 			queries.updateUserStatsAndInventory(player).catch(console.dir);
 
@@ -45,6 +47,7 @@ class Game {
 			this.decrementModTurnNumbers(player.profile.id);
 			
 		}
+		return;
 		
 		this.deleteExpiredMods();
 
@@ -206,13 +209,13 @@ class Game {
 		}
 	}
 
+	//Unused
 	calculateNetWorth(player) {
-		var assetValue =
-			userUtils.getAssetValue(player.game.inventory.cardInstances) +
-			userUtils.getAssetValue(player.game.inventory.newCards);
+		var assetValue = userUtils.getAssetValue(player.game.inventory.cardInstances);
 		player.game.stats.netWorth = userUtils.truncateValueToTwoDp(
 			player.game.stats.cash + assetValue
 		);
+		console.log("Game.js Net Worth: " + player.game.stats.netWorth);
 		return;
 	}
 
